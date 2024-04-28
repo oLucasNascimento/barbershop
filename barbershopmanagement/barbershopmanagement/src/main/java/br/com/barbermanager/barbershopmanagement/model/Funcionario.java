@@ -1,5 +1,6 @@
 package br.com.barbermanager.barbershopmanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,11 @@ public class Funcionario {
     private String cpf;
     private String email;
     private String telefone;
+
+    @ManyToOne
+    @JoinColumn(name = "fk_barbearia")
+    @JsonIgnoreProperties("funcionarios")
+    private Barbearia barbearia;
 
     public Integer getId() {
         return id;
@@ -52,5 +58,13 @@ public class Funcionario {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public Barbearia getBarbearia() {
+        return barbearia;
+    }
+
+    public void setBarbearia(Barbearia barbearia) {
+        this.barbearia = barbearia;
     }
 }

@@ -1,6 +1,7 @@
 package br.com.barbermanager.barbershopmanagement.controller;
 
 import br.com.barbermanager.barbershopmanagement.model.Barbearia;
+import br.com.barbermanager.barbershopmanagement.model.Funcionario;
 import br.com.barbermanager.barbershopmanagement.service.barbearia.BarbeariaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

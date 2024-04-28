@@ -15,7 +15,10 @@ public interface FuncionarioService {
 
     public Funcionario buscarFuncionarioPeloId(Integer id);
 
+    public List<Funcionario> funcionariosPorBarbearia(Integer id);
+
     public Boolean deletarFuncionario(Integer id);
 
     public Funcionario atualizarFuncionario(Integer id, Funcionario camposAtualizados);
+
 }

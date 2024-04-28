@@ -1,7 +1,10 @@
 package br.com.barbermanager.barbershopmanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicUpdate;
+
+import java.util.List;
 
 @Entity
 public class Barbearia {
@@ -15,6 +18,10 @@ public class Barbearia {
     private String endereco;
     private String email;
     private String telefone;
+
+    @OneToMany(mappedBy = "barbearia")
+    @JsonIgnoreProperties("barbearia")
+    private List<Funcionario> funcionarios;
 
     public Integer getId() {
         return id;
@@ -62,5 +69,13 @@ public class Barbearia {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public List<Funcionario> getFuncionarios() {
+        return funcionarios;
+    }
+
+    public void setFuncionarios(List<Funcionario> funcionarios) {
+        this.funcionarios = funcionarios;
     }
 }

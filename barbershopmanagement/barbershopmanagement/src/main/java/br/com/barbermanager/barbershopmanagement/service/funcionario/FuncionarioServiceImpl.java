@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,6 +52,18 @@ public class FuncionarioServiceImpl implements FuncionarioService{
     }
 
     @Override
+    public List<Funcionario> funcionariosPorBarbearia(Integer id) {
+        List<Funcionario> funcionarios = new ArrayList<>();
+        for( Funcionario funcionario : this.funcionarioRepository.findAll()){
+            if(funcionario.getBarbearia().getId().equals(id)){
+                funcionarios.add(funcionario);
+            }
+        }
+        return funcionarios;
+
+    }
+
+    @Override
     public Boolean deletarFuncionario(Integer id) {
         if(this.funcionarioRepository.existsById(id)){
             this.funcionarioRepository.deleteById(id);
@@ -62,8 +75,8 @@ public class FuncionarioServiceImpl implements FuncionarioService{
     @Override
     @Transactional
     public Funcionario atualizarFuncionario(Integer id, Funcionario camposAtualizados) {
-        if (this.funcionarioRepository.existsById(id)) {
-            Funcionario funcionario = this.funcionarioRepository.getById(id);
+        if (this.funcionarioExiste(id)) {
+            Funcionario funcionario = this.buscarFuncionarioPeloId(id);
             BeanUtils.copyProperties(camposAtualizados, funcionario, buscarCampoVazios(camposAtualizados));
             return this.funcionarioRepository.save(funcionario);
         }

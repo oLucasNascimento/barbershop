@@ -33,6 +33,15 @@ public class FuncionarioController {
         return ResponseEntity.ok(funcionarios);
     }
 
+    @GetMapping("/barbearia/{id}")
+    public ResponseEntity<List<Funcionario>> funcionariosPorBarbearia(@PathVariable Integer id){
+        List<Funcionario> funcionarios = this.funcionarioService.funcionariosPorBarbearia(id);
+        if(funcionarios.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(funcionarios);
+    }
+
     @DeleteMapping("/deletar/{id}")
     public ResponseEntity excluirFuncionario(@PathVariable Integer id) {
         if (this.funcionarioService.deletarFuncionario(id)) {

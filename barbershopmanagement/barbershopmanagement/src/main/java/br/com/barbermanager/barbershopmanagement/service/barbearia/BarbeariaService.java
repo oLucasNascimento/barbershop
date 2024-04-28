@@ -1,6 +1,7 @@
 package br.com.barbermanager.barbershopmanagement.service.barbearia;
 
 import br.com.barbermanager.barbershopmanagement.model.Barbearia;
+import br.com.barbermanager.barbershopmanagement.model.Funcionario;
 
 import java.util.List;
 import java.util.Map;

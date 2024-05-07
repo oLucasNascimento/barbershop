@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class FuncionarioServiceImpl implements FuncionarioService{
+public class FuncionarioServiceImpl implements FuncionarioService {
 
     @Autowired
     private FuncionarioRepository funcionarioRepository;
@@ -26,16 +26,13 @@ public class FuncionarioServiceImpl implements FuncionarioService{
         return this.funcionarioRepository.existsById(id);
     }
 
+    @Transactional
     @Override
     public Funcionario criarFuncionario(Funcionario novoFuncionario) {
-
-        for(Funcionario funcionario : this.funcionarioRepository.findAll()){
-            if(funcionario.getCpf().equals(novoFuncionario.getCpf())){
-                return null;
-            }
+        if ((this.funcionarioRepository.findByCpf(novoFuncionario.getCpf())) == null) {
+            return this.funcionarioRepository.save(novoFuncionario);
         }
-
-        return this.funcionarioRepository.save(novoFuncionario);
+        return null;
     }
 
     @Override
@@ -45,7 +42,7 @@ public class FuncionarioServiceImpl implements FuncionarioService{
 
     @Override
     public Funcionario buscarFuncionarioPeloId(Integer id) {
-        if(this.funcionarioRepository.existsById(id)){
+        if (this.funcionarioRepository.existsById(id)) {
             return this.funcionarioRepository.getById(id);
         }
         return null;
@@ -54,9 +51,11 @@ public class FuncionarioServiceImpl implements FuncionarioService{
     @Override
     public List<Funcionario> funcionariosPorBarbearia(Integer id) {
         List<Funcionario> funcionarios = new ArrayList<>();
-        for( Funcionario funcionario : this.funcionarioRepository.findAll()){
-            if(funcionario.getBarbearia().getId().equals(id)){
-                funcionarios.add(funcionario);
+        for (Funcionario funcionario : this.funcionarioRepository.findAll()) {
+            if ((funcionario.getBarbearia() != null)) {
+                if ((funcionario.getBarbearia().getId().equals(id))) {
+                    funcionarios.add(funcionario);
+                }
             }
         }
         return funcionarios;
@@ -65,7 +64,7 @@ public class FuncionarioServiceImpl implements FuncionarioService{
 
     @Override
     public Boolean deletarFuncionario(Integer id) {
-        if(this.funcionarioRepository.existsById(id)){
+        if (this.funcionarioRepository.existsById(id)) {
             this.funcionarioRepository.deleteById(id);
             return true;
         }

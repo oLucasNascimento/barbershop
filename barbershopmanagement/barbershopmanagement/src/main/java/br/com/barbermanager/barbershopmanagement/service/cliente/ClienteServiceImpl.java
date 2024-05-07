@@ -1,7 +1,9 @@
 package br.com.barbermanager.barbershopmanagement.service.cliente;
 
+import br.com.barbermanager.barbershopmanagement.model.Barbearia;
 import br.com.barbermanager.barbershopmanagement.model.Cliente;
 import br.com.barbermanager.barbershopmanagement.repository.ClienteRepository;
+import br.com.barbermanager.barbershopmanagement.service.barbearia.BarbeariaService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -20,19 +22,20 @@ public class ClienteServiceImpl implements ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private BarbeariaService barbeariaService;
+
     @Override
     public Boolean clienteExiste(Integer id) {
         return this.clienteRepository.existsById(id);
     }
 
     @Override
-    public Cliente criarCliente(Cliente novoFuncionario) {
-        for (Cliente cliente : this.clienteRepository.findAll()) {
-            if (cliente.getCpf().equals(novoFuncionario.getCpf())) {
-                return null;
-            }
+    public Cliente criarCliente(Cliente novoCliente) {
+        if ((this.clienteRepository.findByCpf(novoCliente.getCpf())) == null) {
+            return this.clienteRepository.save(novoCliente);
         }
-        return this.clienteRepository.save(novoFuncionario);
+        return null;
     }
 
     @Override
@@ -43,7 +46,8 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public Cliente buscarClientePeloId(Integer id) {
         if (this.clienteRepository.existsById(id)) {
-            this.clienteRepository.getById(id);
+            return this.clienteRepository.getById(id);
+
         }
         return null;
     }
@@ -59,13 +63,36 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     @Transactional
-    public Cliente atualizarCliente(Integer id,Cliente camposAtualizados) {
-        if (this.clienteRepository.existsById(id)) {
-            Cliente cliente = this.clienteRepository.getById(id);
-            BeanUtils.copyProperties(camposAtualizados, cliente, buscarCampoVazios(camposAtualizados));
-            return this.clienteRepository.save(cliente);
+    public Cliente atualizarCliente(Integer id, Cliente camposAtualizados) {
+        if (this.clienteExiste(id)) {
+            if (this.clienteRepository.findByCpf(camposAtualizados.getCpf()) == null) {
+                Cliente cliente = this.buscarClientePeloId(id);
+                if (camposAtualizados.getBarbearias() != null) {
+                    for (Barbearia barbeariaAtt : camposAtualizados.getBarbearias()) {
+                        Set<Cliente> clientes = new HashSet<>();
+                        clientes.add(cliente);
+                        Barbearia barbearia = this.barbeariaService.buscarBarbeariaPeloId(barbeariaAtt.getId());
+                        barbearia.setClientes(clientes);
+                        this.barbeariaService.inserirCliente(barbearia.getId(), barbearia);
+                    }
+                }
+                BeanUtils.copyProperties(camposAtualizados, cliente, buscarCampoVazios(camposAtualizados));
+                return this.clienteRepository.save(cliente);
+            }
         }
         return null;
+//        Cliente cliente = this.clienteRepository.getById(id);
+//        if ((camposAtualizados.getBarbearias() != null)) {
+//            Set<Barbearia> barbearias = cliente.getBarbearias();
+//            System.out.println(barbearias.size() + " qtd Barbearias");
+//            for (Barbearia barbearia : camposAtualizados.getBarbearias()) {
+//                barbearias.add(barbearia);
+//            }
+//            cliente.setBarbearias(barbearias);
+//            System.out.println(barbearias.size() + " qtd Barbearias");
+//            return this.clienteRepository.save(cliente);
+//        }
+//        return null;
     }
 
     private String[] buscarCampoVazios(Object source) {

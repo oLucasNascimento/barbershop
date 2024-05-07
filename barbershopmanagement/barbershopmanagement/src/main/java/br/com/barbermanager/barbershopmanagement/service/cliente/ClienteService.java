@@ -8,7 +8,7 @@ public interface ClienteService {
 
     public Boolean clienteExiste(Integer id);
 
-    public Cliente criarCliente(Cliente novoFuncionario);
+    public Cliente criarCliente(Cliente novoCliente);
 
     public List<Cliente> todosClientes();
 

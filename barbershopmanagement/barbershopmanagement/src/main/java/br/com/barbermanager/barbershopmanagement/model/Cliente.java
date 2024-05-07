@@ -1,9 +1,10 @@
 package br.com.barbermanager.barbershopmanagement.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Cliente {
@@ -15,6 +16,10 @@ public class Cliente {
     private String nome;
     private String cpf;
     private String telefone;
+
+    @ManyToMany(mappedBy = "clientes")
+    @JsonIgnoreProperties("clientes")
+    private Set<Barbearia> barbearias;
 
     public Integer getId() {
         return id;
@@ -46,5 +51,13 @@ public class Cliente {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public Set<Barbearia> getBarbearias() {
+        return barbearias;
+    }
+
+    public void setBarbearias(Set<Barbearia> barbearias) {
+        this.barbearias = barbearias;
     }
 }

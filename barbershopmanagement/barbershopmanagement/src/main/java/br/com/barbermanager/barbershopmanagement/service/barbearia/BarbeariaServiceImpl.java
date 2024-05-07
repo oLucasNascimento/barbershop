@@ -1,9 +1,10 @@
 package br.com.barbermanager.barbershopmanagement.service.barbearia;
 
 import br.com.barbermanager.barbershopmanagement.model.Barbearia;
+import br.com.barbermanager.barbershopmanagement.model.Cliente;
 import br.com.barbermanager.barbershopmanagement.model.Funcionario;
 import br.com.barbermanager.barbershopmanagement.repository.BarbeariaRepository;
-import br.com.barbermanager.barbershopmanagement.repository.FuncionarioRepository;
+import br.com.barbermanager.barbershopmanagement.service.cliente.ClienteService;
 import br.com.barbermanager.barbershopmanagement.service.funcionario.FuncionarioService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +27,9 @@ public class BarbeariaServiceImpl implements BarbeariaService {
     @Autowired
     private FuncionarioService funcionarioService;
 
+//    @Autowired
+//    private ClienteService clienteService;
+
     @Override
     public Boolean barbeariaExiste(Integer id) {
         return this.barbeariaRepository.existsById(id);
@@ -34,13 +37,10 @@ public class BarbeariaServiceImpl implements BarbeariaService {
 
     @Override
     public Barbearia criarBarbearia(Barbearia novaBarbearia) {
-
-        for (Barbearia barbearia : this.barbeariaRepository.findAll()) {
-            if (barbearia.getEmail().equals(novaBarbearia.getEmail())) {
-                return null;
-            }
+        if ((this.barbeariaRepository.findByEmail(novaBarbearia.getEmail())) == null) {
+            return this.barbeariaRepository.save(novaBarbearia);
         }
-        return this.barbeariaRepository.save(novaBarbearia);
+        return null;
     }
 
     @Override
@@ -57,31 +57,68 @@ public class BarbeariaServiceImpl implements BarbeariaService {
     }
 
     @Override
-    public Boolean deletarBarbearia(Integer id) {
-        if (this.barbeariaRepository.existsById(id)) {
-            this.barbeariaRepository.deleteById(id);
-            return true;
+    public void deletarBarbearia(Integer id) {
+        this.barbeariaRepository.deleteById(id);
+    }
+
+    @Override
+    public void demitirFuncionario(Integer idBarbearia, Integer idFuncionario) {
+        Barbearia barbearia = this.buscarBarbeariaPeloId(idBarbearia);
+        if ((barbearia.getFuncionarios() != null)) {
+            Funcionario funcionarioDemitido = this.funcionarioService.buscarFuncionarioPeloId(idFuncionario);
+            funcionarioDemitido.setBarbearia(null);
+            this.funcionarioService.atualizarFuncionario(idFuncionario, funcionarioDemitido);
         }
-        return false;
     }
 
     @Override
     @Transactional
     public Barbearia atualizarBarbearia(Integer id, Barbearia camposAtualizados) {
         if (this.barbeariaExiste(id)) {
-            Barbearia barbearia = this.buscarBarbeariaPeloId(id);
-            if ((camposAtualizados.getFuncionarios() != null)) {
-                for (Funcionario funcionarioAtt : camposAtualizados.getFuncionarios()) {
-                    Funcionario funcionarioExistente = this.funcionarioService.buscarFuncionarioPeloId(funcionarioAtt.getId());
-                    funcionarioExistente.setBarbearia(barbearia);
-                    this.funcionarioService.atualizarFuncionario(funcionarioExistente.getId(), funcionarioExistente);
+            if (this.barbeariaRepository.findByEmail(camposAtualizados.getEmail()) == null) {
+                Barbearia barbearia = this.buscarBarbeariaPeloId(id);
+                if ((camposAtualizados.getFuncionarios() != null)) {
+                    barbearia = this.admitirFuncionario(id, camposAtualizados.getFuncionarios());
                 }
+                BeanUtils.copyProperties(camposAtualizados, barbearia, buscarCampoVazios(camposAtualizados));
+                return this.barbeariaRepository.save(barbearia);
             }
+        }
+        return null;
+    }
 
-            BeanUtils.copyProperties(camposAtualizados, barbearia, buscarCampoVazios(camposAtualizados));
+    @Override
+    public Barbearia inserirCliente(Integer id, Barbearia clientesAtualizados) {
+        Barbearia barbearia = this.buscarBarbeariaPeloId(id);
+        if ((clientesAtualizados.getClientes() != null)) {
+            Set<Cliente> clientes = barbearia.getClientes();
+            for (Cliente cliente : clientesAtualizados.getClientes()) {
+                clientes.add(cliente);
+            }
+            barbearia.setClientes(clientes);
             return this.barbeariaRepository.save(barbearia);
         }
         return null;
+    }
+
+    @Override
+    public void removerCliente(Integer idBarbearia, Integer idCliente) {
+//        Barbearia barbearia = this.buscarBarbeariaPeloId(idBarbearia);
+//        if ((barbearia.getClientes() != null)) {
+//            Cliente clienteRemovido = this.clienteService.buscarClientePeloId(idCliente);
+//            clienteRemovido.getBarbearias().remove(this.buscarBarbeariaPeloId(idBarbearia));
+//            this.clienteService.atualizarCliente(idCliente, clienteRemovido);
+//        }
+    }
+
+    private Barbearia admitirFuncionario(Integer id, List<Funcionario> funcionariosAtualizados) {
+        Barbearia barbearia = this.buscarBarbeariaPeloId(id);
+        for (Funcionario funcionarioAtt : funcionariosAtualizados) {
+            Funcionario funcionarioExistente = this.funcionarioService.buscarFuncionarioPeloId(funcionarioAtt.getId());
+            funcionarioExistente.setBarbearia(barbearia);
+            this.funcionarioService.atualizarFuncionario(funcionarioExistente.getId(), funcionarioExistente);
+        }
+        return barbearia;
     }
 
     private String[] buscarCampoVazios(Object source) {
@@ -89,7 +126,6 @@ public class BarbeariaServiceImpl implements BarbeariaService {
         Set<String> camposVazios = new HashSet<>();
         for (PropertyDescriptor pd : src.getPropertyDescriptors()) {
             if (src.getPropertyValue(pd.getName()) == null) {
-                System.out.println(camposVazios + " CV");
                 camposVazios.add(pd.getName());
             }
         }

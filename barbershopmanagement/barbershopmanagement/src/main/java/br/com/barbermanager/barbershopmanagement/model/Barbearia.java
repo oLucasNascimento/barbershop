@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Barbearia {
@@ -22,6 +23,13 @@ public class Barbearia {
     @OneToMany(mappedBy = "barbearia")
     @JsonIgnoreProperties("barbearia")
     private List<Funcionario> funcionarios;
+
+    @ManyToMany()
+    @JoinTable(name = "barbearias_clientes",
+            joinColumns = @JoinColumn(name = "fk_barbearia"),
+            inverseJoinColumns = @JoinColumn(name = "fk_clientes"))
+    @JsonIgnoreProperties("barbearias")
+    private Set<Cliente> clientes;
 
     public Integer getId() {
         return id;
@@ -77,5 +85,13 @@ public class Barbearia {
 
     public void setFuncionarios(List<Funcionario> funcionarios) {
         this.funcionarios = funcionarios;
+    }
+
+    public Set<Cliente> getClientes() {
+        return clientes;
+    }
+
+    public void setClientes(Set<Cliente> clientes) {
+        this.clientes = clientes;
     }
 }

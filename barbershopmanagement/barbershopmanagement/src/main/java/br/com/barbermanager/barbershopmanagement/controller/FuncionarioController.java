@@ -51,7 +51,7 @@ public class FuncionarioController {
     }
 
     @PatchMapping("/atualizar/{id}")
-    public ResponseEntity<Funcionario> atualizarBarbearia(@PathVariable Integer id, @RequestBody Funcionario funcionaroAtualizado) {
+    public ResponseEntity<Funcionario> atualizarFuncionario(@PathVariable Integer id, @RequestBody Funcionario funcionaroAtualizado) {
         if ((this.funcionarioService.atualizarFuncionario(id, funcionaroAtualizado)) != null) {
             return ResponseEntity.ok(this.funcionarioService.buscarFuncionarioPeloId(id));
         }

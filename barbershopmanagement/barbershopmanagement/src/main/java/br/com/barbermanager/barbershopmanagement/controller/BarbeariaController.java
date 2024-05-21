@@ -45,15 +45,16 @@ public class BarbeariaController {
     @DeleteMapping("/demitir/{idBarbearia}/{idFuncionario}")
     public ResponseEntity demitirFuncionario(@PathVariable Integer idBarbearia, @PathVariable Integer idFuncionario) {
         if ((this.barbeariaService.barbeariaExiste(idBarbearia))) {
-            this.barbeariaService.demitirFuncionario(idBarbearia, idFuncionario);
-            return ResponseEntity.ok().build();
+            if (this.barbeariaService.demitirFuncionario(idBarbearia, idFuncionario)) {
+                return ResponseEntity.ok().build();
+            }
         }
         return ResponseEntity.notFound().build();
     }
 
     @PatchMapping("/atualizar/{id}")
     public ResponseEntity<Barbearia> atualizarBarbearia(@PathVariable Integer id, @RequestBody Barbearia barbeariaAtualizada) {
-        if ((this.barbeariaService.atualizarBarbearia(id, barbeariaAtualizada)) != null) {
+        if (((this.barbeariaService.atualizarBarbearia(id, barbeariaAtualizada)) != null)) {
             return ResponseEntity.ok(this.barbeariaService.buscarBarbeariaPeloId(id));
         }
         return ResponseEntity.badRequest().build();
@@ -61,10 +62,20 @@ public class BarbeariaController {
 
     @PatchMapping("/inserir-cliente/{id}")
     public ResponseEntity<Barbearia> inserirNovoCliente(@PathVariable Integer id, @RequestBody Barbearia barbeariaAtualizada) {
-        if ((this.barbeariaService.inserirCliente(id, barbeariaAtualizada)) != null) {
-            return ResponseEntity.ok(this.barbeariaService.buscarBarbeariaPeloId(id));
+        if (this.barbeariaService.barbeariaExiste(id)) {
+            if ((this.barbeariaService.atualizarClienteNaBarbearia(id, barbeariaAtualizada)) != null) {
+                return ResponseEntity.ok(this.barbeariaService.buscarBarbeariaPeloId(id));
+            }
         }
         return ResponseEntity.badRequest().build();
     }
 
+    @DeleteMapping("/remover-cliente/{idBarbearia}/{idCliente}")
+    public ResponseEntity<Barbearia> removerCliente(@PathVariable Integer idBarbearia, @PathVariable Integer idCliente) {
+        if ((this.barbeariaService.barbeariaExiste(idBarbearia))) {
+            this.barbeariaService.removerCliente(idBarbearia, idCliente);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
 }

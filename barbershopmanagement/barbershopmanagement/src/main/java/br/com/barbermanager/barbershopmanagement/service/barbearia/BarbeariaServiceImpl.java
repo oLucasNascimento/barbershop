@@ -3,9 +3,10 @@ package br.com.barbermanager.barbershopmanagement.service.barbearia;
 import br.com.barbermanager.barbershopmanagement.model.Barbearia;
 import br.com.barbermanager.barbershopmanagement.model.Cliente;
 import br.com.barbermanager.barbershopmanagement.model.Funcionario;
+import br.com.barbermanager.barbershopmanagement.model.Servico;
 import br.com.barbermanager.barbershopmanagement.repository.BarbeariaRepository;
-import br.com.barbermanager.barbershopmanagement.service.cliente.ClienteService;
 import br.com.barbermanager.barbershopmanagement.service.funcionario.FuncionarioService;
+import br.com.barbermanager.barbershopmanagement.service.servico.ServicoService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -27,8 +28,8 @@ public class BarbeariaServiceImpl implements BarbeariaService {
     @Autowired
     private FuncionarioService funcionarioService;
 
-//    @Autowired
-//    private ClienteService clienteService;
+    @Autowired
+    private ServicoService servicoService;
 
     @Override
     public Boolean barbeariaExiste(Integer id) {
@@ -62,23 +63,16 @@ public class BarbeariaServiceImpl implements BarbeariaService {
     }
 
     @Override
-    public void demitirFuncionario(Integer idBarbearia, Integer idFuncionario) {
-        Barbearia barbearia = this.buscarBarbeariaPeloId(idBarbearia);
-        if ((barbearia.getFuncionarios() != null)) {
-            Funcionario funcionarioDemitido = this.funcionarioService.buscarFuncionarioPeloId(idFuncionario);
-            funcionarioDemitido.setBarbearia(null);
-            this.funcionarioService.atualizarFuncionario(idFuncionario, funcionarioDemitido);
-        }
-    }
-
-    @Override
     @Transactional
     public Barbearia atualizarBarbearia(Integer id, Barbearia camposAtualizados) {
-        if (this.barbeariaExiste(id)) {
+        if ((this.barbeariaExiste(id))) {
             if (this.barbeariaRepository.findByEmail(camposAtualizados.getEmail()) == null) {
                 Barbearia barbearia = this.buscarBarbeariaPeloId(id);
                 if ((camposAtualizados.getFuncionarios() != null)) {
                     barbearia = this.admitirFuncionario(id, camposAtualizados.getFuncionarios());
+                }
+                if ((camposAtualizados.getServicos() != null)) {
+                    barbearia = this.inserirServico(id, camposAtualizados.getServicos());
                 }
                 BeanUtils.copyProperties(camposAtualizados, barbearia, buscarCampoVazios(camposAtualizados));
                 return this.barbeariaRepository.save(barbearia);
@@ -87,28 +81,56 @@ public class BarbeariaServiceImpl implements BarbeariaService {
         return null;
     }
 
-    @Override
-    public Barbearia inserirCliente(Integer id, Barbearia clientesAtualizados) {
-        Barbearia barbearia = this.buscarBarbeariaPeloId(id);
-        if ((clientesAtualizados.getClientes() != null)) {
-            Set<Cliente> clientes = barbearia.getClientes();
-            for (Cliente cliente : clientesAtualizados.getClientes()) {
-                clientes.add(cliente);
-            }
-            barbearia.setClientes(clientes);
-            return this.barbeariaRepository.save(barbearia);
+    private Barbearia inserirServico(Integer idBarbearia, List<Servico> novosServicos) {
+        Barbearia barbearia = this.buscarBarbeariaPeloId(idBarbearia);
+        for (Servico servicoAtt : novosServicos) {
+            Servico servicoExistente = this.servicoService.buscarServicoPeloId(servicoAtt.getId());
+            servicoExistente.setBarbearia(barbearia);
+            this.servicoService.atualizarServico(servicoExistente.getId(), servicoExistente);
         }
-        return null;
+        return barbearia;
+    }
+
+    @Override
+    public Barbearia atualizarClienteNaBarbearia(Integer id, Barbearia clientesAtualizados) {
+        Barbearia barbearia = this.buscarBarbeariaPeloId(id);
+        Set<Cliente> clientes = barbearia.getClientes();
+        for (Cliente cliente : clientesAtualizados.getClientes()) {
+            clientes.add(cliente);
+        }
+        barbearia.setClientes(clientes);
+        return this.barbeariaRepository.save(barbearia);
     }
 
     @Override
     public void removerCliente(Integer idBarbearia, Integer idCliente) {
-//        Barbearia barbearia = this.buscarBarbeariaPeloId(idBarbearia);
-//        if ((barbearia.getClientes() != null)) {
-//            Cliente clienteRemovido = this.clienteService.buscarClientePeloId(idCliente);
-//            clienteRemovido.getBarbearias().remove(this.buscarBarbeariaPeloId(idBarbearia));
-//            this.clienteService.atualizarCliente(idCliente, clienteRemovido);
-//        }
+        Barbearia barbearia = this.buscarBarbeariaPeloId(idBarbearia);
+        if ((barbearia.getClientes() != null)) {
+            Set<Cliente> clientes = barbearia.getClientes();
+            Set<Cliente> clientesRemovidos = new HashSet<>();
+            for (Cliente cliente : barbearia.getClientes()) {
+                if (cliente.getId().equals(idCliente)) {
+                    clientesRemovidos.add(cliente);
+                }
+            }
+            clientes.removeAll(clientesRemovidos);
+            barbearia.setClientes(clientes);
+            this.atualizarClienteNaBarbearia(idBarbearia, barbearia);
+        }
+    }
+
+    @Override
+    public Boolean demitirFuncionario(Integer idBarbearia, Integer idFuncionario) {
+        Barbearia barbearia = this.buscarBarbeariaPeloId(idBarbearia);
+        if ((barbearia.getFuncionarios() != null)) {
+            Funcionario funcionarioDemitido = this.funcionarioService.buscarFuncionarioPeloId(idFuncionario);
+            if (barbearia.getFuncionarios().contains(funcionarioDemitido)) {
+                funcionarioDemitido.setBarbearia(null);
+                this.funcionarioService.atualizarFuncionario(idFuncionario, funcionarioDemitido);
+                return true;
+            }
+        }
+        return false;
     }
 
     private Barbearia admitirFuncionario(Integer id, List<Funcionario> funcionariosAtualizados) {

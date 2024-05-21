@@ -22,6 +22,10 @@ public class Barbearia {
 
     @OneToMany(mappedBy = "barbearia")
     @JsonIgnoreProperties("barbearia")
+    private List<Servico> servicos;
+
+    @OneToMany(mappedBy = "barbearia")
+    @JsonIgnoreProperties("barbearia")
     private List<Funcionario> funcionarios;
 
     @ManyToMany()
@@ -77,6 +81,14 @@ public class Barbearia {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public List<Servico> getServicos() {
+        return servicos;
+    }
+
+    public void setServicos(List<Servico> servicos) {
+        this.servicos = servicos;
     }
 
     public List<Funcionario> getFuncionarios() {

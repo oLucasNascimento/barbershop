@@ -60,39 +60,31 @@ public class ClienteServiceImpl implements ClienteService {
         }
         return false;
     }
-
     @Override
-    @Transactional
     public Cliente atualizarCliente(Integer id, Cliente camposAtualizados) {
         if (this.clienteExiste(id)) {
+            Cliente cliente = this.buscarClientePeloId(id);
             if (this.clienteRepository.findByCpf(camposAtualizados.getCpf()) == null) {
-                Cliente cliente = this.buscarClientePeloId(id);
                 if (camposAtualizados.getBarbearias() != null) {
-                    for (Barbearia barbeariaAtt : camposAtualizados.getBarbearias()) {
-                        Set<Cliente> clientes = new HashSet<>();
-                        clientes.add(cliente);
-                        Barbearia barbearia = this.barbeariaService.buscarBarbeariaPeloId(barbeariaAtt.getId());
-                        barbearia.setClientes(clientes);
-                        this.barbeariaService.inserirCliente(barbearia.getId(), barbearia);
-                    }
+                    cliente = this.atualizarBarbearias(id, camposAtualizados);
                 }
                 BeanUtils.copyProperties(camposAtualizados, cliente, buscarCampoVazios(camposAtualizados));
                 return this.clienteRepository.save(cliente);
             }
         }
         return null;
-//        Cliente cliente = this.clienteRepository.getById(id);
-//        if ((camposAtualizados.getBarbearias() != null)) {
-//            Set<Barbearia> barbearias = cliente.getBarbearias();
-//            System.out.println(barbearias.size() + " qtd Barbearias");
-//            for (Barbearia barbearia : camposAtualizados.getBarbearias()) {
-//                barbearias.add(barbearia);
-//            }
-//            cliente.setBarbearias(barbearias);
-//            System.out.println(barbearias.size() + " qtd Barbearias");
-//            return this.clienteRepository.save(cliente);
-//        }
-//        return null;
+    }
+
+    private Cliente atualizarBarbearias(Integer idCliente, Cliente clienteAtualizado) {
+        Cliente cliente = this.buscarClientePeloId(idCliente);
+        for (Barbearia barbeariaAtt : clienteAtualizado.getBarbearias()) {
+            Set<Cliente> clientes = new HashSet<>();
+            clientes.add(cliente);
+            Barbearia barbearia = this.barbeariaService.buscarBarbeariaPeloId(barbeariaAtt.getId());
+            barbearia.setClientes(clientes);
+            this.barbeariaService.atualizarClienteNaBarbearia(barbearia.getId(), barbearia);
+        }
+        return cliente;
     }
 
     private String[] buscarCampoVazios(Object source) {

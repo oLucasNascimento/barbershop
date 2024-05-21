@@ -1,5 +1,6 @@
 package br.com.barbermanager.barbershopmanagement.controller;
 
+import br.com.barbermanager.barbershopmanagement.model.Barbearia;
 import br.com.barbermanager.barbershopmanagement.model.Cliente;
 import br.com.barbermanager.barbershopmanagement.service.cliente.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +42,10 @@ public class ClienteController {
     }
 
     @PatchMapping("/atualizar/{id}")
-    public ResponseEntity<Cliente> atualizarBarbearia(@PathVariable Integer id, @RequestBody Cliente clienteAtualizado) {
+    public ResponseEntity<Cliente> atualizarCliente(@PathVariable Integer id, @RequestBody Cliente clienteAtualizado) {
         if ((this.clienteService.atualizarCliente(id, clienteAtualizado)) != null) {
             return ResponseEntity.ok(this.clienteService.buscarClientePeloId(id));
         }
         return ResponseEntity.badRequest().build();
     }
-
-
 }

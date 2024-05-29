@@ -1,5 +1,7 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
+import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.barber.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +18,17 @@ public class BarberShopController {
     private BarberShopService barberShopService;
 
     @PostMapping("/new")
-    public ResponseEntity<BarberShop> newBarberShop(@RequestBody BarberShop newBarberShop) {
-        if ((this.barberShopService.createBarberShop(newBarberShop)) != null) {
-            return ResponseEntity.ok(newBarberShop);
+    public ResponseEntity<BarberShopResponse> newBarberShop(@RequestBody BarberShopRequest newBarberShop) {
+        BarberShopResponse barberShop = this.barberShopService.createBarberShop(newBarberShop);
+        if ((barberShop != null)) {
+            return ResponseEntity.ok(barberShop);
         }
         return ResponseEntity.status(409).build();
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<BarberShop>> allBarberShops() {
-        List<BarberShop> barberShops = this.barberShopService.allBarberShops();
+    public ResponseEntity<List<BarberShopResponse>> allBarberShops() {
+        List<BarberShopResponse> barberShops = this.barberShopService.allBarberShops();
         if (barberShops.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -52,7 +55,7 @@ public class BarberShopController {
     }
 
     @PatchMapping("/update/{barberShopId}")
-    public ResponseEntity<BarberShop> updateBarberShop(@PathVariable Integer barberShopId, @RequestBody BarberShop updatedBarberShop) {
+    public ResponseEntity<BarberShopResponse> updateBarberShop(@PathVariable Integer barberShopId, @RequestBody BarberShopRequest updatedBarberShop) {
         if (((this.barberShopService.updateBarberShop(barberShopId, updatedBarberShop)) != null)) {
             return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
         }
@@ -60,17 +63,18 @@ public class BarberShopController {
     }
 
     @PatchMapping("/insert-client/{barberShopId}")
-    public ResponseEntity<BarberShop> insertNewClient(@PathVariable Integer barberShopId, @RequestBody BarberShop updatedBarberShop) {
+    public ResponseEntity<BarberShopResponse> insertNewClient(@PathVariable Integer barberShopId, @RequestBody BarberShopRequest updatedBarberShop) {
         if (this.barberShopService.barberShopExists(barberShopId)) {
-            if ((this.barberShopService.udpateClientAtBarberShop(barberShopId, updatedBarberShop)) != null) {
-                return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
+            BarberShopResponse barberShopResponse = this.barberShopService.udpateClientAtBarberShop(barberShopId, updatedBarberShop);
+            if ((barberShopResponse != null)) {
+                return ResponseEntity.ok(barberShopResponse);
             }
         }
         return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/remove-client/{barberShopId}/{clientId}")
-    public ResponseEntity<BarberShop> removeClient(@PathVariable Integer barberShopId, @PathVariable Integer clientId) {
+    public ResponseEntity removeClient(@PathVariable Integer barberShopId, @PathVariable Integer clientId) {
         if ((this.barberShopService.barberShopExists(barberShopId))) {
             this.barberShopService.removeClient(barberShopId, clientId);
             return ResponseEntity.ok().build();

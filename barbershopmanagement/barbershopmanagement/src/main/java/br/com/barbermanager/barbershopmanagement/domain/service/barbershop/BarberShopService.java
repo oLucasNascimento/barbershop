@@ -1,5 +1,7 @@
 package br.com.barbermanager.barbershopmanagement.domain.service.barbershop;
 
+import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.barber.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 
 import java.util.List;
@@ -8,19 +10,19 @@ public interface BarberShopService {
 
     Boolean barberShopExists(Integer barberShopId);
 
-    BarberShop createBarberShop(BarberShop newBarberShop);
+    BarberShopResponse createBarberShop(BarberShopRequest newBarberShop);
 
-    List<BarberShop> allBarberShops();
+    List<BarberShopResponse> allBarberShops();
 
     void deleteBarberShop(Integer barberShopId);
 
-    BarberShop updateBarberShop(Integer barberShopId, BarberShop updatedBarberShop);
+    BarberShopResponse updateBarberShop(Integer barberShopId, BarberShopRequest updatedBarberShop);
 
-    BarberShop udpateClientAtBarberShop(Integer barberShopId, BarberShop updatedClients);
+    BarberShopResponse udpateClientAtBarberShop(Integer barberShopId, BarberShopRequest updatedClients);
 
     void removeClient(Integer barberShopId, Integer clientId);
 
-    BarberShop barberShopById(Integer barberShopId);
+    BarberShopResponse barberShopById(Integer barberShopId);
 
     Boolean dismissEmployee(Integer barberShopId, Integer employeeId);
 }

@@ -76,13 +76,13 @@ public class ClientServiceImpl implements ClientService {
 
     private Client updateBarberShops(Integer clientId, Client updatedClient) {
         Client client = this.clientById(clientId);
-        for (BarberShop barberShopUpdt : updatedClient.getBarberShops()) {
-            Set<Client> clients = new HashSet<>();
-            clients.add(client);
-            BarberShop barberShop = this.barberShopService.barberShopById(barberShopUpdt.getBarberShopId());
-            barberShop.setClients(clients);
-            this.barberShopService.udpateClientAtBarberShop(barberShop.getBarberShopId(), barberShop);
-        }
+//        for (BarberShop barberShopUpdt : updatedClient.getBarberShops()) {
+//            Set<Client> clients = new HashSet<>();
+//            clients.add(client);
+//            BarberShop barberShop = this.barberShopService.barberShopById(barberShopUpdt.getBarberShopId());
+//            barberShop.setClients(clients);
+//            this.barberShopService.udpateClientAtBarberShop(barberShop.getBarberShopId(), barberShop);
+//        }
         return client;
     }
 

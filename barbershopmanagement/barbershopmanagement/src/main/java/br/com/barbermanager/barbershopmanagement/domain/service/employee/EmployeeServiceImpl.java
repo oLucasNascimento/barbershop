@@ -1,5 +1,8 @@
 package br.com.barbermanager.barbershopmanagement.domain.service.employee;
 
+import br.com.barbermanager.barbershopmanagement.api.mapper.EmployeeMapper;
+import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
 import br.com.barbermanager.barbershopmanagement.domain.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
@@ -21,6 +24,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private EmployeeMapper employeeMapper;
+
     @Override
     public Boolean employeeExists(Integer employeeId) {
         return this.employeeRepository.existsById(employeeId);
@@ -28,28 +34,28 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Transactional
     @Override
-    public Employee createEmployee(Employee newEmployee) {
+    public EmployeeResponse createEmployee(EmployeeRequest newEmployee) {
         if ((this.employeeRepository.findByCpf(newEmployee.getCpf())) == null) {
-            return this.employeeRepository.save(newEmployee);
+            return this.employeeMapper.toEmployeeResponse((this.employeeRepository.save((this.employeeMapper.toEmployee(newEmployee)))));
         }
         return null;
     }
 
     @Override
-    public List<Employee> allEmployees() {
-        return this.employeeRepository.findAll();
+    public List<EmployeeResponse> allEmployees() {
+        return this.employeeMapper.toEmployeeResponseList((this.employeeRepository.findAll()));
     }
 
     @Override
-    public Employee EmployeeById(Integer employeeId) {
+    public EmployeeResponse EmployeeById(Integer employeeId) {
         if (this.employeeRepository.existsById(employeeId)) {
-            return this.employeeRepository.getById(employeeId);
+            return this.employeeMapper.toEmployeeResponse((this.employeeRepository.getById(employeeId)));
         }
         return null;
     }
 
     @Override
-    public List<Employee> employeesByBarberShop(Integer barberShopId) {
+    public List<EmployeeResponse> employeesByBarberShop(Integer barberShopId) {
         List<Employee> employees = new ArrayList<>();
         for (Employee employee : this.employeeRepository.findAll()) {
             if ((employee.getBarberShop() != null)) {
@@ -58,7 +64,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 }
             }
         }
-        return employees;
+        return this.employeeMapper.toEmployeeResponseList(employees);
 
     }
 
@@ -73,11 +79,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public Employee updateEmployee(Integer employeeId, Employee updatedEmployee) {
+    public EmployeeResponse updateEmployee(Integer employeeId, EmployeeRequest updatedEmployee) {
         if (this.employeeExists(employeeId)) {
-            Employee employee = this.EmployeeById(employeeId);
-            BeanUtils.copyProperties(updatedEmployee, employee, searchEmptyFields(updatedEmployee));
-            return this.employeeRepository.save(employee);
+            Employee employee = this.employeeRepository.getById(employeeId);
+            BeanUtils.copyProperties(updatedEmployee, employee, searchEmptyFields((this.employeeMapper.toEmployee(updatedEmployee))));
+            return this.employeeMapper.toEmployeeResponse((this.employeeRepository.save(employee)));
         }
         return null;
     }

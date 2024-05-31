@@ -1,8 +1,8 @@
 package br.com.barbermanager.barbershopmanagement.api.mapper;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.barber.BarberShopResponse;
-import br.com.barbermanager.barbershopmanagement.api.response.barber.BarberShopSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 @Component
 public class BarberShopMapper{
 
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
     public BarberShopMapper(ModelMapper mapper) {
         this.mapper = mapper;
     }
 
-    public BarberShop toBarberShop(Object barberShopRequest){
-        return this.mapper.map(barberShopRequest, BarberShop.class);
+    public BarberShop toBarberShop(Object barberShop){
+        return this.mapper.map(barberShop, BarberShop.class);
     }
 
     public BarberShopRequest toBarberShopRequest(Object barberShop){

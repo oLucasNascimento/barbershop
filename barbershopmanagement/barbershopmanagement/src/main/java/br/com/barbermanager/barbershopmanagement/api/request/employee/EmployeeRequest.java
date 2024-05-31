@@ -1,15 +1,26 @@
 package br.com.barbermanager.barbershopmanagement.api.request.employee;
 
+import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 
 public class EmployeeRequest {
+
+    private Integer employeeId;
 
     private String name;
     private String cpf;
     private String email;
     private String phone;
 
-    private BarberShop barberShop;
+    private BarberShopRequest barberShop;
+
+    public Integer getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Integer employeeId) {
+        this.employeeId = employeeId;
+    }
 
     public String getName() {
         return name;
@@ -43,11 +54,11 @@ public class EmployeeRequest {
         this.phone = phone;
     }
 
-    public BarberShop getBarberShop() {
+    public BarberShopRequest getBarberShop() {
         return barberShop;
     }
 
-    public void setBarberShop(BarberShop barberShop) {
+    public void setBarberShop(BarberShopRequest barberShop) {
         this.barberShop = barberShop;
     }
 }

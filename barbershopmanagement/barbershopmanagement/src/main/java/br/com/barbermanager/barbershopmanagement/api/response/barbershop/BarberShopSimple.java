@@ -1,4 +1,4 @@
-package br.com.barbermanager.barbershopmanagement.api.response.barber;
+package br.com.barbermanager.barbershopmanagement.api.response.barbershop;
 
 public class BarberShopSimple {
 

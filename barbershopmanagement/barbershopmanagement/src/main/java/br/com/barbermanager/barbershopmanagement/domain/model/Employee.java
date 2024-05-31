@@ -22,7 +22,7 @@ public class Employee {
 
 //    @OneToMany(mappedBy = "funcionario")
 //    @JsonIgnoreProperties("funcionario")
-//    private Set<Agendamento> agendamentos;
+//    private Set<Scheduling> agendamentos;
 
 
     public Integer getEmployeeId() {

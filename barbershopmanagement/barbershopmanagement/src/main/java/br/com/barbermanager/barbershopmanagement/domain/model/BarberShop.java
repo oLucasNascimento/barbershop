@@ -36,7 +36,7 @@ public class BarberShop {
 
 //    @OneToMany(mappedBy = "barbearia")
 //    @JsonIgnoreProperties("barbearia")
-//    private Set<Agendamento> agendamentos;
+//    private Set<Scheduling> agendamentos;
 
 
     public Integer getBarberShopId() {
@@ -111,11 +111,11 @@ public class BarberShop {
         this.clients = clients;
     }
 
-//    public Set<Agendamento> getAgendamentos() {
+//    public Set<Scheduling> getAgendamentos() {
 //        return agendamentos;
 //    }
 //
-//    public void setAgendamentos(Set<Agendamento> agendamentos) {
+//    public void setAgendamentos(Set<Scheduling> agendamentos) {
 //        this.agendamentos = agendamentos;
 //    }
 }

@@ -54,7 +54,7 @@ public class EmployeeController {
     }
 
     @PatchMapping("/update/{employeeId}")
-    public ResponseEntity<EmployeeResponse> atualizarFuncionario(@PathVariable Integer employeeId, @RequestBody EmployeeRequest updatedEmployee) {
+    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Integer employeeId, @RequestBody EmployeeRequest updatedEmployee) {
         if ((this.employeeService.updateEmployee(employeeId, updatedEmployee)) != null) {
             return ResponseEntity.ok(this.employeeService.EmployeeById(employeeId));
         }

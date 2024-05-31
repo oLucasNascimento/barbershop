@@ -1,5 +1,8 @@
 package br.com.barbermanager.barbershopmanagement.domain.service.item;
 
+import br.com.barbermanager.barbershopmanagement.api.mapper.ItemMapper;
+import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ItemRepository;
 import jakarta.transaction.Transactional;
@@ -20,6 +23,9 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private ItemRepository itemRepository;
 
+    @Autowired
+    private ItemMapper itemMapper;
+
     @Override
     public Boolean itemExists(Integer itemId) {
         return this.itemRepository.existsById(itemId);
@@ -27,30 +33,29 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     @Override
-    public Item createItem(Item newItem) {
-
+    public ItemResponse createItem(ItemRequest newItem) {
         if((itemRepository.existingItem(newItem.getName(), newItem.getPrice())) == null){
-            return this.itemRepository.save(newItem);
+            return this.itemMapper.toItemResponse((this.itemRepository.save((this.itemMapper.toItem(newItem)))));
         }
         return null;
     }
 
     @Override
-    public List<Item> allItems() {
-        return this.itemRepository.findAll();
+    public List<ItemResponse> allItems() {
+        return this.itemMapper.toItemResponseList((this.itemRepository.findAll()));
     }
 
     @Override
-    public Item itemById(Integer itemId) {
+    public ItemResponse itemById(Integer itemId) {
         if (this.itemRepository.existsById(itemId)) {
-            return this.itemRepository.getById(itemId);
+            return this.itemMapper.toItemResponse((this.itemRepository.getById(itemId)));
         }
         return null;
     }
 
     @Override
-    public List<Item> itemByBarberShop(Integer barberShopId) {
-        return this.itemRepository.itemByBarberShop(barberShopId);
+    public List<ItemResponse> itemByBarberShop(Integer barberShopId) {
+        return this.itemMapper.toItemResponseList((this.itemRepository.itemByBarberShop(barberShopId)));
     }
 
     @Override
@@ -64,11 +69,11 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public Item updateItem(Integer itemId, Item updatedItem) {
+    public ItemResponse updateItem(Integer itemId, ItemRequest updatedItem) {
         if (this.itemExists(itemId)) {
-            Item item = this.itemById(itemId);
-            BeanUtils.copyProperties(updatedItem, item, searchEmptyFields(updatedItem));
-            return this.itemRepository.save(item);
+            Item item = this.itemRepository.getById(itemId);
+            BeanUtils.copyProperties((this.itemMapper.toItem(updatedItem)), item, searchEmptyFields(updatedItem));
+            return this.itemMapper.toItemResponse((this.itemRepository.save(item)));
         }
         return null;
     }

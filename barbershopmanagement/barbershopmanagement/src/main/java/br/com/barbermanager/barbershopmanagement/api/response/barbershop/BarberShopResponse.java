@@ -1,10 +1,9 @@
-package br.com.barbermanager.barbershopmanagement.api.response.barber;
+package br.com.barbermanager.barbershopmanagement.api.response.barbershop;
 
-import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
-import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
-import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 
 import java.util.List;
 import java.util.Set;
@@ -15,9 +14,9 @@ public class BarberShopResponse {
     private String name;
     private String phone;
 
-    private List<Item> items;
+    private List<ItemSimple> items;
     private List<EmployeeSimple> employees;
-    private Set<Client> clients;
+    private Set<ClientSimple> clients;
 
     public Integer getBarberShopId() {
         return barberShopId;
@@ -43,11 +42,11 @@ public class BarberShopResponse {
         this.phone = phone;
     }
 
-    public List<Item> getItems() {
+    public List<ItemSimple> getItems() {
         return items;
     }
 
-    public void setItems(List<Item> items) {
+    public void setItems(List<ItemSimple> items) {
         this.items = items;
     }
 
@@ -59,11 +58,11 @@ public class BarberShopResponse {
         this.employees = employees;
     }
 
-    public Set<Client> getClients() {
+    public Set<ClientSimple> getClients() {
         return clients;
     }
 
-    public void setClients(Set<Client> clients) {
+    public void setClients(Set<ClientSimple> clients) {
         this.clients = clients;
     }
 }

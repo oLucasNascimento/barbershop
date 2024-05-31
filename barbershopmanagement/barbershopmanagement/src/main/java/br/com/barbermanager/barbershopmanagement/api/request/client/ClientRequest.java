@@ -1,28 +1,18 @@
-package br.com.barbermanager.barbershopmanagement.domain.model;
+package br.com.barbermanager.barbershopmanagement.api.request.client;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 
 import java.util.Set;
 
-@Entity
-public class Client {
+public class ClientRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer clientId;
 
     private String name;
     private String cpf;
     private String phone;
 
-    @ManyToMany(mappedBy = "clients")
-    @JsonIgnoreProperties("clients")
-    private Set<BarberShop> barberShops;
-
-//    @OneToMany(mappedBy = "cliente")
-//    @JsonIgnoreProperties("cliente")
-//    private Set<Scheduling> agendamentos;
+    private Set<BarberShopRequest> barberShops;
 
     public Integer getClientId() {
         return clientId;
@@ -56,11 +46,11 @@ public class Client {
         this.phone = phone;
     }
 
-    public Set<BarberShop> getBarberShops() {
+    public Set<BarberShopRequest> getBarberShops() {
         return barberShops;
     }
 
-    public void setBarberShops(Set<BarberShop> barberShops) {
+    public void setBarberShops(Set<BarberShopRequest> barberShops) {
         this.barberShops = barberShops;
     }
 }

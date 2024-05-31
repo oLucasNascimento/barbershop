@@ -1,5 +1,9 @@
 package br.com.barbermanager.barbershopmanagement.domain.service.client;
 
+import br.com.barbermanager.barbershopmanagement.api.mapper.BarberShopMapper;
+import br.com.barbermanager.barbershopmanagement.api.mapper.ClientMapper;
+import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ClientRepository;
@@ -24,28 +28,35 @@ public class ClientServiceImpl implements ClientService {
     @Autowired
     private BarberShopService barberShopService;
 
+    @Autowired
+    private BarberShopMapper barberShopMapper;
+
+    @Autowired
+    private ClientMapper clientMapper;
+
+
     @Override
     public Boolean clientExists(Integer clientId) {
         return this.clientRepository.existsById(clientId);
     }
 
     @Override
-    public Client createClient(Client newClient) {
+    public ClientResponse createClient(ClientRequest newClient) {
         if ((this.clientRepository.findByCpf(newClient.getCpf())) == null) {
-            return this.clientRepository.save(newClient);
+            return this.clientMapper.toClientResponse((this.clientRepository.save((this.clientMapper.toClient(newClient)))));
         }
         return null;
     }
 
     @Override
-    public List<Client> allClients() {
-        return this.clientRepository.findAll();
+    public List<ClientResponse> allClients() {
+        return this.clientMapper.toClientResponseList((this.clientRepository.findAll()));
     }
 
     @Override
-    public Client clientById(Integer clientId) {
+    public ClientResponse clientById(Integer clientId) {
         if (this.clientRepository.existsById(clientId)) {
-            return this.clientRepository.getById(clientId);
+            return this.clientMapper.toClientResponse((this.clientRepository.getById(clientId)));
 
         }
         return null;
@@ -60,29 +71,29 @@ public class ClientServiceImpl implements ClientService {
         return false;
     }
     @Override
-    public Client updateClient(Integer clientId, Client updatedClient) {
+    public ClientResponse updateClient(Integer clientId, ClientRequest updatedClient) {
         if (this.clientExists(clientId)) {
-            Client client = this.clientById(clientId);
+            Client client = this.clientRepository.getById(clientId);
             if (this.clientRepository.findByCpf(updatedClient.getCpf()) == null) {
                 if (updatedClient.getBarberShops() != null) {
-                    client = this.updateBarberShops(clientId, updatedClient);
+                    client = this.updateBarberShops(clientId, (this.clientMapper.toClient(updatedClient)));
                 }
-                BeanUtils.copyProperties(updatedClient, client, searchEmptyFields(updatedClient));
-                return this.clientRepository.save(client);
+                BeanUtils.copyProperties((this.clientMapper.toClient(updatedClient)), client, searchEmptyFields(updatedClient));
+                return this.clientMapper.toClientResponse((this.clientRepository.save(client)));
             }
         }
         return null;
     }
 
     private Client updateBarberShops(Integer clientId, Client updatedClient) {
-        Client client = this.clientById(clientId);
-//        for (BarberShop barberShopUpdt : updatedClient.getBarberShops()) {
-//            Set<Client> clients = new HashSet<>();
-//            clients.add(client);
-//            BarberShop barberShop = this.barberShopService.barberShopById(barberShopUpdt.getBarberShopId());
-//            barberShop.setClients(clients);
-//            this.barberShopService.udpateClientAtBarberShop(barberShop.getBarberShopId(), barberShop);
-//        }
+        Client client = this.clientRepository.getById(clientId);
+        for (BarberShop barberShopUpdt : updatedClient.getBarberShops()) {
+            Set<Client> clients = new HashSet<>();
+            clients.add(client);
+            BarberShop barberShop = this.barberShopMapper.toBarberShop((this.barberShopService.barberShopById((barberShopUpdt.getBarberShopId()))));
+            barberShop.setClients(clients);
+            this.barberShopService.udpateClientAtBarberShop(barberShop.getBarberShopId(), this.barberShopMapper.toBarberShopRequest(barberShop));
+        }
         return client;
     }
 

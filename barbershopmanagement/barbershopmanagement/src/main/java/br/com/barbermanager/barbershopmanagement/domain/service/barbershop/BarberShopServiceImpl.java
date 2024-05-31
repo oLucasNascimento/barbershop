@@ -2,8 +2,9 @@ package br.com.barbermanager.barbershopmanagement.domain.service.barbershop;
 
 import br.com.barbermanager.barbershopmanagement.api.mapper.BarberShopMapper;
 import br.com.barbermanager.barbershopmanagement.api.mapper.EmployeeMapper;
+import br.com.barbermanager.barbershopmanagement.api.mapper.ItemMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.barber.BarberShopResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
@@ -13,10 +14,12 @@ import br.com.barbermanager.barbershopmanagement.domain.repository.BarberShopRep
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
 import jakarta.transaction.Transactional;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
@@ -41,6 +44,9 @@ public class BarberShopServiceImpl implements BarberShopService {
 
     @Autowired
     private EmployeeMapper employeeMapper;
+
+    @Autowired
+    private ItemMapper itemMapper;
 
     @Override
     public Boolean barberShopExists(Integer barberShopId) {
@@ -87,20 +93,19 @@ public class BarberShopServiceImpl implements BarberShopService {
                     barberShop = this.insertItem(barberShopId, barberShopUpdt.getItems());
                 }
                 BeanUtils.copyProperties(barberShopUpdt, barberShop, searchEmptyFields(barberShopUpdt));
-                BarberShopResponse barberShopResponse = this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
-                return barberShopResponse;
+                return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
             }
         }
         return null;
     }
 
-    private BarberShop insertItem(Integer barberShopItem, List<Item> newItems) {
+    private BarberShop insertItem(Integer barberShopId, List<Item> newItems) {
 //        BarberShop barberShop = this.barberShopById(barberShopItem);
-        BarberShop barberShop = this.barberShopRepository.getById(barberShopItem);
+        BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
         for (Item itemUpdt : newItems) {
-            Item existingItem = this.itemService.itemById(itemUpdt.getItemId());
+            Item existingItem = this.itemMapper.toItem(this.itemService.itemById(itemUpdt.getItemId()));
             existingItem.setBarberShop(barberShop);
-            this.itemService.updateItem(existingItem.getItemId(), existingItem);
+            this.itemService.updateItem(existingItem.getItemId(), (this.itemMapper.toItemRequest(existingItem)));
         }
         return barberShop;
     }
@@ -141,8 +146,11 @@ public class BarberShopServiceImpl implements BarberShopService {
 //        BarberShop barberShop = this.barberShopById(barberShopId);
         BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
         if ((barberShop.getEmployees() != null)) {
+            System.out.println("GET EMPLOYEE");
             EmployeeResponse dismissedEmployee = this.employeeService.EmployeeById(employeeId);
-            if (barberShop.getEmployees().contains(dismissedEmployee)) {
+            System.out.println(barberShop.getEmployees() + " EMPLOYEE ID");
+            if (barberShop.getEmployees().contains(this.employeeMapper.toEmployee(dismissedEmployee))) {
+                System.out.println("CONTAINS EMPLOYEE");
                 dismissedEmployee.setBarberShop(null);
                 this.employeeService.updateEmployee(employeeId, (this.employeeMapper.toEmployeeRequest(dismissedEmployee)));
                 return true;
@@ -153,13 +161,14 @@ public class BarberShopServiceImpl implements BarberShopService {
 
     private BarberShop hireEmployee(Integer barberShopId, List<Employee> updatedEmployees) {
 //        BarberShop barberShop = this.barberShopById(barberShopId);
-        BarberShopResponse barberShop = this.barberShopById(barberShopId);
+        BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
         for (Employee employeeUpdt : updatedEmployees) {
-            EmployeeResponse existingEmployee = this.employeeService.EmployeeById(employeeUpdt.getEmployeeId());
-            existingEmployee.setBarberShop(this.barberShopMapper.toBarberShopSimple(barberShop));
+            Employee existingEmployee = this.employeeMapper.toEmployee((this.employeeService.EmployeeById(employeeUpdt.getEmployeeId())));
+            existingEmployee.setBarberShop(barberShop);
             this.employeeService.updateEmployee(existingEmployee.getEmployeeId(), (this.employeeMapper.toEmployeeRequest(existingEmployee)));
-        }
-        return this.barberShopMapper.toBarberShop(barberShop);
+            }
+
+        return barberShop;
     }
 
     private String[] searchEmptyFields(Object source) {

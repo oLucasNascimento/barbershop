@@ -1,5 +1,7 @@
 package br.com.barbermanager.barbershopmanagement.domain.service.client;
 
+import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 
 import java.util.List;
@@ -8,14 +10,14 @@ public interface ClientService {
 
     Boolean clientExists(Integer clientId);
 
-    Client createClient(Client newClient);
+    ClientResponse createClient(ClientRequest newClient);
 
-    List<Client> allClients();
+    List<ClientResponse> allClients();
 
-    Client clientById(Integer clientId);
+    ClientResponse clientById(Integer clientId);
 
     Boolean deleteClient(Integer clientId);
 
-    Client updateClient(Integer clientId, Client updatedClient);
+    ClientResponse updateClient(Integer clientId, ClientRequest updatedClient);
 
 }

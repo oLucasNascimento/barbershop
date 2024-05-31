@@ -1,5 +1,7 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
+import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,25 +18,26 @@ public class ItemController {
     private ItemService itemService;
 
     @PostMapping("/new")
-    public ResponseEntity<Item> newItem(@RequestBody Item newItem) {
-        if ((this.itemService.createItem(newItem)) != null) {
-            return ResponseEntity.ok(newItem);
+    public ResponseEntity<ItemResponse> newItem(@RequestBody ItemRequest newItem) {
+        ItemResponse itemResponse = this.itemService.createItem(newItem);
+        if (itemResponse != null) {
+            return ResponseEntity.ok(itemResponse);
         }
         return ResponseEntity.status(409).build();
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Item>> allItems() {
-        List<Item> items = this.itemService.allItems();
+    public ResponseEntity<List<ItemResponse>> allItems() {
+        List<ItemResponse> items = this.itemService.allItems();
         if (items.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(items);
     }
 
-    @GetMapping("/barberShop/{barberShopId}")
-    public ResponseEntity<List<Item>> itemsByBarberShop(@PathVariable Integer barberShopId){
-        List<Item> items = this.itemService.itemByBarberShop(barberShopId);
+    @GetMapping("/barbershop/{barberShopId}")
+    public ResponseEntity<List<ItemResponse>> itemsByBarberShop(@PathVariable Integer barberShopId){
+        List<ItemResponse> items = this.itemService.itemByBarberShop(barberShopId);
         if(items.isEmpty()){
             return ResponseEntity.notFound().build();
         }
@@ -50,7 +53,7 @@ public class ItemController {
     }
 
     @PatchMapping("/update/{itemId}")
-    public ResponseEntity<Item> updateItem(@PathVariable Integer itemId, @RequestBody Item updatedItem) {
+    public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer itemId, @RequestBody ItemRequest updatedItem) {
         if ((this.itemService.updateItem(itemId, updatedItem)) != null) {
             return ResponseEntity.ok(this.itemService.itemById(itemId));
         }

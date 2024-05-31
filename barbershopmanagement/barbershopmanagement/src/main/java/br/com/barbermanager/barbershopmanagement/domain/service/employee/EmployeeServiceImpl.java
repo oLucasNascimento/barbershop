@@ -82,7 +82,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponse updateEmployee(Integer employeeId, EmployeeRequest updatedEmployee) {
         if (this.employeeExists(employeeId)) {
             Employee employee = this.employeeRepository.getById(employeeId);
-            BeanUtils.copyProperties(updatedEmployee, employee, searchEmptyFields((this.employeeMapper.toEmployee(updatedEmployee))));
+            BeanUtils.copyProperties((this.employeeMapper.toEmployee(updatedEmployee)), employee, searchEmptyFields(updatedEmployee));
             return this.employeeMapper.toEmployeeResponse((this.employeeRepository.save(employee)));
         }
         return null;

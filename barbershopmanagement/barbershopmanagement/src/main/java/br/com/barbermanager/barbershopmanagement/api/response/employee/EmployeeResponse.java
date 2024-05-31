@@ -1,6 +1,6 @@
 package br.com.barbermanager.barbershopmanagement.api.response.employee;
 
-import br.com.barbermanager.barbershopmanagement.api.response.barber.BarberShopSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
 
 public class EmployeeResponse {
 

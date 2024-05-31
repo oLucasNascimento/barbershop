@@ -1,8 +1,7 @@
 package br.com.barbermanager.barbershopmanagement.domain.service.barbershop;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.barber.BarberShopResponse;
-import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
+import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 
 import java.util.List;
 

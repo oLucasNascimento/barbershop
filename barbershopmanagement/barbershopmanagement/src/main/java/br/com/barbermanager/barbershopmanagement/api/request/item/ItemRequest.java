@@ -1,27 +1,20 @@
-package br.com.barbermanager.barbershopmanagement.domain.model;
+package br.com.barbermanager.barbershopmanagement.api.request.item;
 
+import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
+import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
-@Entity
-public class Item {
+public class ItemRequest {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer itemId;
 
     private String name;
     private Double price;
     private Integer time;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_barberShop")
-    @JsonIgnoreProperties("items")
-    private BarberShop barberShop;
-
-//    @OneToMany(mappedBy = "servico")
-//    @JsonIgnoreProperties("servico")
-//    private Set<Scheduling> agendamentos;
+    private BarberShopRequest barberShop;
 
     public Integer getItemId() {
         return itemId;
@@ -55,11 +48,11 @@ public class Item {
         this.time = time;
     }
 
-    public BarberShop getBarberShop() {
+    public BarberShopRequest getBarberShop() {
         return barberShop;
     }
 
-    public void setBarberShop(BarberShop barberShop) {
+    public void setBarberShop(BarberShopRequest barberShop) {
         this.barberShop = barberShop;
     }
 }

@@ -1,6 +1,7 @@
 package br.com.barbermanager.barbershopmanagement.domain.service.barbershop;
 
 import br.com.barbermanager.barbershopmanagement.api.mapper.BarberShopMapper;
+import br.com.barbermanager.barbershopmanagement.api.mapper.ClientMapper;
 import br.com.barbermanager.barbershopmanagement.api.mapper.EmployeeMapper;
 import br.com.barbermanager.barbershopmanagement.api.mapper.ItemMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
@@ -13,13 +14,14 @@ import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.repository.BarberShopRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
+import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
+import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
@@ -58,12 +60,16 @@ public class BarberShopServiceImpl implements BarberShopService {
         if ((this.barberShopRepository.findByEmail(newBarberShop.getEmail())) == null) {
             return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save((this.barberShopMapper.toBarberShop(newBarberShop)))));
         }
-        return null;
+        throw new AlreadyExistsException("Barber Shop with email '" + newBarberShop.getEmail() + "' already exists.");
     }
 
     @Override
     public List<BarberShopResponse> allBarberShops() {
-        return this.barberShopMapper.toBarberShopResponseList((this.barberShopRepository.findAll()));
+        List<BarberShopResponse> barbershops = this.barberShopMapper.toBarberShopResponseList((this.barberShopRepository.findAll()));
+        if (barbershops.isEmpty()) {
+            throw new NotFoundException("There aren't barbershops to show");
+        }
+        return barbershops;
     }
 
     @Override
@@ -71,12 +77,15 @@ public class BarberShopServiceImpl implements BarberShopService {
         if (this.barberShopRepository.existsById(barberShopId)) {
             return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.getById(barberShopId)));
         }
-        return null;
+        throw new NotFoundException("Barber Shop with ID '" + barberShopId + "' not found.");
     }
 
     @Override
     public void deleteBarberShop(Integer barberShopId) {
-        this.barberShopRepository.deleteById(barberShopId);
+        if ((this.barberShopExists(barberShopId))) {
+            this.barberShopRepository.deleteById(barberShopId);
+        }
+        throw new NotFoundException("Barber Shop with ID '" + barberShopId + "' not found.");
     }
 
     @Override
@@ -95,12 +104,12 @@ public class BarberShopServiceImpl implements BarberShopService {
                 BeanUtils.copyProperties(barberShopUpdt, barberShop, searchEmptyFields(barberShopUpdt));
                 return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
             }
+            throw new AlreadyExistsException("Barber Shop with email '" + updatedBarberShop.getEmail() + "' already exists.");
         }
-        return null;
+        throw new NotFoundException("Barber Shop with ID '" + barberShopId + "' not found.");
     }
 
     private BarberShop insertItem(Integer barberShopId, List<Item> newItems) {
-//        BarberShop barberShop = this.barberShopById(barberShopItem);
         BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
         for (Item itemUpdt : newItems) {
             Item existingItem = this.itemMapper.toItem(this.itemService.itemById(itemUpdt.getItemId()));
@@ -112,61 +121,71 @@ public class BarberShopServiceImpl implements BarberShopService {
 
     @Override
     public BarberShopResponse udpateClientAtBarberShop(Integer barberShopId, BarberShopRequest updatedClients) {
-//        BarberShop barberShop = this.barberShopById(barberShopId);
-        BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
-        BarberShop barberShopUpdt = this.barberShopMapper.toBarberShop(updatedClients);
-        Set<Client> clients = barberShop.getClients();
-        for (Client client : barberShopUpdt.getClients()) {
-            clients.add(client);
+        if (this.barberShopExists(barberShopId)) {
+            BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
+            BarberShop barberShopUpdt = this.barberShopMapper.toBarberShop(updatedClients);
+            Set<Client> clients = barberShop.getClients();
+            for (Client client : barberShopUpdt.getClients()) {
+                clients.add(client);
+            }
+            barberShop.setClients(clients);
+            return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
         }
-        barberShop.setClients(clients);
-        return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
+        throw new NotFoundException("Barber Shop with ID '" + barberShopId + "' not found.");
     }
 
     @Override
     public void removeClient(Integer barberShopId, Integer clientId) {
-//        BarberShop barberShop = this.barberShopById(barberShopId);
-        BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
-        if ((barberShop.getClients() != null)) {
-            Set<Client> clients = barberShop.getClients();
-            Set<Client> removedClients = new HashSet<>();
-            for (Client client : barberShop.getClients()) {
-                if (client.getClientId().equals(clientId)) {
-                    removedClients.add(client);
+        if ((this.barberShopExists(barberShopId))) {
+            BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
+            if ((barberShop.getClients() != null)) {
+                Set<Client> clients = barberShop.getClients();
+                Set<Client> removedClients = new HashSet<>();
+
+                for (Client client : barberShop.getClients()) {
+                    if (client.getClientId().equals(clientId)) {
+                        removedClients.add(client);
+                    }
                 }
+                clients.removeAll(removedClients);
+                barberShop.setClients(clients);
+                this.udpateClientAtBarberShop(barberShopId, (this.barberShopMapper.toBarberShopRequest(barberShop)));
+                if (removedClients.isEmpty()) {
+                    throw new NotFoundException("Client with ID '" + clientId + "' doesn't belong at the barbershop with ID '" + barberShopId + "'.");
+                }
+                return;
             }
-            clients.removeAll(removedClients);
-            barberShop.setClients(clients);
-            this.udpateClientAtBarberShop(barberShopId, (this.barberShopMapper.toBarberShopRequest(barberShop)));
+            throw new NotFoundException("Barber Shop hasn't clients to be removed.");
         }
+        throw new NotFoundException("Barber Shop with ID '" + barberShopId + "' not found.");
     }
 
     @Override
-    public Boolean dismissEmployee(Integer barberShopId, Integer employeeId) {
-//        BarberShop barberShop = this.barberShopById(barberShopId);
-        BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
-        if ((barberShop.getEmployees() != null)) {
-            System.out.println("GET EMPLOYEE");
-            EmployeeResponse dismissedEmployee = this.employeeService.EmployeeById(employeeId);
-            System.out.println(barberShop.getEmployees() + " EMPLOYEE ID");
-            if (barberShop.getEmployees().contains(this.employeeMapper.toEmployee(dismissedEmployee))) {
-                System.out.println("CONTAINS EMPLOYEE");
-                dismissedEmployee.setBarberShop(null);
-                this.employeeService.updateEmployee(employeeId, (this.employeeMapper.toEmployeeRequest(dismissedEmployee)));
-                return true;
+    public void dismissEmployee(Integer barberShopId, Integer employeeId) {
+        if (this.barberShopExists(barberShopId)) {
+            BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
+            if (!(barberShop.getEmployees().isEmpty())) {
+                Employee dismissedEmployee = this.employeeMapper.toEmployee(this.employeeService.EmployeeById(employeeId));
+                for (Employee employees : barberShop.getEmployees()) {
+                    if (employees.getEmployeeId().equals(dismissedEmployee.getEmployeeId())) {
+                        this.employeeService.removeBarberShop(employeeId);
+                        return;
+                    }
+                }
+                throw new NotFoundException("Employee with ID '" + employeeId + "' was not found at the barbershop.");
             }
+            throw new NotFoundException("Theren't employees at the barbershop.");
         }
-        return false;
+        throw new NotFoundException("Barber Shop with ID '" + barberShopId + "' not found.");
     }
 
     private BarberShop hireEmployee(Integer barberShopId, List<Employee> updatedEmployees) {
-//        BarberShop barberShop = this.barberShopById(barberShopId);
         BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
         for (Employee employeeUpdt : updatedEmployees) {
             Employee existingEmployee = this.employeeMapper.toEmployee((this.employeeService.EmployeeById(employeeUpdt.getEmployeeId())));
             existingEmployee.setBarberShop(barberShop);
             this.employeeService.updateEmployee(existingEmployee.getEmployeeId(), (this.employeeMapper.toEmployeeRequest(existingEmployee)));
-            }
+        }
 
         return barberShop;
     }

@@ -18,8 +18,10 @@ public interface EmployeeService {
 
     List<EmployeeResponse> employeesByBarberShop(Integer barberShopId);
 
-    Boolean deleteEmployee(Integer employeeId);
+    void deleteEmployee(Integer employeeId);
 
     EmployeeResponse updateEmployee(Integer employeeId, EmployeeRequest updatedEmployee);
+
+    void removeBarberShop(Integer employeeId);
 
 }

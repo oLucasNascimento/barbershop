@@ -8,6 +8,8 @@ import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ClientRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
+import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -45,31 +47,35 @@ public class ClientServiceImpl implements ClientService {
         if ((this.clientRepository.findByCpf(newClient.getCpf())) == null) {
             return this.clientMapper.toClientResponse((this.clientRepository.save((this.clientMapper.toClient(newClient)))));
         }
-        return null;
+        throw new AlreadyExistsException("Client with CPF '" + newClient.getCpf() + "' already exists.");
     }
 
     @Override
     public List<ClientResponse> allClients() {
-        return this.clientMapper.toClientResponseList((this.clientRepository.findAll()));
+        List<ClientResponse> clientResponses = this.clientMapper.toClientResponseList((this.clientRepository.findAll()));
+        if (clientResponses.isEmpty()) {
+            throw new NotFoundException("There aren't clients to show.");
+        }
+        return clientResponses;
     }
 
     @Override
     public ClientResponse clientById(Integer clientId) {
         if (this.clientRepository.existsById(clientId)) {
             return this.clientMapper.toClientResponse((this.clientRepository.getById(clientId)));
-
         }
-        return null;
+        throw new NotFoundException("Client with ID '" + clientId + "' not found.");
     }
 
     @Override
-    public Boolean deleteClient(Integer clientId) {
+    public void deleteClient(Integer clientId) {
         if (this.clientRepository.existsById(clientId)) {
             this.clientRepository.deleteById(clientId);
-            return true;
+            return;
         }
-        return false;
+        throw new NotFoundException("Client with ID '" + clientId + "' not found.");
     }
+
     @Override
     public ClientResponse updateClient(Integer clientId, ClientRequest updatedClient) {
         if (this.clientExists(clientId)) {
@@ -81,8 +87,9 @@ public class ClientServiceImpl implements ClientService {
                 BeanUtils.copyProperties((this.clientMapper.toClient(updatedClient)), client, searchEmptyFields(updatedClient));
                 return this.clientMapper.toClientResponse((this.clientRepository.save(client)));
             }
+            throw new AlreadyExistsException("Client with CPF '" + updatedClient.getCpf() + "' exists.");
         }
-        return null;
+        throw new NotFoundException("Client with ID '" + clientId + "' not found.");
     }
 
     private Client updateBarberShops(Integer clientId, Client updatedClient) {

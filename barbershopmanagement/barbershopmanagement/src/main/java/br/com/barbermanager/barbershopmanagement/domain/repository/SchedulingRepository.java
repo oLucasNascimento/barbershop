@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface SchedulingRepository extends JpaRepository<Scheduling, Integer> {
 
-    @Query("SELECT s FROM Scheduling s WHERE s.barberShop.barberShopId = :barberShopId AND s.employee.employeeId = :employeeId AND s.schedulingTime = :schedulingTime")
-    List<Scheduling> schedulingExists(Integer barberShopId, Integer employeeId, LocalDateTime schedulingTime);
+    @Query("SELECT s FROM Scheduling s WHERE s.employee.employeeId = :employeeId AND s.schedulingTime = :schedulingTime")
+    List<Scheduling> schedulingExists(Integer employeeId, LocalDateTime schedulingTime);
 
 }

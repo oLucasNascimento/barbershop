@@ -18,7 +18,7 @@ public interface ItemService {
 
     List<ItemResponse> itemByBarberShop(Integer barberShopId);
 
-    Boolean deleteItem(Integer itemId);
+    void deleteItem(Integer itemId);
 
     ItemResponse updateItem(Integer itemId, ItemRequest updatedItem);
 }

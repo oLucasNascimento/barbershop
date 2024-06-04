@@ -23,5 +23,5 @@ public interface BarberShopService {
 
     BarberShopResponse barberShopById(Integer barberShopId);
 
-    Boolean dismissEmployee(Integer barberShopId, Integer employeeId);
+    void dismissEmployee(Integer barberShopId, Integer employeeId);
 }

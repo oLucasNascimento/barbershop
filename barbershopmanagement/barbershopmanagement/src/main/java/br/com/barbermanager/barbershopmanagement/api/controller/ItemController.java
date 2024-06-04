@@ -19,45 +19,29 @@ public class ItemController {
 
     @PostMapping("/new")
     public ResponseEntity<ItemResponse> newItem(@RequestBody ItemRequest newItem) {
-        ItemResponse itemResponse = this.itemService.createItem(newItem);
-        if (itemResponse != null) {
-            return ResponseEntity.ok(itemResponse);
-        }
-        return ResponseEntity.status(409).build();
+        return ResponseEntity.ok(this.itemService.createItem(newItem));
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<ItemResponse>> allItems() {
-        List<ItemResponse> items = this.itemService.allItems();
-        if (items.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(items);
+        return ResponseEntity.ok(this.itemService.allItems());
     }
 
     @GetMapping("/barbershop/{barberShopId}")
-    public ResponseEntity<List<ItemResponse>> itemsByBarberShop(@PathVariable Integer barberShopId){
-        List<ItemResponse> items = this.itemService.itemByBarberShop(barberShopId);
-        if(items.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(items);
+    public ResponseEntity<List<ItemResponse>> itemsByBarberShop(@PathVariable Integer barberShopId) {
+        return ResponseEntity.ok(this.itemService.itemByBarberShop(barberShopId));
     }
 
     @DeleteMapping("/delete/{itemId}")
     public ResponseEntity deleteItem(@PathVariable Integer itemId) {
-        if (this.itemService.deleteItem(itemId)) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
+        this.itemService.deleteItem(itemId);
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/update/{itemId}")
     public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer itemId, @RequestBody ItemRequest updatedItem) {
-        if ((this.itemService.updateItem(itemId, updatedItem)) != null) {
-            return ResponseEntity.ok(this.itemService.itemById(itemId));
-        }
-        return ResponseEntity.badRequest().build();
+        this.itemService.updateItem(itemId, updatedItem);
+        return ResponseEntity.ok(this.itemService.itemById(itemId));
     }
 
 }

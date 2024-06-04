@@ -18,21 +18,12 @@ public class SchedulingController {
 
     @PostMapping("/new")
     public ResponseEntity<SchedulingResponse> newScheduling(@RequestBody SchedulingRequest newScheduling) {
-        SchedulingResponse schedulingResponse = this.schedulingService.newScheduling(newScheduling);
-        if ( schedulingResponse != null) {
-            return ResponseEntity.ok(schedulingResponse);
-        }
-        return ResponseEntity.status(409).build();
-
+        return ResponseEntity.ok(this.schedulingService.newScheduling(newScheduling));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<SchedulingResponse>> allSchedulings(){
-        List<SchedulingResponse> schedulings = this.schedulingService.allSchedulings();
-        if(!(schedulings.isEmpty())){
-            return ResponseEntity.ok(schedulings);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<List<SchedulingResponse>> allSchedulings() {
+        return ResponseEntity.ok(this.schedulingService.allSchedulings());
     }
 
 

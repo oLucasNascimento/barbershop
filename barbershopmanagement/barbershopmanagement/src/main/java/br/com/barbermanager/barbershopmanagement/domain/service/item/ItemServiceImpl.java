@@ -5,6 +5,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ItemRepository;
+import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -34,15 +35,19 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public ItemResponse createItem(ItemRequest newItem) {
-        if((itemRepository.existingItem(newItem.getName(), newItem.getPrice())) == null){
+        if ((itemRepository.existingItem(newItem.getName(), newItem.getPrice())) == null) {
             return this.itemMapper.toItemResponse((this.itemRepository.save((this.itemMapper.toItem(newItem)))));
         }
-        return null;
+        throw new NotFoundException("Item with name '" + newItem.getName() + "' and price '" + newItem.getPrice() + "' already exists.");
     }
 
     @Override
     public List<ItemResponse> allItems() {
-        return this.itemMapper.toItemResponseList((this.itemRepository.findAll()));
+        List<ItemResponse> itemResponses = this.itemMapper.toItemResponseList((this.itemRepository.findAll()));
+        if (itemResponses.isEmpty()) {
+            throw new NotFoundException("There aren't items to show.");
+        }
+        return itemResponses;
     }
 
     @Override
@@ -50,21 +55,25 @@ public class ItemServiceImpl implements ItemService {
         if (this.itemRepository.existsById(itemId)) {
             return this.itemMapper.toItemResponse((this.itemRepository.getById(itemId)));
         }
-        return null;
+        throw new NotFoundException("Item with ID '" + itemId + "' not found.");
     }
 
     @Override
     public List<ItemResponse> itemByBarberShop(Integer barberShopId) {
-        return this.itemMapper.toItemResponseList((this.itemRepository.itemByBarberShop(barberShopId)));
+        List<ItemResponse> itemResponses = this.itemMapper.toItemResponseList((this.itemRepository.itemByBarberShop(barberShopId)));
+        if (itemResponses.isEmpty()) {
+            throw new NotFoundException("There aren't items at this barbershop");
+        }
+        return itemResponses;
     }
 
     @Override
-    public Boolean deleteItem(Integer itemId) {
+    public void deleteItem(Integer itemId) {
         if (this.itemRepository.existsById(itemId)) {
             this.itemRepository.deleteById(itemId);
-            return true;
+            return;
         }
-        return false;
+        throw new NotFoundException("Item with ID '" + itemId + "' not found.");
     }
 
     @Override
@@ -75,7 +84,7 @@ public class ItemServiceImpl implements ItemService {
             BeanUtils.copyProperties((this.itemMapper.toItem(updatedItem)), item, searchEmptyFields(updatedItem));
             return this.itemMapper.toItemResponse((this.itemRepository.save(item)));
         }
-        return null;
+        throw new NotFoundException("Item with ID '" + itemId + "' not found.");
     }
 
     private String[] searchEmptyFields(Object source) {

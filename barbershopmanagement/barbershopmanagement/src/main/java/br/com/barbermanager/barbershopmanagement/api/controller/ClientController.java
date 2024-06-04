@@ -19,35 +19,23 @@ public class ClientController {
 
     @PostMapping("/new")
     public ResponseEntity<ClientResponse> newClient(@RequestBody ClientRequest newClient) {
-        ClientResponse clientResponse = this.clientService.createClient(newClient);
-        if (clientResponse != null) {
-            return ResponseEntity.ok(clientResponse);
-        }
-        return ResponseEntity.status(409).build();
+        return ResponseEntity.ok(this.clientService.createClient(newClient));
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<ClientResponse>> allClients() {
-        List<ClientResponse> clients = this.clientService.allClients();
-        if (clients.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(clients);
+        return ResponseEntity.ok(this.clientService.allClients());
     }
 
     @DeleteMapping("/delete/{clientId}")
     public ResponseEntity deleteClient(@PathVariable Integer clientId) {
-        if (this.clientService.deleteClient(clientId)) {
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.badRequest().build();
+        this.clientService.deleteClient(clientId);
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/update/{clientId}")
     public ResponseEntity<ClientResponse> updateClient(@PathVariable Integer clientId, @RequestBody ClientRequest updatedClient) {
-        if ((this.clientService.updateClient(clientId, updatedClient)) != null) {
-            return ResponseEntity.ok(this.clientService.clientById(clientId));
-        }
-        return ResponseEntity.badRequest().build();
+        this.clientService.updateClient(clientId, updatedClient);
+        return ResponseEntity.ok(this.clientService.clientById(clientId));
     }
 }

@@ -5,6 +5,8 @@ import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRe
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
 import br.com.barbermanager.barbershopmanagement.domain.repository.EmployeeRepository;
+import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
+import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -38,12 +40,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         if ((this.employeeRepository.findByCpf(newEmployee.getCpf())) == null) {
             return this.employeeMapper.toEmployeeResponse((this.employeeRepository.save((this.employeeMapper.toEmployee(newEmployee)))));
         }
-        return null;
+        throw new AlreadyExistsException("Employee with CPF '" + newEmployee.getCpf() + "' already exists.");
     }
 
     @Override
     public List<EmployeeResponse> allEmployees() {
-        return this.employeeMapper.toEmployeeResponseList((this.employeeRepository.findAll()));
+        List<EmployeeResponse> employeeResponses = this.employeeMapper.toEmployeeResponseList((this.employeeRepository.findAll()));
+        if (employeeResponses.isEmpty()) {
+            throw new NotFoundException("There aren't employees to show.");
+        }
+        return employeeResponses;
     }
 
     @Override
@@ -51,7 +57,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (this.employeeRepository.existsById(employeeId)) {
             return this.employeeMapper.toEmployeeResponse((this.employeeRepository.getById(employeeId)));
         }
-        return null;
+        throw new NotFoundException("Employee with ID '" + employeeId + "' not found.");
     }
 
     @Override
@@ -64,17 +70,19 @@ public class EmployeeServiceImpl implements EmployeeService {
                 }
             }
         }
+        if (employees.isEmpty()) {
+            throw new NotFoundException("There aren't employees at this barbershop.");
+        }
         return this.employeeMapper.toEmployeeResponseList(employees);
-
     }
 
     @Override
-    public Boolean deleteEmployee(Integer employeeId) {
+    public void deleteEmployee(Integer employeeId) {
         if (this.employeeRepository.existsById(employeeId)) {
             this.employeeRepository.deleteById(employeeId);
-            return true;
+            return;
         }
-        return false;
+        throw new NotFoundException("Employee with ID '" + employeeId + "' not found.");
     }
 
     @Override
@@ -85,7 +93,14 @@ public class EmployeeServiceImpl implements EmployeeService {
             BeanUtils.copyProperties((this.employeeMapper.toEmployee(updatedEmployee)), employee, searchEmptyFields(updatedEmployee));
             return this.employeeMapper.toEmployeeResponse((this.employeeRepository.save(employee)));
         }
-        return null;
+        throw new NotFoundException("Employee with ID '" + employeeId + "' not found.");
+    }
+
+    @Override
+    public void removeBarberShop(Integer employeeId){
+        Employee employee = this.employeeRepository.getById(employeeId);
+        employee.setBarberShop(null);
+        this.employeeRepository.save(employee);
     }
 
     private String[] searchEmptyFields(Object source) {

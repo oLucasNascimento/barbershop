@@ -5,6 +5,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.scheduling.Scheduli
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
 import br.com.barbermanager.barbershopmanagement.domain.repository.SchedulingRepository;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
+import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,16 +22,19 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     @Override
     public SchedulingResponse newScheduling(SchedulingRequest newScheduling) {
-//        newScheduling.setSchedulingTime((this.dateConvert(newScheduling.getSchedulingTime())));
-        if ((this.schedulingRepository.schedulingExists((newScheduling.getBarberShop().getBarberShopId()), (newScheduling.getEmployee().getEmployeeId()), (newScheduling.getSchedulingTime())).isEmpty())) {
+        if ((this.schedulingRepository.schedulingExists((newScheduling.getEmployee().getEmployeeId()), (newScheduling.getSchedulingTime())).isEmpty())) {
             return this.schedulingMapper.toSchedulingResponse((schedulingRepository.save((this.schedulingMapper.toScheduling(newScheduling)))));
         }
-        throw new AlreadyExistsException("Scheduling exists.");
+        throw new AlreadyExistsException("The employee with ID '"+newScheduling.getEmployee().getEmployeeId() + "' already has an scheduling at time '"+ newScheduling.getSchedulingTime() + "'.");
     }
 
     @Override
     public List<SchedulingResponse> allSchedulings() {
-        return this.schedulingMapper.toSchedulingResponseList((this.schedulingRepository.findAll()));
+        List<SchedulingResponse> schedulingResponses = this.schedulingMapper.toSchedulingResponseList((this.schedulingRepository.findAll()));
+        if (schedulingResponses.isEmpty()){
+            throw new NotFoundException("There aren't schedulings to show.");
+        }
+        return schedulingResponses;
     }
 
 //    private LocalDateTime dateConvert(LocalDateTime dateOld) {

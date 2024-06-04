@@ -16,7 +16,7 @@ public interface ClientService {
 
     ClientResponse clientById(Integer clientId);
 
-    Boolean deleteClient(Integer clientId);
+    void deleteClient(Integer clientId);
 
     ClientResponse updateClient(Integer clientId, ClientRequest updatedClient);
 

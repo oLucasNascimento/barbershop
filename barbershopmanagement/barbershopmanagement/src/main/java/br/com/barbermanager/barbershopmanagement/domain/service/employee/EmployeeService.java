@@ -2,7 +2,7 @@ package br.com.barbermanager.barbershopmanagement.domain.service.employee;
 
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
-import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
+import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 
 import java.util.List;
 
@@ -12,11 +12,11 @@ public interface EmployeeService {
 
     EmployeeResponse createEmployee(EmployeeRequest newEmployee);
 
-    List<EmployeeResponse> allEmployees();
+    List<EmployeeSimple> allEmployees();
 
-    EmployeeResponse EmployeeById(Integer employeeId);
+    EmployeeResponse employeeById(Integer employeeId);
 
-    List<EmployeeResponse> employeesByBarberShop(Integer barberShopId);
+    List<EmployeeSimple> employeesByBarberShop(Integer barberShopId);
 
     void deleteEmployee(Integer employeeId);
 

@@ -3,6 +3,9 @@ package br.com.barbermanager.barbershopmanagement.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.List;
+import java.util.Set;
+
 @Entity
 public class Item {
 
@@ -19,9 +22,9 @@ public class Item {
     @JsonIgnoreProperties("items")
     private BarberShop barberShop;
 
-//    @OneToMany(mappedBy = "servico")
-//    @JsonIgnoreProperties("servico")
-//    private Set<Scheduling> agendamentos;
+    @ManyToMany(mappedBy = "items")
+    @JsonIgnoreProperties("items")
+    private List<Scheduling> schedulings;
 
     public Integer getItemId() {
         return itemId;
@@ -61,5 +64,13 @@ public class Item {
 
     public void setBarberShop(BarberShop barberShop) {
         this.barberShop = barberShop;
+    }
+
+    public List<Scheduling> getSchedulings() {
+        return schedulings;
+    }
+
+    public void setSchedulings(List<Scheduling> schedulings) {
+        this.schedulings = schedulings;
     }
 }

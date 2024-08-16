@@ -2,6 +2,7 @@ package br.com.barbermanager.barbershopmanagement.domain.service.client;
 
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface ClientService {
 
     ClientResponse createClient(ClientRequest newClient);
 
-    List<ClientResponse> allClients();
+    List<ClientSimple> allClients();
 
     ClientResponse clientById(Integer clientId);
 

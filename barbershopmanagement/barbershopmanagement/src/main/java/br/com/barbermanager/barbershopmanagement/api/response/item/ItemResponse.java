@@ -1,6 +1,11 @@
 package br.com.barbermanager.barbershopmanagement.api.response.item;
 
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
+import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
+
+import java.util.List;
+import java.util.Set;
 
 public class ItemResponse {
 
@@ -10,7 +15,7 @@ public class ItemResponse {
     private Integer time;
 
     private BarberShopSimple barberShop;
-
+    private List<SchedulingResponse> schedulings;
     public Integer getItemId() {
         return itemId;
     }
@@ -49,5 +54,13 @@ public class ItemResponse {
 
     public void setBarberShop(BarberShopSimple barberShop) {
         this.barberShop = barberShop;
+    }
+
+    public List<SchedulingResponse> getSchedulings() {
+        return schedulings;
+    }
+
+    public void setSchedulings(List<SchedulingResponse> schedulings) {
+        this.schedulings = schedulings;
     }
 }

@@ -2,6 +2,7 @@ package br.com.barbermanager.barbershopmanagement.api.mapper;
 
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -30,8 +31,16 @@ public class EmployeeMapper {
         return this.mapper.map(employee, EmployeeResponse.class);
     }
 
+    public EmployeeSimple toEmployeeSimple(Object employee){
+        return this.mapper.map(employee, EmployeeSimple.class);
+    }
+
     public List<EmployeeResponse> toEmployeeResponseList(List<Employee> employeeList){
         return employeeList.stream().map(this::toEmployeeResponse).collect(Collectors.toList());
+    }
+
+    public List<EmployeeSimple> toEmployeeSimpleList(List<Employee> employeeList){
+        return employeeList.stream().map(this::toEmployeeSimple).collect(Collectors.toList());
     }
 
 }

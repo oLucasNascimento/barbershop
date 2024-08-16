@@ -2,6 +2,7 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,13 @@ public class ItemController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ItemResponse>> allItems() {
+    public ResponseEntity<List<ItemSimple>> allItems() {
         return ResponseEntity.ok(this.itemService.allItems());
+    }
+
+    @GetMapping("/{itemId}")
+    public ResponseEntity<ItemResponse> barberShopById(@PathVariable Integer itemId) {
+        return ResponseEntity.ok(this.itemService.itemById(itemId));
     }
 
     @GetMapping("/barbershop/{barberShopId}")

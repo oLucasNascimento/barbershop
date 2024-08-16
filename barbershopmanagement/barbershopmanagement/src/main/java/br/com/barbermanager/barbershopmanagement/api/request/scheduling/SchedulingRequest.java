@@ -8,6 +8,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Set;
 
 public class SchedulingRequest {
 
@@ -16,7 +18,7 @@ public class SchedulingRequest {
     private ClientRequest client;
     private BarberShopRequest barberShop;
     private EmployeeRequest employee;
-    private ItemRequest item;
+    private List<ItemRequest> items;
 
     private LocalDateTime schedulingTime;
 
@@ -52,12 +54,12 @@ public class SchedulingRequest {
         this.employee = employee;
     }
 
-    public ItemRequest getItem() {
-        return item;
+    public List<ItemRequest> getItems() {
+        return items;
     }
 
-    public void setItem(ItemRequest item) {
-        this.item = item;
+    public void setItems(List<ItemRequest> items) {
+        this.items = items;
     }
 
     public LocalDateTime getSchedulingTime() {

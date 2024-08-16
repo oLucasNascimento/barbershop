@@ -1,23 +1,18 @@
 package br.com.barbermanager.barbershopmanagement.domain.service.barbershop;
 
 import br.com.barbermanager.barbershopmanagement.api.mapper.BarberShopMapper;
-import br.com.barbermanager.barbershopmanagement.api.mapper.ClientMapper;
 import br.com.barbermanager.barbershopmanagement.api.mapper.EmployeeMapper;
 import br.com.barbermanager.barbershopmanagement.api.mapper.ItemMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
-import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
-import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
-import br.com.barbermanager.barbershopmanagement.domain.model.Client;
-import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
-import br.com.barbermanager.barbershopmanagement.domain.model.Item;
+import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
+import br.com.barbermanager.barbershopmanagement.domain.model.*;
 import br.com.barbermanager.barbershopmanagement.domain.repository.BarberShopRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import jakarta.transaction.Transactional;
-import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -25,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
@@ -64,8 +60,8 @@ public class BarberShopServiceImpl implements BarberShopService {
     }
 
     @Override
-    public List<BarberShopResponse> allBarberShops() {
-        List<BarberShopResponse> barbershops = this.barberShopMapper.toBarberShopResponseList((this.barberShopRepository.findAll()));
+    public List<BarberShopSimple> allBarberShops() {
+        List<BarberShopSimple> barbershops = this.barberShopMapper.toBarberShopSimpleList((this.barberShopRepository.findAll()));
         if (barbershops.isEmpty()) {
             throw new NotFoundException("There aren't barbershops to show");
         }
@@ -101,7 +97,7 @@ public class BarberShopServiceImpl implements BarberShopService {
                 if ((barberShopUpdt.getItems() != null)) {
                     barberShop = this.insertItem(barberShopId, barberShopUpdt.getItems());
                 }
-                BeanUtils.copyProperties(barberShopUpdt, barberShop, searchEmptyFields(barberShopUpdt));
+                BeanUtils.copyProperties(barberShopUpdt, barberShop, this.searchEmptyFields(barberShopUpdt));
                 return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
             }
             throw new AlreadyExistsException("Barber Shop with email '" + updatedBarberShop.getEmail() + "' already exists.");
@@ -124,7 +120,7 @@ public class BarberShopServiceImpl implements BarberShopService {
         if (this.barberShopExists(barberShopId)) {
             BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
             BarberShop barberShopUpdt = this.barberShopMapper.toBarberShop(updatedClients);
-            Set<Client> clients = barberShop.getClients();
+            List<Client> clients = barberShop.getClients();
             for (Client client : barberShopUpdt.getClients()) {
                 clients.add(client);
             }
@@ -139,8 +135,8 @@ public class BarberShopServiceImpl implements BarberShopService {
         if ((this.barberShopExists(barberShopId))) {
             BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
             if ((barberShop.getClients() != null)) {
-                Set<Client> clients = barberShop.getClients();
-                Set<Client> removedClients = new HashSet<>();
+                List<Client> clients = barberShop.getClients();
+                List<Client> removedClients = new ArrayList<>();
 
                 for (Client client : barberShop.getClients()) {
                     if (client.getClientId().equals(clientId)) {
@@ -165,7 +161,7 @@ public class BarberShopServiceImpl implements BarberShopService {
         if (this.barberShopExists(barberShopId)) {
             BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
             if (!(barberShop.getEmployees().isEmpty())) {
-                Employee dismissedEmployee = this.employeeMapper.toEmployee(this.employeeService.EmployeeById(employeeId));
+                Employee dismissedEmployee = this.employeeMapper.toEmployee(this.employeeService.employeeById(employeeId));
                 for (Employee employees : barberShop.getEmployees()) {
                     if (employees.getEmployeeId().equals(dismissedEmployee.getEmployeeId())) {
                         this.employeeService.removeBarberShop(employeeId);
@@ -182,7 +178,7 @@ public class BarberShopServiceImpl implements BarberShopService {
     private BarberShop hireEmployee(Integer barberShopId, List<Employee> updatedEmployees) {
         BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
         for (Employee employeeUpdt : updatedEmployees) {
-            Employee existingEmployee = this.employeeMapper.toEmployee((this.employeeService.EmployeeById(employeeUpdt.getEmployeeId())));
+            Employee existingEmployee = this.employeeMapper.toEmployee((this.employeeService.employeeById(employeeUpdt.getEmployeeId())));
             existingEmployee.setBarberShop(barberShop);
             this.employeeService.updateEmployee(existingEmployee.getEmployeeId(), (this.employeeMapper.toEmployeeRequest(existingEmployee)));
         }

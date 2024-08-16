@@ -2,6 +2,7 @@ package br.com.barbermanager.barbershopmanagement.domain.service.item;
 
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface ItemService {
 
     ItemResponse createItem(ItemRequest newItem);
 
-    List<ItemResponse> allItems();
+    List<ItemSimple> allItems();
 
     ItemResponse itemById(Integer itemId);
 

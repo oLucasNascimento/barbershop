@@ -1,10 +1,14 @@
 package br.com.barbermanager.barbershopmanagement.api.request.item;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
+import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+
+import java.util.List;
+import java.util.Set;
 
 public class ItemRequest {
 
@@ -15,6 +19,7 @@ public class ItemRequest {
     private Integer time;
 
     private BarberShopRequest barberShop;
+    private List<SchedulingRequest> schedulings;
 
     public Integer getItemId() {
         return itemId;
@@ -54,5 +59,13 @@ public class ItemRequest {
 
     public void setBarberShop(BarberShopRequest barberShop) {
         this.barberShop = barberShop;
+    }
+
+    public List<SchedulingRequest> getSchedulings() {
+        return schedulings;
+    }
+
+    public void setSchedulings(List<SchedulingRequest> schedulings) {
+        this.schedulings = schedulings;
     }
 }

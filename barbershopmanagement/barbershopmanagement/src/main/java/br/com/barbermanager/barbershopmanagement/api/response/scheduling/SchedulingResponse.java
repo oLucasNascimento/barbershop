@@ -4,9 +4,10 @@ import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberS
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
-import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 public class SchedulingResponse {
 
@@ -15,7 +16,7 @@ public class SchedulingResponse {
     private ClientSimple client;
     private BarberShopSimple barberShop;
     private EmployeeSimple employee;
-    private ItemSimple item;
+    private List<ItemSimple> items;
 
     private LocalDateTime schedulingTime;
 
@@ -51,12 +52,12 @@ public class SchedulingResponse {
         this.employee = employee;
     }
 
-    public ItemSimple getItem() {
-        return item;
+    public List<ItemSimple> getItems() {
+        return items;
     }
 
-    public void setItem(ItemSimple item) {
-        this.item = item;
+    public void setItems(List<ItemSimple> items) {
+        this.items = items;
     }
 
     public LocalDateTime getSchedulingTime() {

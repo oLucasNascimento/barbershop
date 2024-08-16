@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Scheduling {
@@ -15,23 +17,22 @@ public class Scheduling {
 
     @ManyToOne
     @JoinColumn(name = "fk_client")
-    @JsonIgnoreProperties("schedulings")
     private Client client;
 
     @ManyToOne
-    @JoinColumn(name = "fk_barbershop")
-    @JsonIgnoreProperties("schedulings")
+    @JoinColumn(name = "fk_barberShop")
     private BarberShop barberShop;
 
     @ManyToOne
     @JoinColumn(name = "fk_employee")
-    @JsonIgnoreProperties("schedulings")
     private Employee employee;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_item")
+    @ManyToMany
+    @JoinTable(name = "items_schedulings",
+            joinColumns = @JoinColumn(name = "fk_schedulings"),
+            inverseJoinColumns = @JoinColumn(name = "fk_items"))
     @JsonIgnoreProperties("schedulings")
-    private Item item;
+    private List<Item> items;
 
     private LocalDateTime schedulingTime;
 
@@ -67,12 +68,12 @@ public class Scheduling {
         this.employee = employee;
     }
 
-    public Item getItem() {
-        return item;
+    public List<Item> getItems() {
+        return items;
     }
 
-    public void setItem(Item item) {
-        this.item = item;
+    public void setItems(List<Item> items) {
+        this.items = items;
     }
 
     public LocalDateTime getSchedulingTime() {

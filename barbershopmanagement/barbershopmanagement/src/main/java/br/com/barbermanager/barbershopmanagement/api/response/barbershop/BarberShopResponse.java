@@ -3,7 +3,9 @@ package br.com.barbermanager.barbershopmanagement.api.response.barbershop;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
+import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
 
 import java.util.List;
 import java.util.Set;
@@ -12,11 +14,15 @@ public class BarberShopResponse {
 
     private Integer barberShopId;
     private String name;
+    private String zipCode;
+    private String adress;
+    private String email;
     private String phone;
 
     private List<ItemSimple> items;
     private List<EmployeeSimple> employees;
-    private Set<ClientSimple> clients;
+    private List<ClientSimple> clients;
+    private List<SchedulingResponse> schedulings;
 
     public Integer getBarberShopId() {
         return barberShopId;
@@ -32,6 +38,30 @@ public class BarberShopResponse {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getAdress() {
+        return adress;
+    }
+
+    public void setAdress(String adress) {
+        this.adress = adress;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPhone() {
@@ -58,11 +88,19 @@ public class BarberShopResponse {
         this.employees = employees;
     }
 
-    public Set<ClientSimple> getClients() {
+    public List<ClientSimple> getClients() {
         return clients;
     }
 
-    public void setClients(Set<ClientSimple> clients) {
+    public void setClients(List<ClientSimple> clients) {
         this.clients = clients;
+    }
+
+    public List<SchedulingResponse> getSchedulings() {
+        return schedulings;
+    }
+
+    public void setSchedulings(List<SchedulingResponse> schedulings) {
+        this.schedulings = schedulings;
     }
 }

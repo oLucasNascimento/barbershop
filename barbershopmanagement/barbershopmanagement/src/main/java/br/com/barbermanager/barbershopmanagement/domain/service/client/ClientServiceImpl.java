@@ -4,6 +4,7 @@ import br.com.barbermanager.barbershopmanagement.api.mapper.BarberShopMapper;
 import br.com.barbermanager.barbershopmanagement.api.mapper.ClientMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ClientRepository;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,8 +53,8 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<ClientResponse> allClients() {
-        List<ClientResponse> clientResponses = this.clientMapper.toClientResponseList((this.clientRepository.findAll()));
+    public List<ClientSimple> allClients() {
+        List<ClientSimple> clientResponses = this.clientMapper.toClientSimpleList((this.clientRepository.findAll()));
         if (clientResponses.isEmpty()) {
             throw new NotFoundException("There aren't clients to show.");
         }
@@ -70,6 +72,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void deleteClient(Integer clientId) {
         if (this.clientRepository.existsById(clientId)) {
+            this.clientRepository.getById(clientId);
             this.clientRepository.deleteById(clientId);
             return;
         }
@@ -84,7 +87,7 @@ public class ClientServiceImpl implements ClientService {
                 if (updatedClient.getBarberShops() != null) {
                     client = this.updateBarberShops(clientId, (this.clientMapper.toClient(updatedClient)));
                 }
-                BeanUtils.copyProperties((this.clientMapper.toClient(updatedClient)), client, searchEmptyFields(updatedClient));
+                BeanUtils.copyProperties((this.clientMapper.toClient(updatedClient)), client, this.searchEmptyFields(updatedClient));
                 return this.clientMapper.toClientResponse((this.clientRepository.save(client)));
             }
             throw new AlreadyExistsException("Client with CPF '" + updatedClient.getCpf() + "' exists.");
@@ -95,7 +98,7 @@ public class ClientServiceImpl implements ClientService {
     private Client updateBarberShops(Integer clientId, Client updatedClient) {
         Client client = this.clientRepository.getById(clientId);
         for (BarberShop barberShopUpdt : updatedClient.getBarberShops()) {
-            Set<Client> clients = new HashSet<>();
+            List<Client> clients = new ArrayList<>();
             clients.add(client);
             BarberShop barberShop = this.barberShopMapper.toBarberShop((this.barberShopService.barberShopById((barberShopUpdt.getBarberShopId()))));
             barberShop.setClients(clients);

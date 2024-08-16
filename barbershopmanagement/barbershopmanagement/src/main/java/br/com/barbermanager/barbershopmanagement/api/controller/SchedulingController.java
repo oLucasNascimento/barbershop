@@ -1,6 +1,8 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
+import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
 import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +28,21 @@ public class SchedulingController {
         return ResponseEntity.ok(this.schedulingService.allSchedulings());
     }
 
+    @GetMapping("/{schedulingId}")
+    public ResponseEntity<SchedulingResponse> schedulingById(@PathVariable Integer schedulingId){
+        return ResponseEntity.ok(this.schedulingService.schedulingById(schedulingId));
+    }
+
+    @DeleteMapping("/delete/{schedulingId}")
+    public ResponseEntity deleteScheduling(@PathVariable Integer schedulingId){
+        this.schedulingService.deleteScheduling(schedulingId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/update/{schedulingId}")
+    public ResponseEntity updateScheduling(@PathVariable Integer schedulingId, @RequestBody SchedulingRequest schedulingUpdated){
+        this.schedulingService.updateScheduling(schedulingId,schedulingUpdated);
+        return ResponseEntity.ok(this.schedulingService.schedulingById(schedulingId));
+    }
 
 }

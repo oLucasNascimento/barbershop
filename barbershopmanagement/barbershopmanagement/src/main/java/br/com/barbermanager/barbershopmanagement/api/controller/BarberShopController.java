@@ -2,6 +2,8 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
+import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +24,13 @@ public class BarberShopController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<BarberShopResponse>> allBarberShops() {
+    public ResponseEntity<List<BarberShopSimple>> allBarberShops() {
         return ResponseEntity.ok(this.barberShopService.allBarberShops());
+    }
+
+    @GetMapping("/{barberShopId}")
+    public ResponseEntity<BarberShopResponse> barberShopById(@PathVariable Integer barberShopId) {
+        return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
     }
 
     @DeleteMapping("/delete/{barberShopId}")

@@ -1,13 +1,20 @@
 package br.com.barbermanager.barbershopmanagement.api.response.employee;
 
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
+
+import java.util.List;
 
 public class EmployeeResponse {
 
     private Integer employeeId;
     private String name;
+    private String cpf;
+    private String email;
     private String phone;
+
     private BarberShopSimple barberShop;
+    private List<SchedulingResponse> schedulings;
 
     public Integer getEmployeeId() {
         return employeeId;
@@ -25,6 +32,22 @@ public class EmployeeResponse {
         this.name = name;
     }
 
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getPhone() {
         return phone;
     }
@@ -39,5 +62,13 @@ public class EmployeeResponse {
 
     public void setBarberShop(BarberShopSimple barberShop) {
         this.barberShop = barberShop;
+    }
+
+    public List<SchedulingResponse> getSchedulings() {
+        return schedulings;
+    }
+
+    public void setSchedulings(List<SchedulingResponse> schedulings) {
+        this.schedulings = schedulings;
     }
 }

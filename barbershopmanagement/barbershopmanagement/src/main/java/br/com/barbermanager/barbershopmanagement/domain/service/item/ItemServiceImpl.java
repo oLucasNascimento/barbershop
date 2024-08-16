@@ -3,6 +3,7 @@ package br.com.barbermanager.barbershopmanagement.domain.service.item;
 import br.com.barbermanager.barbershopmanagement.api.mapper.ItemMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ItemRepository;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
@@ -42,8 +43,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemResponse> allItems() {
-        List<ItemResponse> itemResponses = this.itemMapper.toItemResponseList((this.itemRepository.findAll()));
+    public List<ItemSimple> allItems() {
+        List<ItemSimple> itemResponses = this.itemMapper.toItemSimpleList((this.itemRepository.findAll()));
         if (itemResponses.isEmpty()) {
             throw new NotFoundException("There aren't items to show.");
         }
@@ -81,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemResponse updateItem(Integer itemId, ItemRequest updatedItem) {
         if (this.itemExists(itemId)) {
             Item item = this.itemRepository.getById(itemId);
-            BeanUtils.copyProperties((this.itemMapper.toItem(updatedItem)), item, searchEmptyFields(updatedItem));
+            BeanUtils.copyProperties((this.itemMapper.toItem(updatedItem)), item, this.searchEmptyFields(updatedItem));
             return this.itemMapper.toItemResponse((this.itemRepository.save(item)));
         }
         throw new NotFoundException("Item with ID '" + itemId + "' not found.");

@@ -2,6 +2,7 @@ package br.com.barbermanager.barbershopmanagement.api.mapper;
 
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -30,8 +31,16 @@ public class ClientMapper {
         return this.mapper.map(client, ClientResponse.class);
     }
 
+    public ClientSimple toClientSimple(Object client){
+        return this.mapper.map(client, ClientSimple.class);
+    }
+
     public List<ClientResponse> toClientResponseList(List<Client> clientList){
         return clientList.stream().map(this::toClientResponse).collect(Collectors.toList());
+    }
+
+    public List<ClientSimple> toClientSimpleList(List<Client> clientList){
+        return clientList.stream().map(this::toClientSimple).collect(Collectors.toList());
     }
 
 }

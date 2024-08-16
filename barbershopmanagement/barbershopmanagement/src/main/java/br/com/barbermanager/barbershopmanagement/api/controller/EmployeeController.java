@@ -3,7 +3,7 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
-import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
+import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +24,17 @@ public class EmployeeController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<EmployeeResponse>> allEmployees() {
+    public ResponseEntity<List<EmployeeSimple>> allEmployees() {
         return ResponseEntity.ok(this.employeeService.allEmployees());
     }
 
+    @GetMapping("/{employeeId}")
+    public ResponseEntity<EmployeeResponse> employeeById(@PathVariable Integer employeeId) {
+        return ResponseEntity.ok(this.employeeService.employeeById(employeeId));
+    }
+
     @GetMapping("/barbershop/{barberShopId}")
-    public ResponseEntity<List<EmployeeResponse>> employeesByBarberShop(@PathVariable Integer barberShopId) {
+    public ResponseEntity<List<EmployeeSimple>> employeesByBarberShop(@PathVariable Integer barberShopId) {
         return ResponseEntity.ok(this.employeeService.employeesByBarberShop(barberShopId));
     }
 
@@ -42,7 +47,7 @@ public class EmployeeController {
     @PatchMapping("/update/{employeeId}")
     public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Integer employeeId, @RequestBody EmployeeRequest updatedEmployee) {
         this.employeeService.updateEmployee(employeeId, updatedEmployee);
-        return ResponseEntity.ok(this.employeeService.EmployeeById(employeeId));
+        return ResponseEntity.ok(this.employeeService.employeeById(employeeId));
     }
 
 }

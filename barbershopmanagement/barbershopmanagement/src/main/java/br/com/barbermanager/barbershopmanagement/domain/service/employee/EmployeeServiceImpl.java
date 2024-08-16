@@ -3,6 +3,7 @@ package br.com.barbermanager.barbershopmanagement.domain.service.employee;
 import br.com.barbermanager.barbershopmanagement.api.mapper.EmployeeMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
 import br.com.barbermanager.barbershopmanagement.domain.repository.EmployeeRepository;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
@@ -44,8 +45,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponse> allEmployees() {
-        List<EmployeeResponse> employeeResponses = this.employeeMapper.toEmployeeResponseList((this.employeeRepository.findAll()));
+    public List<EmployeeSimple> allEmployees() {
+        List<EmployeeSimple> employeeResponses = this.employeeMapper.toEmployeeSimpleList((this.employeeRepository.findAll()));
         if (employeeResponses.isEmpty()) {
             throw new NotFoundException("There aren't employees to show.");
         }
@@ -53,7 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeResponse EmployeeById(Integer employeeId) {
+    public EmployeeResponse employeeById(Integer employeeId) {
         if (this.employeeRepository.existsById(employeeId)) {
             return this.employeeMapper.toEmployeeResponse((this.employeeRepository.getById(employeeId)));
         }
@@ -61,7 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponse> employeesByBarberShop(Integer barberShopId) {
+    public List<EmployeeSimple> employeesByBarberShop(Integer barberShopId) {
         List<Employee> employees = new ArrayList<>();
         for (Employee employee : this.employeeRepository.findAll()) {
             if ((employee.getBarberShop() != null)) {
@@ -73,7 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employees.isEmpty()) {
             throw new NotFoundException("There aren't employees at this barbershop.");
         }
-        return this.employeeMapper.toEmployeeResponseList(employees);
+        return this.employeeMapper.toEmployeeSimpleList(employees);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponse updateEmployee(Integer employeeId, EmployeeRequest updatedEmployee) {
         if (this.employeeExists(employeeId)) {
             Employee employee = this.employeeRepository.getById(employeeId);
-            BeanUtils.copyProperties((this.employeeMapper.toEmployee(updatedEmployee)), employee, searchEmptyFields(updatedEmployee));
+            BeanUtils.copyProperties((this.employeeMapper.toEmployee(updatedEmployee)), employee, this.searchEmptyFields(updatedEmployee));
             return this.employeeMapper.toEmployeeResponse((this.employeeRepository.save(employee)));
         }
         throw new NotFoundException("Employee with ID '" + employeeId + "' not found.");

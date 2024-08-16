@@ -5,6 +5,7 @@ public class BarberShopSimple {
     private Integer barberShopId;
     private String name;
     private String phone;
+    private String adress;
 
     public Integer getBarberShopId() {
         return barberShopId;
@@ -28,5 +29,13 @@ public class BarberShopSimple {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getAdress() {
+        return adress;
+    }
+
+    public void setAdress(String adress) {
+        this.adress = adress;
     }
 }

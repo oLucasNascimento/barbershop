@@ -2,6 +2,7 @@ package br.com.barbermanager.barbershopmanagement.api.request.client;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 
+import java.util.List;
 import java.util.Set;
 
 public class ClientRequest {
@@ -12,7 +13,7 @@ public class ClientRequest {
     private String cpf;
     private String phone;
 
-    private Set<BarberShopRequest> barberShops;
+    private List<BarberShopRequest> barberShops;
 
     public Integer getClientId() {
         return clientId;
@@ -46,11 +47,11 @@ public class ClientRequest {
         this.phone = phone;
     }
 
-    public Set<BarberShopRequest> getBarberShops() {
+    public List<BarberShopRequest> getBarberShops() {
         return barberShops;
     }
 
-    public void setBarberShops(Set<BarberShopRequest> barberShops) {
+    public void setBarberShops(List<BarberShopRequest> barberShops) {
         this.barberShops = barberShops;
     }
 }

@@ -2,6 +2,9 @@ package br.com.barbermanager.barbershopmanagement.domain.service.barbershop;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
+import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
+import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
 
 import java.util.List;
 
@@ -11,7 +14,7 @@ public interface BarberShopService {
 
     BarberShopResponse createBarberShop(BarberShopRequest newBarberShop);
 
-    List<BarberShopResponse> allBarberShops();
+    List<BarberShopSimple> allBarberShops();
 
     void deleteBarberShop(Integer barberShopId);
 
@@ -24,4 +27,5 @@ public interface BarberShopService {
     BarberShopResponse barberShopById(Integer barberShopId);
 
     void dismissEmployee(Integer barberShopId, Integer employeeId);
+
 }

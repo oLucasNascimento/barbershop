@@ -3,9 +3,12 @@ package br.com.barbermanager.barbershopmanagement.api.request.barbershop;
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
+import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
+import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
+
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +24,8 @@ public class BarberShopRequest {
 
     private List<ItemRequest> items;
     private List<EmployeeRequest> employees;
-    private Set<ClientRequest> clients;
+    private List<ClientRequest> clients;
+    private List<SchedulingRequest> schedulings;
 
     public Integer getBarberShopId() {
         return barberShopId;
@@ -87,11 +91,19 @@ public class BarberShopRequest {
         this.employees = employees;
     }
 
-    public Set<ClientRequest> getClients() {
+    public List<ClientRequest> getClients() {
         return clients;
     }
 
-    public void setClients(Set<ClientRequest> clients) {
+    public void setClients(List<ClientRequest> clients) {
         this.clients = clients;
+    }
+
+    public List<SchedulingRequest> getSchedulings() {
+        return schedulings;
+    }
+
+    public void setSchedulings(List<SchedulingRequest> schedulings) {
+        this.schedulings = schedulings;
     }
 }

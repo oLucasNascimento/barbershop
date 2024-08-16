@@ -10,4 +10,10 @@ public interface SchedulingService {
 
     SchedulingResponse newScheduling(SchedulingRequest newScheduling);
     List<SchedulingResponse> allSchedulings();
+
+    SchedulingResponse schedulingById(Integer schedulingId);
+
+    void deleteScheduling(Integer schedulingId);
+
+    SchedulingResponse updateScheduling(Integer schedulingId, SchedulingRequest schedulingUpdated);
 }

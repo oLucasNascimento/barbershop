@@ -19,25 +19,24 @@ public class BarberShop {
     private String email;
     private String phone;
 
-    @OneToMany(mappedBy = "barberShop")
+    @OneToMany(mappedBy = "barberShop", orphanRemoval = true)
     @JsonIgnoreProperties("barberShop")
     private List<Item> items;
 
-    @OneToMany(mappedBy = "barberShop")
+    @OneToMany(mappedBy = "barberShop", orphanRemoval = true)
     @JsonIgnoreProperties("barberShop")
     private List<Employee> employees;
 
-    @ManyToMany()
+    @ManyToMany
     @JoinTable(name = "barberShops_clients",
             joinColumns = @JoinColumn(name = "fk_barberShops"),
             inverseJoinColumns = @JoinColumn(name = "fk_clients"))
     @JsonIgnoreProperties("barberShops")
-    private Set<Client> clients;
+    private List<Client> clients;
 
-//    @OneToMany(mappedBy = "barbearia")
-//    @JsonIgnoreProperties("barbearia")
-//    private Set<Scheduling> agendamentos;
-
+    @OneToMany(mappedBy = "barberShop", orphanRemoval = true)
+    @JsonIgnoreProperties("barberShop")
+    private List<Scheduling> schedulings;
 
     public Integer getBarberShopId() {
         return barberShopId;
@@ -103,19 +102,19 @@ public class BarberShop {
         this.employees = employees;
     }
 
-    public Set<Client> getClients() {
+    public List<Client> getClients() {
         return clients;
     }
 
-    public void setClients(Set<Client> clients) {
+    public void setClients(List<Client> clients) {
         this.clients = clients;
     }
 
-//    public Set<Scheduling> getAgendamentos() {
-//        return agendamentos;
-//    }
-//
-//    public void setAgendamentos(Set<Scheduling> agendamentos) {
-//        this.agendamentos = agendamentos;
-//    }
+    public List<Scheduling> getSchedulings() {
+        return schedulings;
+    }
+
+    public void setSchedulings(List<Scheduling> schedulings) {
+        this.schedulings = schedulings;
+    }
 }

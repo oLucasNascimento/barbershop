@@ -16,9 +16,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -37,39 +39,38 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Autowired
     private ItemService itemService;
 
-    private Boolean schedulingExists(Integer schedulingId) {
-        return this.schedulingRepository.existsById(schedulingId);
-    }
+//    private Boolean schedulingExists(Integer schedulingId) {
+//        return this.schedulingRepository.existsById(schedulingId);
+//    }
 
     @Override
     public SchedulingResponse newScheduling(SchedulingRequest newScheduling) {
-        if ((this.schedulingRepository.schedulingExists((newScheduling.getEmployee().getEmployeeId()), (newScheduling.getSchedulingTime())).isEmpty())) {
+        Scheduling scheduling = this.schedulingMapper.toScheduling(newScheduling);
 
-            Scheduling scheduling = this.schedulingMapper.toScheduling(newScheduling);
-            List<ItemResponse> items = scheduling.getItems().stream().map(item -> this.itemService.itemById(item.getItemId())).collect(Collectors.toList());
-            int interval = items.stream().mapToInt(ItemResponse::getTime).sum();
-
-
-            if (this.isSchedulingAvailable(scheduling.getEmployee().getEmployeeId(), scheduling.getSchedulingTime(), interval)) {
-                int timeIntervals = (int) Math.ceil(interval / 30.0);
-                for (int i = 0; i < timeIntervals; i++) {
-                    Scheduling schedulingTime = this.schedulingMapper.toScheduling(newScheduling);
-                    schedulingTime.setSchedulingTime(scheduling.getSchedulingTime().plusMinutes(i * 30));
-                    this.schedulingRepository.save(schedulingTime);
-                }
-//                return this.schedulingMapper.toSchedulingResponse((schedulingRepository.save(scheduling)));
-                return this.schedulingMapper.toSchedulingResponse(scheduling);
-            }
+        if (isSchedulingAvailable(scheduling)) {
+            return this.schedulingMapper.toSchedulingResponse((schedulingRepository.save(scheduling)));
+        } else {
+            throw new AlreadyExistsException("This time isn't available for scheduling");
         }
-        throw new AlreadyExistsException("The employee with ID '" + newScheduling.getEmployee().getEmployeeId() + "' already has an scheduling at time '" + newScheduling.getSchedulingTime() + "'.");
     }
 
-    private Boolean isSchedulingAvailable(Integer employeeId, LocalDateTime schedulingTime, Integer interval) {
-        int timeIntervals = (int) Math.ceil(interval / 30.0);
-        for (int i = 0; i < timeIntervals; i++) {
-            LocalDateTime schedulingExisting = schedulingTime.plusMinutes(i * 30);
-            if (!(schedulingRepository.schedulingExists(employeeId, schedulingExisting)).isEmpty()) {
-                throw new AlreadyExistsException("This time isn't available for scheduling");
+
+    private Boolean isSchedulingAvailable(Scheduling scheduling) {
+
+        LocalDate date = scheduling.getSchedulingTime().toLocalDate();
+
+        List<ItemResponse> newItems = scheduling.getItems().stream().map(item -> this.itemService.itemById(item.getItemId())).collect(Collectors.toList());
+        LocalDateTime newStart = scheduling.getSchedulingTime();
+        LocalDateTime newEnd = scheduling.getSchedulingTime().plusMinutes(newItems.stream().mapToInt(ItemResponse::getTime).sum());
+
+        for (Scheduling schedulingOld : this.schedulingRepository.findAllByDate(date)) {
+            List<ItemResponse> existingItems = schedulingOld.getItems().stream().map(item -> this.itemService.itemById(item.getItemId())).collect(Collectors.toList());
+
+            LocalDateTime existingStart = schedulingOld.getSchedulingTime();
+            LocalDateTime existingEnd = schedulingOld.getSchedulingTime().plusMinutes(existingItems.stream().mapToInt(ItemResponse::getTime).sum());
+
+            if (((scheduling.getEmployee().getEmployeeId().equals(schedulingOld.getEmployee().getEmployeeId())) && (newStart.isBefore(existingEnd)) && (newEnd.isAfter(existingStart)) && !(newStart.equals(existingEnd)))) {
+                return false;
             }
         }
         return true;
@@ -103,7 +104,7 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     @Override
     public SchedulingResponse updateScheduling(Integer schedulingId, SchedulingRequest schedulingUpdated) {
-        if(this.schedulingExists(schedulingId)){
+        if (this.schedulingRepository.existsById(schedulingId)) {
             Scheduling scheduling = this.schedulingRepository.getById(schedulingId);
             BeanUtils.copyProperties((this.schedulingMapper.toScheduling(schedulingUpdated)), scheduling, this.searchEmptyFields(schedulingUpdated));
             return this.schedulingMapper.toSchedulingResponse((this.schedulingRepository.save(scheduling)));

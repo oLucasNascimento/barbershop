@@ -19,11 +19,11 @@ public class BarberShop {
     private String email;
     private String phone;
 
-    @OneToMany(mappedBy = "barberShop", orphanRemoval = true)
+    @OneToMany(mappedBy = "barberShop")
     @JsonIgnoreProperties("barberShop")
     private List<Item> items;
 
-    @OneToMany(mappedBy = "barberShop", orphanRemoval = true)
+    @OneToMany(mappedBy = "barberShop")
     @JsonIgnoreProperties("barberShop")
     private List<Employee> employees;
 
@@ -34,7 +34,7 @@ public class BarberShop {
     @JsonIgnoreProperties("barberShops")
     private List<Client> clients;
 
-    @OneToMany(mappedBy = "barberShop", orphanRemoval = true)
+    @OneToMany(mappedBy = "barberShop")
     @JsonIgnoreProperties("barberShop")
     private List<Scheduling> schedulings;
 

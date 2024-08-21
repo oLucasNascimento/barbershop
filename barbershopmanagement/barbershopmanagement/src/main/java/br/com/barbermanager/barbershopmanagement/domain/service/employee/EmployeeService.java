@@ -3,6 +3,7 @@ package br.com.barbermanager.barbershopmanagement.domain.service.employee;
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 
 import java.util.List;
 
@@ -24,4 +25,5 @@ public interface EmployeeService {
 
     void removeBarberShop(Integer employeeId);
 
+    List<EmployeeSimple> allEmployeesByStatus(StatusEnum status);
 }

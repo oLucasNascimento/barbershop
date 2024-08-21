@@ -106,6 +106,17 @@ public class SchedulingServiceImpl implements SchedulingService {
     public SchedulingResponse updateScheduling(Integer schedulingId, SchedulingRequest schedulingUpdated) {
         if (this.schedulingRepository.existsById(schedulingId)) {
             Scheduling scheduling = this.schedulingRepository.getById(schedulingId);
+            if ((schedulingUpdated.getItems() != null)) {
+                Scheduling schedulingUpdt = this.schedulingMapper.toScheduling(schedulingUpdated);
+                List<Item> itemsUpdt = scheduling.getItems();
+                for (Item item : schedulingUpdt.getItems()) {
+                    if (!(itemsUpdt.stream().anyMatch(itemUpdt -> itemUpdt.getItemId().equals(item.getItemId())))) {
+                        itemsUpdt.add(item);
+                    }
+                }
+                scheduling.setItems(itemsUpdt);
+                return this.schedulingMapper.toSchedulingResponse((this.schedulingRepository.save(scheduling)));
+            }
             BeanUtils.copyProperties((this.schedulingMapper.toScheduling(schedulingUpdated)), scheduling, this.searchEmptyFields(schedulingUpdated));
             return this.schedulingMapper.toSchedulingResponse((this.schedulingRepository.save(scheduling)));
         }

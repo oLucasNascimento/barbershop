@@ -4,7 +4,9 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
+import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,11 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeSimple>> allEmployees() {
         return ResponseEntity.ok(this.employeeService.allEmployees());
     }
+
+    @GetMapping("/all/status")
+    public ResponseEntity<List<EmployeeSimple>> employeesByStatus(@RequestParam StatusEnum status){
+        return ResponseEntity.ok(this.employeeService.allEmployeesByStatus(status));
+        }
 
     @GetMapping("/{employeeId}")
     public ResponseEntity<EmployeeResponse> employeeById(@PathVariable Integer employeeId) {

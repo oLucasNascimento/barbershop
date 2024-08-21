@@ -6,6 +6,8 @@ import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ItemRepository;
+import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingService;
+import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingServiceImpl;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;

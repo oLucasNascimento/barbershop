@@ -15,7 +15,7 @@ public class Scheduling {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer schedulingId;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "fk_client")
     private Client client;
 

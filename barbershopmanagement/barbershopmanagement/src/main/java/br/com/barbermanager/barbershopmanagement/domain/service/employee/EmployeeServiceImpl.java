@@ -5,6 +5,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRe
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.repository.EmployeeRepository;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
@@ -39,6 +40,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponse createEmployee(EmployeeRequest newEmployee) {
         if ((this.employeeRepository.findByCpf(newEmployee.getCpf())) == null) {
+            newEmployee.setStatus(StatusEnum.ACTIVE);
             return this.employeeMapper.toEmployeeResponse((this.employeeRepository.save((this.employeeMapper.toEmployee(newEmployee)))));
         }
         throw new AlreadyExistsException("Employee with CPF '" + newEmployee.getCpf() + "' already exists.");
@@ -47,6 +49,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeSimple> allEmployees() {
         List<EmployeeSimple> employeeResponses = this.employeeMapper.toEmployeeSimpleList((this.employeeRepository.findAll()));
+        if (employeeResponses.isEmpty()) {
+            throw new NotFoundException("There aren't employees to show.");
+        }
+        return employeeResponses;
+    }
+
+    @Override
+    public List<EmployeeSimple> allEmployeesByStatus(StatusEnum status) {
+        List<EmployeeSimple> employeeResponses = this.employeeMapper.toEmployeeSimpleList((this.employeeRepository.findEmployeesByStatus(status)));
         if (employeeResponses.isEmpty()) {
             throw new NotFoundException("There aren't employees to show.");
         }
@@ -80,7 +91,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteEmployee(Integer employeeId) {
         if (this.employeeRepository.existsById(employeeId)) {
-            this.employeeRepository.deleteById(employeeId);
+            Employee employee = this.employeeRepository.getById(employeeId);
+            employee.setStatus(StatusEnum.INACTIVE);
+            this.employeeRepository.save(employee);
             return;
         }
         throw new NotFoundException("Employee with ID '" + employeeId + "' not found.");

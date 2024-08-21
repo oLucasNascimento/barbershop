@@ -1,12 +1,14 @@
 package br.com.barbermanager.barbershopmanagement.api.response.employee;
 
 
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+
 public class EmployeeSimple {
 
     private Integer employeeId;
     private String name;
     private String phone;
-
+    private StatusEnum status;
     public Integer getEmployeeId() {
         return employeeId;
     }
@@ -31,4 +33,11 @@ public class EmployeeSimple {
         this.phone = phone;
     }
 
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
+    }
 }

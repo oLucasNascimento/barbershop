@@ -2,6 +2,7 @@ package br.com.barbermanager.barbershopmanagement.api.response.employee;
 
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class EmployeeResponse {
     private String cpf;
     private String email;
     private String phone;
+    private StatusEnum status;
 
     private BarberShopSimple barberShop;
     private List<SchedulingResponse> schedulings;
@@ -70,5 +72,13 @@ public class EmployeeResponse {
 
     public void setSchedulings(List<SchedulingResponse> schedulings) {
         this.schedulings = schedulings;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 }

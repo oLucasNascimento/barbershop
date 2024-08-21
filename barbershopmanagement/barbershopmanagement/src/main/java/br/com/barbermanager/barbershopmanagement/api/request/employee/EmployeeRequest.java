@@ -2,6 +2,7 @@ package br.com.barbermanager.barbershopmanagement.api.request.employee;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 
 public class EmployeeRequest {
 
@@ -11,6 +12,7 @@ public class EmployeeRequest {
     private String cpf;
     private String email;
     private String phone;
+    private StatusEnum status;
 
     private BarberShopRequest barberShop;
 
@@ -60,5 +62,13 @@ public class EmployeeRequest {
 
     public void setBarberShop(BarberShopRequest barberShop) {
         this.barberShop = barberShop;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 }

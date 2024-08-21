@@ -25,11 +25,6 @@ public class Client {
     @JsonIgnoreProperties("client")
     private List<Scheduling> schedulings;
 
-
-//    @OneToMany(mappedBy = "cliente")
-//    @JsonIgnoreProperties("cliente")
-//    private Set<Scheduling> agendamentos;
-
     public Integer getClientId() {
         return clientId;
     }

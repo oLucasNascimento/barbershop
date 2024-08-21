@@ -17,6 +17,8 @@ public class Employee {
     private String email;
     private String phone;
 
+    private StatusEnum status;
+
     @ManyToOne
     @JoinColumn(name = "fk_barberShop")
     @JsonIgnoreProperties("employees")
@@ -80,5 +82,13 @@ public class Employee {
 
     public void setSchedulings(List<Scheduling> schedulings) {
         this.schedulings = schedulings;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 }

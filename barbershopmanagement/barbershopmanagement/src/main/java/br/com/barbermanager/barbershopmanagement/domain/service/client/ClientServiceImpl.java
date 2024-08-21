@@ -82,8 +82,8 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientResponse updateClient(Integer clientId, ClientRequest updatedClient) {
         if (this.clientExists(clientId)) {
-            Client client = this.clientRepository.getById(clientId);
             if (this.clientRepository.findByCpf(updatedClient.getCpf()) == null) {
+                Client client = this.clientRepository.getById(clientId);
                 if (updatedClient.getBarberShops() != null) {
                     client = this.updateBarberShops(clientId, (this.clientMapper.toClient(updatedClient)));
                 }

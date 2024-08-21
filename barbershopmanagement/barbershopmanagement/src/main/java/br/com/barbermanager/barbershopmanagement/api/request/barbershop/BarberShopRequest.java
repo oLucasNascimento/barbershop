@@ -25,7 +25,6 @@ public class BarberShopRequest {
     private List<ItemRequest> items;
     private List<EmployeeRequest> employees;
     private List<ClientRequest> clients;
-    private List<SchedulingRequest> schedulings;
 
     public Integer getBarberShopId() {
         return barberShopId;
@@ -97,13 +96,5 @@ public class BarberShopRequest {
 
     public void setClients(List<ClientRequest> clients) {
         this.clients = clients;
-    }
-
-    public List<SchedulingRequest> getSchedulings() {
-        return schedulings;
-    }
-
-    public void setSchedulings(List<SchedulingRequest> schedulings) {
-        this.schedulings = schedulings;
     }
 }

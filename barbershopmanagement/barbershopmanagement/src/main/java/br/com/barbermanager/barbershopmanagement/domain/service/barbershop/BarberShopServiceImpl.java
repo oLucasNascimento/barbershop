@@ -97,8 +97,9 @@ public class BarberShopServiceImpl implements BarberShopService {
                 if ((barberShopUpdt.getItems() != null)) {
                     barberShop = this.insertItem(barberShopId, barberShopUpdt.getItems());
                 }
-                BeanUtils.copyProperties(barberShopUpdt, barberShop, this.searchEmptyFields(barberShopUpdt));
-                return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
+                BeanUtils.copyProperties((this.barberShopMapper.toBarberShop(updatedBarberShop)), barberShop, this.searchEmptyFields(updatedBarberShop));
+                this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
+                return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.getById(barberShopId)));
             }
             throw new AlreadyExistsException("Barber Shop with email '" + updatedBarberShop.getEmail() + "' already exists.");
         }
@@ -122,7 +123,9 @@ public class BarberShopServiceImpl implements BarberShopService {
             BarberShop barberShopUpdt = this.barberShopMapper.toBarberShop(updatedClients);
             List<Client> clients = barberShop.getClients();
             for (Client client : barberShopUpdt.getClients()) {
-                clients.add(client);
+                if (!(clients.stream().anyMatch(existingClient -> existingClient.getClientId().equals(client.getClientId())))) {
+                    clients.add(client);
+                }
             }
             barberShop.setClients(clients);
             return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
@@ -182,7 +185,6 @@ public class BarberShopServiceImpl implements BarberShopService {
             existingEmployee.setBarberShop(barberShop);
             this.employeeService.updateEmployee(existingEmployee.getEmployeeId(), (this.employeeMapper.toEmployeeRequest(existingEmployee)));
         }
-
         return barberShop;
     }
 

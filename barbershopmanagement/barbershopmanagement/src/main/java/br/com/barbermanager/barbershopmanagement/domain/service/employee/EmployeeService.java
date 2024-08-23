@@ -26,4 +26,8 @@ public interface EmployeeService {
     void removeBarberShop(Integer employeeId);
 
     List<EmployeeSimple> allEmployeesByStatus(StatusEnum status);
+
+    void activeEmployee(Integer employeeId);
+
+    List<EmployeeSimple> employeesByBarberShopAndStatus(Integer barberShopId, StatusEnum status);
 }

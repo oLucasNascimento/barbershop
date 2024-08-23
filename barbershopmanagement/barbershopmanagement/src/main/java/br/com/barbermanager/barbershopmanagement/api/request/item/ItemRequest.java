@@ -3,6 +3,7 @@ package br.com.barbermanager.barbershopmanagement.api.request.item;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,6 +18,7 @@ public class ItemRequest {
     private String name;
     private Double price;
     private Integer time;
+    private StatusEnum status;
 
     private BarberShopRequest barberShop;
     private List<SchedulingRequest> schedulings;
@@ -51,6 +53,14 @@ public class ItemRequest {
 
     public void setTime(Integer time) {
         this.time = time;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 
     public BarberShopRequest getBarberShop() {

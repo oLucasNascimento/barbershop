@@ -3,6 +3,7 @@ package br.com.barbermanager.barbershopmanagement.api.response.item;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 
 import java.util.List;
 import java.util.Set;
@@ -13,9 +14,11 @@ public class ItemResponse {
     private String name;
     private Double price;
     private Integer time;
+    private StatusEnum status;
 
     private BarberShopSimple barberShop;
     private List<SchedulingResponse> schedulings;
+
     public Integer getItemId() {
         return itemId;
     }
@@ -46,6 +49,14 @@ public class ItemResponse {
 
     public void setTime(Integer time) {
         this.time = time;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 
     public BarberShopSimple getBarberShop() {

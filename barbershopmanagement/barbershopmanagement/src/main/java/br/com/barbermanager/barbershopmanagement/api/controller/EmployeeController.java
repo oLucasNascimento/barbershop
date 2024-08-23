@@ -45,6 +45,11 @@ public class EmployeeController {
         return ResponseEntity.ok(this.employeeService.employeesByBarberShop(barberShopId));
     }
 
+    @GetMapping("/barbershop/{barberShopId}/status")
+    public ResponseEntity<List<EmployeeSimple>> employeesByBarberShopAndStatus(@PathVariable Integer barberShopId, @RequestParam StatusEnum status) {
+        return ResponseEntity.ok(this.employeeService.employeesByBarberShopAndStatus(barberShopId, status));
+    }
+
     @DeleteMapping("/delete/{employeeId}")
     public ResponseEntity deleteEmployee(@PathVariable Integer employeeId) {
         this.employeeService.deleteEmployee(employeeId);
@@ -55,6 +60,12 @@ public class EmployeeController {
     public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Integer employeeId, @RequestBody EmployeeRequest updatedEmployee) {
         this.employeeService.updateEmployee(employeeId, updatedEmployee);
         return ResponseEntity.ok(this.employeeService.employeeById(employeeId));
+    }
+
+    @PatchMapping("/active-employee/{employeeId}")
+    public ResponseEntity activeEmployee(@PathVariable Integer employeeId) {
+        this.employeeService.activeEmployee(employeeId);
+        return ResponseEntity.ok().build();
     }
 
 }

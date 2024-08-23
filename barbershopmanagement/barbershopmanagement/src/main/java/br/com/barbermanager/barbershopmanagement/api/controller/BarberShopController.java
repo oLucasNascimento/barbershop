@@ -3,7 +3,10 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +31,21 @@ public class BarberShopController {
         return ResponseEntity.ok(this.barberShopService.allBarberShops());
     }
 
+    @GetMapping("/all/status")
+    public ResponseEntity<List<BarberShopSimple>> barberShopsByStatus(@RequestParam StatusEnum status){
+        return ResponseEntity.ok(this.barberShopService.allBarberShopsByStatus(status));
+    }
+
+    @GetMapping("/client/{clientId}")
+    public ResponseEntity<List<BarberShopSimple>> clientsByBarberShop(@PathVariable Integer clientId){
+        return ResponseEntity.ok(this.barberShopService.barberShopsByClient(clientId));
+    }
+
+    @GetMapping("/client/{clientId}/status")
+    public ResponseEntity<List<BarberShopSimple>> clientsByBarberShopAndStatus(@PathVariable Integer clientId, @RequestParam StatusEnum status){
+        return ResponseEntity.ok(this.barberShopService.barberShopsByClientAndStatus(clientId, status));
+    }
+
     @GetMapping("/{barberShopId}")
     public ResponseEntity<BarberShopResponse> barberShopById(@PathVariable Integer barberShopId) {
         return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
@@ -36,6 +54,12 @@ public class BarberShopController {
     @DeleteMapping("/delete/{barberShopId}")
     public ResponseEntity deleteBarberShop(@PathVariable Integer barberShopId) {
         this.barberShopService.deleteBarberShop(barberShopId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/active-barbershop/{barberShopId}")
+    public ResponseEntity activeBarberShop(@PathVariable Integer barberShopId){
+        this.barberShopService.activeBarberShop(barberShopId);
         return ResponseEntity.ok().build();
     }
 

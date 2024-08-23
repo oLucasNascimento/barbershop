@@ -19,6 +19,8 @@ public class BarberShop {
     private String email;
     private String phone;
 
+    private StatusEnum status;
+
     @OneToMany(mappedBy = "barberShop")
     @JsonIgnoreProperties("barberShop")
     private List<Item> items;
@@ -84,6 +86,14 @@ public class BarberShop {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 
     public List<Item> getItems() {

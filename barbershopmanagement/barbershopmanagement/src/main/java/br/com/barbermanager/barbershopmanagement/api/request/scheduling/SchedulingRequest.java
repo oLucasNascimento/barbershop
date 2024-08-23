@@ -4,6 +4,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberSh
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class SchedulingRequest {
     private List<ItemRequest> items;
 
     private LocalDateTime schedulingTime;
+    private StatusEnum status;
 
     public Integer getSchedulingId() {
         return schedulingId;
@@ -68,5 +70,13 @@ public class SchedulingRequest {
 
     public void setSchedulingTime(LocalDateTime schedulingTime) {
         this.schedulingTime = schedulingTime;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 }

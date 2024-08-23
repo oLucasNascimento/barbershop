@@ -17,6 +17,8 @@ public class Client {
     private String cpf;
     private String phone;
 
+    private StatusEnum status;
+
     @ManyToMany(mappedBy = "clients")
     @JsonIgnoreProperties("clients")
     private Set<BarberShop> barberShops;
@@ -55,6 +57,14 @@ public class Client {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 
     public Set<BarberShop> getBarberShops() {

@@ -4,6 +4,7 @@ import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberS
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +20,7 @@ public class SchedulingResponse {
     private List<ItemSimple> items;
 
     private LocalDateTime schedulingTime;
+    private StatusEnum status;
 
     public Integer getSchedulingId() {
         return schedulingId;
@@ -66,5 +68,13 @@ public class SchedulingResponse {
 
     public void setSchedulingTime(LocalDateTime schedulingTime) {
         this.schedulingTime = schedulingTime;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 }

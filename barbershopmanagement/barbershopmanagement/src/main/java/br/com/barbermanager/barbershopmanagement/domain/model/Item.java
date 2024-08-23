@@ -17,6 +17,8 @@ public class Item {
     private Double price;
     private Integer time;
 
+    private StatusEnum status;
+
     @ManyToOne
     @JoinColumn(name = "fk_barberShop")
     @JsonIgnoreProperties("items")
@@ -56,6 +58,14 @@ public class Item {
 
     public void setTime(Integer time) {
         this.time = time;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 
     public BarberShop getBarberShop() {

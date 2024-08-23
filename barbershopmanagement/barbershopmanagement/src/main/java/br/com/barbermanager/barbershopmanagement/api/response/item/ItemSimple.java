@@ -1,11 +1,14 @@
 package br.com.barbermanager.barbershopmanagement.api.response.item;
 
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+
 public class ItemSimple {
 
     private Integer itemId;
     private String name;
     private Double price;
     private Integer time;
+    private StatusEnum status;
 
     public Integer getItemId() {
         return itemId;
@@ -37,5 +40,13 @@ public class ItemSimple {
 
     public void setTime(Integer time) {
         this.time = time;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 }

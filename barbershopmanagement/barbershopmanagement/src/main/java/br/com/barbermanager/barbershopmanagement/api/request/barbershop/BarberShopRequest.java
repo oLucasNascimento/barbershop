@@ -4,10 +4,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.client.ClientReques
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
-import br.com.barbermanager.barbershopmanagement.domain.model.Client;
-import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
-import br.com.barbermanager.barbershopmanagement.domain.model.Item;
-import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
+import br.com.barbermanager.barbershopmanagement.domain.model.*;
 
 import java.util.List;
 import java.util.Set;
@@ -21,6 +18,7 @@ public class BarberShopRequest {
     private String adress;
     private String email;
     private String phone;
+    private StatusEnum status;
 
     private List<ItemRequest> items;
     private List<EmployeeRequest> employees;
@@ -72,6 +70,14 @@ public class BarberShopRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 
     public List<ItemRequest> getItems() {

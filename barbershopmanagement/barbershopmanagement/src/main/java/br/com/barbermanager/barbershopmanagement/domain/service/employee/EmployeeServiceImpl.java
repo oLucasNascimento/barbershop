@@ -7,6 +7,7 @@ import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeS
 import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.repository.EmployeeRepository;
+import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import jakarta.transaction.Transactional;
@@ -56,20 +57,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public EmployeeResponse employeeById(Integer employeeId) {
+        if (this.employeeRepository.existsById(employeeId)) {
+            return this.employeeMapper.toEmployeeResponse((this.employeeRepository.getById(employeeId)));
+        }
+        throw new NotFoundException("Employee with ID '" + employeeId + "' not found.");
+    }
+
+    @Override
     public List<EmployeeSimple> allEmployeesByStatus(StatusEnum status) {
         List<EmployeeSimple> employeeResponses = this.employeeMapper.toEmployeeSimpleList((this.employeeRepository.findEmployeesByStatus(status)));
         if (employeeResponses.isEmpty()) {
             throw new NotFoundException("There aren't employees to show.");
         }
         return employeeResponses;
-    }
-
-    @Override
-    public EmployeeResponse employeeById(Integer employeeId) {
-        if (this.employeeRepository.existsById(employeeId)) {
-            return this.employeeMapper.toEmployeeResponse((this.employeeRepository.getById(employeeId)));
-        }
-        throw new NotFoundException("Employee with ID '" + employeeId + "' not found.");
     }
 
     @Override
@@ -86,6 +87,20 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new NotFoundException("There aren't employees at this barbershop.");
         }
         return this.employeeMapper.toEmployeeSimpleList(employees);
+    }
+
+    @Override
+    public List<EmployeeSimple> employeesByBarberShopAndStatus(Integer barberShopId, StatusEnum status) {
+        List<EmployeeSimple> employees = new ArrayList<>();
+        for(EmployeeSimple employee : this.employeesByBarberShop(barberShopId)){
+            if((employee.getStatus().equals(status))){
+                employees.add(employee);
+            }
+        }
+        if(employees.isEmpty()){
+            throw new NotFoundException("There aren't employees at this barbershop.");
+        }
+        return employees;
     }
 
     @Override
@@ -111,10 +126,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void removeBarberShop(Integer employeeId){
+    public void removeBarberShop(Integer employeeId) {
         Employee employee = this.employeeRepository.getById(employeeId);
         employee.setBarberShop(null);
         this.employeeRepository.save(employee);
+    }
+
+    @Override
+    public void activeEmployee(Integer employeeId) {
+        if (this.employeeExists(employeeId)) {
+            Employee employee = this.employeeRepository.getById(employeeId);
+            if (employee.getStatus() != StatusEnum.ACTIVE) {
+                employee.setStatus(StatusEnum.ACTIVE);
+                this.employeeRepository.save(employee);
+                return;
+            }
+            throw new AlreadyActiveException("Employee with ID '" + employeeId + "' is already active.");
+        }
+        throw new NotFoundException("Employee with ID '" + employeeId + "' not found.");
     }
 
     private String[] searchEmptyFields(Object source) {

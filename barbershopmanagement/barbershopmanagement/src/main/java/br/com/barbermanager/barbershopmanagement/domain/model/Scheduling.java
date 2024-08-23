@@ -35,6 +35,7 @@ public class Scheduling {
     private List<Item> items;
 
     private LocalDateTime schedulingTime;
+    private StatusEnum status;
 
     public Integer getSchedulingId() {
         return schedulingId;
@@ -82,5 +83,13 @@ public class Scheduling {
 
     public void setSchedulingTime(LocalDateTime schedulingTime) {
         this.schedulingTime = schedulingTime;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusEnum status) {
+        this.status = status;
     }
 }

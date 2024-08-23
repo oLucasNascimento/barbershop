@@ -4,6 +4,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.client.ClientReques
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 
 import java.util.List;
 
@@ -21,4 +22,11 @@ public interface ClientService {
 
     ClientResponse updateClient(Integer clientId, ClientRequest updatedClient);
 
+    List<ClientSimple> allclientsByStatus(StatusEnum status);
+
+    List<ClientSimple> clientsByBarberShop(Integer barberShopId);
+
+    List<ClientSimple> clientsByBarberShopAndStatus(Integer barberShopId, StatusEnum status);
+
+    void activeClient(Integer clientId);
 }

@@ -5,10 +5,14 @@ import br.com.barbermanager.barbershopmanagement.api.mapper.ClientMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
+import br.com.barbermanager.barbershopmanagement.domain.model.Item;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ClientRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import org.springframework.beans.BeanUtils;
@@ -47,6 +51,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientResponse createClient(ClientRequest newClient) {
         if ((this.clientRepository.findByCpf(newClient.getCpf())) == null) {
+            newClient.setStatus(StatusEnum.ACTIVE);
             return this.clientMapper.toClientResponse((this.clientRepository.save((this.clientMapper.toClient(newClient)))));
         }
         throw new AlreadyExistsException("Client with CPF '" + newClient.getCpf() + "' already exists.");
@@ -62,6 +67,15 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public List<ClientSimple> allclientsByStatus(StatusEnum status) {
+        List<ClientSimple> clients = this.clientMapper.toClientSimpleList((this.clientRepository.findClientsByStatus(status)));
+        if (clients.isEmpty()) {
+            throw new NotFoundException("There aren't clients to show.");
+        }
+        return clients;
+    }
+
+    @Override
     public ClientResponse clientById(Integer clientId) {
         if (this.clientRepository.existsById(clientId)) {
             return this.clientMapper.toClientResponse((this.clientRepository.getById(clientId)));
@@ -70,11 +84,45 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public List<ClientSimple> clientsByBarberShop(Integer barberShopId) {
+        return this.clientMapper.toClientSimpleList(this.clientRepository.findClientsByBarberShop(barberShopId));
+    }
+
+    @Override
+    public List<ClientSimple> clientsByBarberShopAndStatus(Integer barberShopId, StatusEnum status) {
+        List<ClientSimple> clients = new ArrayList<>();
+        for(ClientSimple client : this.clientsByBarberShop(barberShopId)){
+            if((client.getStatus().equals(status))){
+                clients.add(client);
+            }
+        }
+        if(clients.isEmpty()){
+            throw new NotFoundException("There aren't clients at this barbershop.");
+        }
+        return clients;
+    }
+
+    @Override
     public void deleteClient(Integer clientId) {
         if (this.clientRepository.existsById(clientId)) {
-            this.clientRepository.getById(clientId);
-            this.clientRepository.deleteById(clientId);
+            Client client = this.clientRepository.getById(clientId);
+            client.setStatus(StatusEnum.INACTIVE);
+            this.clientRepository.save(client);
             return;
+        }
+        throw new NotFoundException("Client with ID '" + clientId + "' not found.");
+    }
+
+    @Override
+    public void activeClient(Integer clientId) {
+        if (this.clientExists(clientId)) {
+            Client client = this.clientRepository.getById(clientId);
+            if (client.getStatus() != StatusEnum.ACTIVE) {
+                client.setStatus(StatusEnum.ACTIVE);
+                this.clientRepository.save(client);
+                return;
+            }
+            throw new AlreadyActiveException("Client with ID '" + clientId + "' is already active.");
         }
         throw new NotFoundException("Client with ID '" + clientId + "' not found.");
     }

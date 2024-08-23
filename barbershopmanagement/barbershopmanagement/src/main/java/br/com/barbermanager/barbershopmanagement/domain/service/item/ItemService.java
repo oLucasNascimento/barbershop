@@ -4,6 +4,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 
 import java.util.List;
 
@@ -17,9 +18,15 @@ public interface ItemService {
 
     ItemResponse itemById(Integer itemId);
 
-    List<ItemResponse> itemByBarberShop(Integer barberShopId);
+    List<ItemSimple> itemByBarberShop(Integer barberShopId);
 
     void deleteItem(Integer itemId);
 
     ItemResponse updateItem(Integer itemId, ItemRequest updatedItem);
+
+    void activeItem(Integer itemId);
+
+    List<ItemSimple> allItemsByStatus(StatusEnum status);
+
+    List<ItemSimple> itemsByBarberShopAndStatus(Integer barberShopId, StatusEnum status);
 }

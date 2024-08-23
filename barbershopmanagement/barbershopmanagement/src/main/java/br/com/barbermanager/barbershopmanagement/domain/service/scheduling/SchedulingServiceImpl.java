@@ -7,6 +7,7 @@ import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.repository.SchedulingRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
@@ -46,8 +47,8 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Override
     public SchedulingResponse newScheduling(SchedulingRequest newScheduling) {
         Scheduling scheduling = this.schedulingMapper.toScheduling(newScheduling);
-
         if (isSchedulingAvailable(scheduling)) {
+            scheduling.setStatus(StatusEnum.SCHEDULED);
             return this.schedulingMapper.toSchedulingResponse((schedulingRepository.save(scheduling)));
         } else {
             throw new AlreadyExistsException("This time isn't available for scheduling");
@@ -69,7 +70,7 @@ public class SchedulingServiceImpl implements SchedulingService {
             LocalDateTime existingStart = schedulingOld.getSchedulingTime();
             LocalDateTime existingEnd = schedulingOld.getSchedulingTime().plusMinutes(existingItems.stream().mapToInt(ItemResponse::getTime).sum());
 
-            if (((scheduling.getEmployee().getEmployeeId().equals(schedulingOld.getEmployee().getEmployeeId())) && (newStart.isBefore(existingEnd)) && (newEnd.isAfter(existingStart)) && !(newStart.equals(existingEnd)))) {
+            if (((schedulingOld.getStatus() == StatusEnum.SCHEDULED) && (scheduling.getEmployee().getEmployeeId().equals(schedulingOld.getEmployee().getEmployeeId())) && (newStart.isBefore(existingEnd)) && (newEnd.isAfter(existingStart)) && !(newStart.equals(existingEnd)))) {
                 return false;
             }
         }

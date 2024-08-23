@@ -2,12 +2,16 @@ package br.com.barbermanager.barbershopmanagement.domain.service.item;
 
 import br.com.barbermanager.barbershopmanagement.api.mapper.ItemMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
+import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ItemRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingService;
 import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingServiceImpl;
+import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +44,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemResponse createItem(ItemRequest newItem) {
         if ((itemRepository.existingItem(newItem.getName(), newItem.getPrice())) == null) {
+            newItem.setStatus(StatusEnum.ACTIVE);
             return this.itemMapper.toItemResponse((this.itemRepository.save((this.itemMapper.toItem(newItem)))));
         }
         throw new NotFoundException("Item with name '" + newItem.getName() + "' and price '" + newItem.getPrice() + "' already exists.");
@@ -54,6 +60,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public List<ItemSimple> allItemsByStatus(StatusEnum status) {
+        List<ItemSimple> itemSimples = this.itemMapper.toItemSimpleList((this.itemRepository.findItemsByStatus(status)));
+        if (itemSimples.isEmpty()) {
+            throw new NotFoundException("There aren't items to show.");
+        }
+        return itemSimples;
+    }
+
+    @Override
     public ItemResponse itemById(Integer itemId) {
         if (this.itemRepository.existsById(itemId)) {
             return this.itemMapper.toItemResponse((this.itemRepository.getById(itemId)));
@@ -62,18 +77,34 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemResponse> itemByBarberShop(Integer barberShopId) {
-        List<ItemResponse> itemResponses = this.itemMapper.toItemResponseList((this.itemRepository.itemByBarberShop(barberShopId)));
-        if (itemResponses.isEmpty()) {
+    public List<ItemSimple> itemByBarberShop(Integer barberShopId) {
+        List<ItemSimple> items = this.itemMapper.toItemSimpleList((this.itemRepository.itemByBarberShop(barberShopId)));
+        if (items.isEmpty()) {
             throw new NotFoundException("There aren't items at this barbershop");
         }
-        return itemResponses;
+        return items;
+    }
+
+    @Override
+    public List<ItemSimple> itemsByBarberShopAndStatus(Integer barberShopId, StatusEnum status) {
+        List<ItemSimple> items = new ArrayList<>();
+        for(ItemSimple item : this.itemByBarberShop(barberShopId)){
+            if((item.getStatus().equals(status))){
+                items.add(item);
+            }
+        }
+        if(items.isEmpty()){
+            throw new NotFoundException("There aren't items at this barbershop.");
+        }
+        return items;
     }
 
     @Override
     public void deleteItem(Integer itemId) {
         if (this.itemRepository.existsById(itemId)) {
-            this.itemRepository.deleteById(itemId);
+            Item item = this.itemRepository.getById(itemId);
+            item.setStatus(StatusEnum.INACTIVE);
+            this.itemRepository.save(item);
             return;
         }
         throw new NotFoundException("Item with ID '" + itemId + "' not found.");
@@ -86,6 +117,20 @@ public class ItemServiceImpl implements ItemService {
             Item item = this.itemRepository.getById(itemId);
             BeanUtils.copyProperties((this.itemMapper.toItem(updatedItem)), item, this.searchEmptyFields(updatedItem));
             return this.itemMapper.toItemResponse((this.itemRepository.save(item)));
+        }
+        throw new NotFoundException("Item with ID '" + itemId + "' not found.");
+    }
+
+    @Override
+    public void activeItem(Integer itemId) {
+        if (this.itemExists(itemId)) {
+            Item item = this.itemRepository.getById(itemId);
+            if (item.getStatus() != StatusEnum.ACTIVE) {
+                item.setStatus(StatusEnum.ACTIVE);
+                this.itemRepository.save(item);
+                return;
+            }
+            throw new AlreadyActiveException("Item with ID '" + itemId + "' is already active.");
         }
         throw new NotFoundException("Item with ID '" + itemId + "' not found.");
     }

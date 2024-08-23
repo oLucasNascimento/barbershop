@@ -1,5 +1,6 @@
 package br.com.barbermanager.barbershopmanagement.exception.handler;
 
+import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.BadRequestException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
@@ -33,6 +34,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<RestErrorMessage> badRequestException(BadRequestException exception){
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST, exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
+    }
+
+    @ExceptionHandler(AlreadyActiveException.class)
+    private ResponseEntity<RestErrorMessage> alreadyActiveException(AlreadyActiveException exception){
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.CONFLICT, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
     }
 
 }

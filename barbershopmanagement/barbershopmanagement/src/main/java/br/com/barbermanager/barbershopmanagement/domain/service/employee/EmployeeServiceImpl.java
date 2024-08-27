@@ -129,6 +129,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void removeBarberShop(Integer employeeId) {
         Employee employee = this.employeeRepository.getById(employeeId);
         employee.setBarberShop(null);
+        employee.setStatus(StatusEnum.INACTIVE);
         this.employeeRepository.save(employee);
     }
 

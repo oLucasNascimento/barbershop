@@ -8,6 +8,7 @@ import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberS
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.*;
 import br.com.barbermanager.barbershopmanagement.domain.repository.BarberShopRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
@@ -83,7 +84,11 @@ public class BarberShopServiceImpl implements BarberShopService {
 
     @Override
     public List<BarberShopSimple> barberShopsByClient(Integer clientId) {
-        return this.barberShopMapper.toBarberShopSimpleList(this.barberShopRepository.findBarberShopsByClients(clientId));
+        List<BarberShopSimple> schedulings = this.barberShopMapper.toBarberShopSimpleList(this.barberShopRepository.findBarberShopsByClients(clientId));
+        if(schedulings.isEmpty()){
+            throw new NotFoundException("There aren't barber shops to show.");
+        }
+        return schedulings;
     }
 
     @Override
@@ -95,7 +100,7 @@ public class BarberShopServiceImpl implements BarberShopService {
             }
         }
         if(barberShops.isEmpty()){
-            throw new NotFoundException("There aren't barber shops for this client.");
+            throw new NotFoundException("There aren't barber shops with status '" + status + "' for this client.");
         }
         return barberShops;
     }
@@ -232,6 +237,7 @@ public class BarberShopServiceImpl implements BarberShopService {
         for (Employee employeeUpdt : updatedEmployees) {
             Employee existingEmployee = this.employeeMapper.toEmployee((this.employeeService.employeeById(employeeUpdt.getEmployeeId())));
             existingEmployee.setBarberShop(barberShop);
+            existingEmployee.setStatus(StatusEnum.ACTIVE);
             this.employeeService.updateEmployee(existingEmployee.getEmployeeId(), (this.employeeMapper.toEmployeeRequest(existingEmployee)));
         }
         return barberShop;

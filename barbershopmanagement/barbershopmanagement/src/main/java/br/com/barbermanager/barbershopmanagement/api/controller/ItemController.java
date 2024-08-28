@@ -26,13 +26,8 @@ public class ItemController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ItemSimple>> allItems() {
-        return ResponseEntity.ok(this.itemService.allItems());
-    }
-
-    @GetMapping("/all/status")
-    public ResponseEntity<List<ItemSimple>> itemsByStatus(@RequestParam StatusEnum status){
-        return ResponseEntity.ok(this.itemService.allItemsByStatus(status));
+    public ResponseEntity<List<ItemSimple>> allItems(@RequestParam(required = false) StatusEnum status) {
+        return ResponseEntity.ok(this.itemService.allItems(status));
     }
 
     @GetMapping("/{itemId}")
@@ -41,13 +36,8 @@ public class ItemController {
     }
 
     @GetMapping("/barbershop/{barberShopId}")
-    public ResponseEntity<List<ItemSimple>> itemsByBarberShop(@PathVariable Integer barberShopId) {
-        return ResponseEntity.ok(this.itemService.itemByBarberShop(barberShopId));
-    }
-
-    @GetMapping("/barbershop/{barberShopId}/status")
-    public ResponseEntity<List<ItemSimple>> itemsByBarberShopAndStatus(@PathVariable Integer barberShopId, @RequestParam StatusEnum status) {
-        return ResponseEntity.ok(this.itemService.itemsByBarberShopAndStatus(barberShopId, status));
+    public ResponseEntity<List<ItemSimple>> itemsByBarberShop(@RequestParam(required = false) StatusEnum status, @PathVariable Integer barberShopId) {
+        return ResponseEntity.ok(this.itemService.itemByBarberShop(barberShopId, status));
     }
 
     @DeleteMapping("/delete/{itemId}")

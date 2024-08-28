@@ -3,16 +3,23 @@ package br.com.barbermanager.barbershopmanagement.domain.service.scheduling;
 import br.com.barbermanager.barbershopmanagement.api.mapper.SchedulingMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
+import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
+import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.repository.SchedulingRepository;
+import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import br.com.barbermanager.barbershopmanagement.domain.service.client.ClientService;
+import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.BadRequestException;
+import br.com.barbermanager.barbershopmanagement.exception.InactiveException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +27,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
@@ -30,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class SchedulingServiceImpl implements SchedulingService {
@@ -42,6 +51,12 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     @Autowired
     private ItemService itemService;
+
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private BarberShopService barberShopService;
 
 //    private Boolean schedulingExists(Integer schedulingId) {
 //        return this.schedulingRepository.existsById(schedulingId);
@@ -60,6 +75,16 @@ public class SchedulingServiceImpl implements SchedulingService {
 
 
     private Boolean isSchedulingAvailable(Scheduling scheduling) {
+
+        BarberShopResponse barberShop = this.barberShopService.barberShopById(scheduling.getBarberShop().getBarberShopId());
+        if (barberShop.getStatus().equals(StatusEnum.INACTIVE)) {
+            throw new InactiveException("The barber shop informated is inactive");
+        } else {
+            boolean employeBelong = barberShop.getEmployees().stream().anyMatch(employee -> employee.getEmployeeId().equals(scheduling.getEmployee().getEmployeeId()));
+            if (!employeBelong) {
+                throw new BadRequestException("This employee doesn't belong to the informed barbershop.");
+            }
+        }
 
         LocalDate date = scheduling.getSchedulingTime().toLocalDate();
 
@@ -89,19 +114,15 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public List<SchedulingResponse> allSchedulings() {
-        List<SchedulingResponse> schedulingResponses = this.schedulingMapper.toSchedulingResponseList((this.schedulingRepository.findAll()));
-        if (schedulingResponses.isEmpty()) {
-            throw new NotFoundException("There aren't schedulings to show.");
-        }
-        return schedulingResponses;
-    }
-
-    @Override
-    public List<SchedulingResponse> allSchedulingsByStatus(StatusEnum status) {
-        List<SchedulingResponse> schedulings = this.schedulingMapper.toSchedulingResponseList((this.schedulingRepository.findSchedulingsByStatus(status)));
+    public List<SchedulingResponse> allSchedulings(StatusEnum status) {
+        List<SchedulingResponse> schedulings = this.schedulingMapper.toSchedulingResponseList((this.schedulingRepository.findAll()));
         if (schedulings.isEmpty()) {
-            throw new NotFoundException("There aren't schedulings with status '" + status + "' to show.");
+            throw new NotFoundException("There aren't schedulings to show.");
+        } else if (status != null) {
+            List<SchedulingResponse> schedulingsByStatus = this.schedulingMapper.toSchedulingResponseList((this.schedulingRepository.findSchedulingsByStatus(status)));
+            if (schedulingsByStatus.isEmpty()) {
+                throw new NotFoundException("There aren't schedulings with status '" + status + "'.");
+            }
         }
         return schedulings;
     }
@@ -151,6 +172,7 @@ public class SchedulingServiceImpl implements SchedulingService {
             return schedulingByStatus;
         }
     }
+
     @Override
     public List<SchedulingResponse> schedulingsByEmployee(Integer employeeId, StatusEnum status) {
         List<SchedulingResponse> schedulings = this.schedulingMapper.toSchedulingResponseList(this.schedulingRepository.findSchedulingsByEmployee(employeeId));

@@ -13,11 +13,11 @@ public interface EmployeeService {
 
     EmployeeResponse createEmployee(EmployeeRequest newEmployee);
 
-    List<EmployeeSimple> allEmployees();
+    List<EmployeeSimple> allEmployees(StatusEnum status);
 
     EmployeeResponse employeeById(Integer employeeId);
 
-    List<EmployeeSimple> employeesByBarberShop(Integer barberShopId);
+    List<EmployeeSimple> employeesByBarberShop(Integer barberShopId, StatusEnum status);
 
     void deleteEmployee(Integer employeeId);
 
@@ -25,9 +25,5 @@ public interface EmployeeService {
 
     void removeBarberShop(Integer employeeId);
 
-    List<EmployeeSimple> allEmployeesByStatus(StatusEnum status);
-
     void activeEmployee(Integer employeeId);
-
-    List<EmployeeSimple> employeesByBarberShopAndStatus(Integer barberShopId, StatusEnum status);
 }

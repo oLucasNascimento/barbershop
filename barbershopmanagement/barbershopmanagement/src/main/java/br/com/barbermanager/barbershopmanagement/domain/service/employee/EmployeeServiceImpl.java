@@ -48,60 +48,69 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeSimple> allEmployees() {
-        List<EmployeeSimple> employeeResponses = this.employeeMapper.toEmployeeSimpleList((this.employeeRepository.findAll()));
-        if (employeeResponses.isEmpty()) {
+    public List<EmployeeSimple> allEmployees(StatusEnum status) {
+        List<EmployeeSimple> employees = this.employeeMapper.toEmployeeSimpleList((this.employeeRepository.findAll()));
+        if (employees.isEmpty()) {
             throw new NotFoundException("There aren't employees to show.");
+        } else if (status != null) {
+            List<EmployeeSimple> employeesByStatus = this.employeeMapper.toEmployeeSimpleList((this.employeeRepository.findEmployeesByStatus(status)));
+            if (employeesByStatus.isEmpty()) {
+                throw new NotFoundException("There aren't employees with status '" + status + "' to show.");
+            }
+            return employeesByStatus;
         }
-        return employeeResponses;
+        return employees;
     }
 
     @Override
     public EmployeeResponse employeeById(Integer employeeId) {
         if (this.employeeRepository.existsById(employeeId)) {
-            return this.employeeMapper.toEmployeeResponse((this.employeeRepository.getById(employeeId)));
+            return this.employeeMapper.toEmployeeResponse(this.employeeRepository.getById(employeeId));
         }
         throw new NotFoundException("Employee with ID '" + employeeId + "' not found.");
     }
 
     @Override
-    public List<EmployeeSimple> allEmployeesByStatus(StatusEnum status) {
-        List<EmployeeSimple> employeeResponses = this.employeeMapper.toEmployeeSimpleList((this.employeeRepository.findEmployeesByStatus(status)));
-        if (employeeResponses.isEmpty()) {
-            throw new NotFoundException("There aren't employees to show.");
-        }
-        return employeeResponses;
-    }
-
-    @Override
-    public List<EmployeeSimple> employeesByBarberShop(Integer barberShopId) {
-        List<Employee> employees = new ArrayList<>();
-        for (Employee employee : this.employeeRepository.findAll()) {
-            if ((employee.getBarberShop() != null)) {
-                if ((employee.getBarberShop().getBarberShopId().equals(barberShopId))) {
-                    employees.add(employee);
+    public List<EmployeeSimple> employeesByBarberShop(Integer barberShopId, StatusEnum status) {
+        List<EmployeeSimple> employeesByBarberShop = this.employeeMapper.toEmployeeSimpleList(this.employeeRepository.findEmployeesByBarberShop(barberShopId));
+        if (employeesByBarberShop.isEmpty()) {
+            throw new NotFoundException("There aren't employees at this barbershop.");
+        } else if (status != null) {
+            List<EmployeeSimple> employeesByStatus = new ArrayList<>();
+            for (EmployeeSimple employee : employeesByBarberShop) {
+                if ((employee.getStatus().equals(status))) {
+                    employeesByStatus.add(employee);
                 }
             }
+            if (employeesByStatus.isEmpty()) {
+                throw new NotFoundException("There aren't employees with status '" + status + "' at this barbershop.");
+            }
+            return employeesByStatus;
+//        List<EmployeeSimple> employees = new ArrayList<>();
+//        for (Employee employee : this.employeeRepository.findAll()) {
+//            if ((employee.getBarberShop() != null)) {
+//                if ((employee.getBarberShop().getBarberShopId().equals(barberShopId))) {
+//                    employees.add(employee);
+//                }
+//            }
+//        }
         }
-        if (employees.isEmpty()) {
-            throw new NotFoundException("There aren't employees at this barbershop.");
-        }
-        return this.employeeMapper.toEmployeeSimpleList(employees);
+        return employeesByBarberShop;
     }
 
-    @Override
-    public List<EmployeeSimple> employeesByBarberShopAndStatus(Integer barberShopId, StatusEnum status) {
-        List<EmployeeSimple> employees = new ArrayList<>();
-        for(EmployeeSimple employee : this.employeesByBarberShop(barberShopId)){
-            if((employee.getStatus().equals(status))){
-                employees.add(employee);
-            }
-        }
-        if(employees.isEmpty()){
-            throw new NotFoundException("There aren't employees at this barbershop.");
-        }
-        return employees;
-    }
+//    @Override
+//    public List<EmployeeSimple> employeesByBarberShopAndStatus(Integer barberShopId, StatusEnum status) {
+//        List<EmployeeSimple> employees = new ArrayList<>();
+//        for (EmployeeSimple employee : this.employeesByBarberShop(barberShopId)) {
+//            if ((employee.getStatus().equals(status))) {
+//                employees.add(employee);
+//            }
+//        }
+//        if (employees.isEmpty()) {
+//            throw new NotFoundException("There aren't employees at this barbershop.");
+//        }
+//        return employees;
+//    }
 
     @Override
     public void deleteEmployee(Integer employeeId) {

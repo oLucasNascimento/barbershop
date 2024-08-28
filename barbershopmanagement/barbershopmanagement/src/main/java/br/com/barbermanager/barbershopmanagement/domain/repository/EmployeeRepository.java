@@ -17,4 +17,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     @Query("SELECT e FROM Employee e WHERE e.status = :status")
     List<Employee> findEmployeesByStatus(StatusEnum status);
 
+    @Query("SELECT e FROM Employee e WHERE e.employeeId = :employeeId")
+    Employee getEmployeeById(Integer employeeId);
+
+    @Query("SELECT e FROM Employee e WHERE e.barberShop.barberShopId = :barberShopId")
+    List<Employee> findEmployeesByBarberShop(Integer barberShopId);
+
 }

@@ -58,22 +58,20 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<ClientSimple> allClients() {
-        List<ClientSimple> clientResponses = this.clientMapper.toClientSimpleList((this.clientRepository.findAll()));
-        if (clientResponses.isEmpty()) {
-            throw new NotFoundException("There aren't clients to show.");
-        }
-        return clientResponses;
-    }
-
-    @Override
-    public List<ClientSimple> allclientsByStatus(StatusEnum status) {
-        List<ClientSimple> clients = this.clientMapper.toClientSimpleList((this.clientRepository.findClientsByStatus(status)));
+    public List<ClientSimple> allClients(StatusEnum status) {
+        List<ClientSimple> clients = this.clientMapper.toClientSimpleList((this.clientRepository.findAll()));
         if (clients.isEmpty()) {
             throw new NotFoundException("There aren't clients to show.");
+        } else if (status != null) {
+            List<ClientSimple> clientsByStatus = this.clientMapper.toClientSimpleList((this.clientRepository.findClientsByStatus(status)));
+            if (clientsByStatus.isEmpty()) {
+                throw new NotFoundException("There aren't clients with status '" + status + "'.");
+            }
+            return clientsByStatus;
         }
         return clients;
     }
+
 
     @Override
     public ClientResponse clientById(Integer clientId) {
@@ -84,20 +82,21 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<ClientSimple> clientsByBarberShop(Integer barberShopId) {
-        return this.clientMapper.toClientSimpleList(this.clientRepository.findClientsByBarberShop(barberShopId));
-    }
-
-    @Override
-    public List<ClientSimple> clientsByBarberShopAndStatus(Integer barberShopId, StatusEnum status) {
-        List<ClientSimple> clients = new ArrayList<>();
-        for(ClientSimple client : this.clientsByBarberShop(barberShopId)){
-            if((client.getStatus().equals(status))){
-                clients.add(client);
-            }
-        }
-        if(clients.isEmpty()){
+    public List<ClientSimple> clientsByBarberShop(Integer barberShopId, StatusEnum status) {
+        List<ClientSimple> clients = this.clientMapper.toClientSimpleList(this.clientRepository.findClientsByBarberShop(barberShopId));
+        if (clients.isEmpty()) {
             throw new NotFoundException("There aren't clients at this barbershop.");
+        } else if (status != null) {
+            List<ClientSimple> clientsByStatus = new ArrayList<>();
+            for (ClientSimple client : clients) {
+                if ((client.getStatus().equals(status))) {
+                    clientsByStatus.add(client);
+                }
+            }
+            if (clientsByStatus.isEmpty()) {
+                throw new NotFoundException("There aren't clients with status '" + status + "' at this barbershop.");
+            }
+            return clientsByStatus;
         }
         return clients;
     }

@@ -1,12 +1,9 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
-import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
+import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingService;
 import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +24,7 @@ public class SchedulingController {
 
     @GetMapping("/all")
     public ResponseEntity<List<SchedulingResponse>> allSchedulings(@RequestParam(required = false) StatusEnum status) {
-        if (status == null) {
-            return ResponseEntity.ok(this.schedulingService.allSchedulings());
-        }
-        return ResponseEntity.ok(this.schedulingService.allSchedulingsByStatus(status));
+        return ResponseEntity.ok(this.schedulingService.allSchedulings(status));
     }
 
     @GetMapping("/{schedulingId}")

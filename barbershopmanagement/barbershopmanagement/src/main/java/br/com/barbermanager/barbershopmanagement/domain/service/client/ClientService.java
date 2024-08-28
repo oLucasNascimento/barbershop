@@ -5,6 +5,7 @@ import br.com.barbermanager.barbershopmanagement.api.response.client.ClientRespo
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface ClientService {
 
     ClientResponse createClient(ClientRequest newClient);
 
-    List<ClientSimple> allClients();
+    List<ClientSimple> allClients(StatusEnum status);
 
     ClientResponse clientById(Integer clientId);
 
@@ -22,11 +23,7 @@ public interface ClientService {
 
     ClientResponse updateClient(Integer clientId, ClientRequest updatedClient);
 
-    List<ClientSimple> allclientsByStatus(StatusEnum status);
-
-    List<ClientSimple> clientsByBarberShop(Integer barberShopId);
-
-    List<ClientSimple> clientsByBarberShopAndStatus(Integer barberShopId, StatusEnum status);
+    List<ClientSimple> clientsByBarberShop(Integer barberShopId, StatusEnum status);
 
     void activeClient(Integer clientId);
 }

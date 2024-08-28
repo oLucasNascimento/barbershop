@@ -51,21 +51,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemSimple> allItems() {
+    public List<ItemSimple> allItems(StatusEnum status) {
         List<ItemSimple> itemResponses = this.itemMapper.toItemSimpleList((this.itemRepository.findAll()));
         if (itemResponses.isEmpty()) {
             throw new NotFoundException("There aren't items to show.");
+        } else if (status != null) {
+            List<ItemSimple> itemSimples = this.itemMapper.toItemSimpleList((this.itemRepository.findItemsByStatus(status)));
+            if (itemSimples.isEmpty()) {
+                throw new NotFoundException("There aren't items with status '" + status + "' to show.");
+            }
+            return itemSimples;
         }
         return itemResponses;
-    }
-
-    @Override
-    public List<ItemSimple> allItemsByStatus(StatusEnum status) {
-        List<ItemSimple> itemSimples = this.itemMapper.toItemSimpleList((this.itemRepository.findItemsByStatus(status)));
-        if (itemSimples.isEmpty()) {
-            throw new NotFoundException("There aren't items to show.");
-        }
-        return itemSimples;
     }
 
     @Override
@@ -77,24 +74,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemSimple> itemByBarberShop(Integer barberShopId) {
+    public List<ItemSimple> itemByBarberShop(Integer barberShopId, StatusEnum status) {
         List<ItemSimple> items = this.itemMapper.toItemSimpleList((this.itemRepository.itemByBarberShop(barberShopId)));
         if (items.isEmpty()) {
             throw new NotFoundException("There aren't items at this barbershop");
-        }
-        return items;
-    }
-
-    @Override
-    public List<ItemSimple> itemsByBarberShopAndStatus(Integer barberShopId, StatusEnum status) {
-        List<ItemSimple> items = new ArrayList<>();
-        for(ItemSimple item : this.itemByBarberShop(barberShopId)){
-            if((item.getStatus().equals(status))){
-                items.add(item);
+        } else if (status != null) {
+            List<ItemSimple> itemsByStatus = new ArrayList<>();
+            for (ItemSimple item : items) {
+                if ((item.getStatus().equals(status))) {
+                    itemsByStatus.add(item);
+                }
             }
-        }
-        if(items.isEmpty()){
-            throw new NotFoundException("There aren't items at this barbershop.");
+            if (itemsByStatus.isEmpty()) {
+                throw new NotFoundException("There aren't items with status '" + status + "' at this barbershop.");
+            }
+            return itemsByStatus;
         }
         return items;
     }

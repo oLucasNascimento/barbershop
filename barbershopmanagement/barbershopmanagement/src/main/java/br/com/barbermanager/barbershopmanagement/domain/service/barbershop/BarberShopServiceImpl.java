@@ -65,45 +65,53 @@ public class BarberShopServiceImpl implements BarberShopService {
     }
 
     @Override
-    public List<BarberShopSimple> allBarberShops() {
+    public List<BarberShopSimple> allBarberShops(StatusEnum status) {
         List<BarberShopSimple> barbershops = this.barberShopMapper.toBarberShopSimpleList((this.barberShopRepository.findAll()));
         if (barbershops.isEmpty()) {
             throw new NotFoundException("There aren't barbershops to show");
+        } else if (status != null) {
+            List<BarberShopSimple> barberShopsByStatus = this.barberShopMapper.toBarberShopSimpleList((this.barberShopRepository.findBarberShopsByStatus(status)));
+            if (barberShopsByStatus.isEmpty()){
+                throw new NotFoundException("There aren't barber shops with status '" + status + "'.");
+            }
+            return barberShopsByStatus;
         }
         return barbershops;
     }
 
     @Override
-    public List<BarberShopSimple> allBarberShopsByStatus(StatusEnum status) {
-        List<BarberShopSimple> barberShops = this.barberShopMapper.toBarberShopSimpleList((this.barberShopRepository.findBarberShopsByStatus(status)));
-        if (barberShops.isEmpty()) {
-            throw new NotFoundException("There aren't barber shops to show.");
-        }
-        return barberShops;
-    }
-
-    @Override
-    public List<BarberShopSimple> barberShopsByClient(Integer clientId) {
+    public List<BarberShopSimple> barberShopsByClient(Integer clientId, StatusEnum status) {
         List<BarberShopSimple> schedulings = this.barberShopMapper.toBarberShopSimpleList(this.barberShopRepository.findBarberShopsByClients(clientId));
-        if(schedulings.isEmpty()){
+        if (schedulings.isEmpty()) {
             throw new NotFoundException("There aren't barber shops to show.");
+        } else if (status != null) {
+            List<BarberShopSimple> barberShops = new ArrayList<>();
+            for (BarberShopSimple barberShop : schedulings) {
+                if ((barberShop.getStatus().equals(status))) {
+                    barberShops.add(barberShop);
+                }
+            }
+            if (barberShops.isEmpty()) {
+                throw new NotFoundException("There aren't barber shops with status '" + status + "' for this client.");
+            }
+            return barberShops;
         }
         return schedulings;
     }
 
-    @Override
-    public List<BarberShopSimple> barberShopsByClientAndStatus(Integer clientId, StatusEnum status) {
-        List<BarberShopSimple> barberShops = new ArrayList<>();
-        for(BarberShopSimple barberShop : this.barberShopsByClient(clientId)){
-            if((barberShop.getStatus().equals(status))){
-                barberShops.add(barberShop);
-            }
-        }
-        if(barberShops.isEmpty()){
-            throw new NotFoundException("There aren't barber shops with status '" + status + "' for this client.");
-        }
-        return barberShops;
-    }
+//    @Override
+//    public List<BarberShopSimple> barberShopsByClientAndStatus(Integer clientId, StatusEnum status) {
+//        List<BarberShopSimple> barberShops = new ArrayList<>();
+//        for (BarberShopSimple barberShop : this.barberShopsByClient(clientId)) {
+//            if ((barberShop.getStatus().equals(status))) {
+//                barberShops.add(barberShop);
+//            }
+//        }
+//        if (barberShops.isEmpty()) {
+//            throw new NotFoundException("There aren't barber shops with status '" + status + "' for this client.");
+//        }
+//        return barberShops;
+//    }
 
     @Override
     public BarberShopResponse barberShopById(Integer barberShopId) {

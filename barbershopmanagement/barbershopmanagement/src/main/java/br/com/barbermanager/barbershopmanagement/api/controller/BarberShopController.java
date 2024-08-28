@@ -27,23 +27,13 @@ public class BarberShopController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<BarberShopSimple>> allBarberShops() {
-        return ResponseEntity.ok(this.barberShopService.allBarberShops());
-    }
-
-    @GetMapping("/all/status")
-    public ResponseEntity<List<BarberShopSimple>> barberShopsByStatus(@RequestParam StatusEnum status){
-        return ResponseEntity.ok(this.barberShopService.allBarberShopsByStatus(status));
+    public ResponseEntity<List<BarberShopSimple>> allBarberShops(@RequestParam(required = false) StatusEnum status) {
+        return ResponseEntity.ok(this.barberShopService.allBarberShops(status));
     }
 
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<BarberShopSimple>> clientsByBarberShop(@PathVariable Integer clientId){
-        return ResponseEntity.ok(this.barberShopService.barberShopsByClient(clientId));
-    }
-
-    @GetMapping("/client/{clientId}/status")
-    public ResponseEntity<List<BarberShopSimple>> clientsByBarberShopAndStatus(@PathVariable Integer clientId, @RequestParam StatusEnum status){
-        return ResponseEntity.ok(this.barberShopService.barberShopsByClientAndStatus(clientId, status));
+    public ResponseEntity<List<BarberShopSimple>> clientsByBarberShop(@RequestParam(required = false) StatusEnum status, @PathVariable Integer clientId){
+        return ResponseEntity.ok(this.barberShopService.barberShopsByClient(clientId, status));
     }
 
     @GetMapping("/{barberShopId}")

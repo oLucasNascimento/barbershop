@@ -26,14 +26,9 @@ public class EmployeeController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<EmployeeSimple>> allEmployees() {
-        return ResponseEntity.ok(this.employeeService.allEmployees());
+    public ResponseEntity<List<EmployeeSimple>> allEmployees(@RequestParam(required = false) StatusEnum status) {
+        return ResponseEntity.ok(this.employeeService.allEmployees(status));
     }
-
-    @GetMapping("/all/status")
-    public ResponseEntity<List<EmployeeSimple>> employeesByStatus(@RequestParam StatusEnum status){
-        return ResponseEntity.ok(this.employeeService.allEmployeesByStatus(status));
-        }
 
     @GetMapping("/{employeeId}")
     public ResponseEntity<EmployeeResponse> employeeById(@PathVariable Integer employeeId) {
@@ -41,13 +36,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/barbershop/{barberShopId}")
-    public ResponseEntity<List<EmployeeSimple>> employeesByBarberShop(@PathVariable Integer barberShopId) {
-        return ResponseEntity.ok(this.employeeService.employeesByBarberShop(barberShopId));
-    }
-
-    @GetMapping("/barbershop/{barberShopId}/status")
-    public ResponseEntity<List<EmployeeSimple>> employeesByBarberShopAndStatus(@PathVariable Integer barberShopId, @RequestParam StatusEnum status) {
-        return ResponseEntity.ok(this.employeeService.employeesByBarberShopAndStatus(barberShopId, status));
+    public ResponseEntity<List<EmployeeSimple>> employeesByBarberShop(@RequestParam(required = false) StatusEnum status, @PathVariable Integer barberShopId) {
+        return ResponseEntity.ok(this.employeeService.employeesByBarberShop(barberShopId, status));
     }
 
     @DeleteMapping("/delete/{employeeId}")

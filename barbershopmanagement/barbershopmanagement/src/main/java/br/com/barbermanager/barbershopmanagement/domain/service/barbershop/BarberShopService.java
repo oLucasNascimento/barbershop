@@ -16,7 +16,7 @@ public interface BarberShopService {
 
     BarberShopResponse createBarberShop(BarberShopRequest newBarberShop);
 
-    List<BarberShopSimple> allBarberShops();
+    List<BarberShopSimple> allBarberShops(StatusEnum status);
 
     void deleteBarberShop(Integer barberShopId);
 
@@ -30,11 +30,9 @@ public interface BarberShopService {
 
     void dismissEmployee(Integer barberShopId, Integer employeeId);
 
-    List<BarberShopSimple> allBarberShopsByStatus(StatusEnum status);
+    List<BarberShopSimple> barberShopsByClient(Integer clientId, StatusEnum status);
 
-    List<BarberShopSimple> barberShopsByClient(Integer clientId);
-
-    List<BarberShopSimple> barberShopsByClientAndStatus(Integer barberShopId, StatusEnum status);
+//    List<BarberShopSimple> barberShopsByClientAndStatus(Integer barberShopId, StatusEnum status);
 
     void activeBarberShop(Integer barberShopId);
 }

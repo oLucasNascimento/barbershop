@@ -11,7 +11,7 @@ public interface SchedulingService {
 
     SchedulingResponse newScheduling(SchedulingRequest newScheduling);
 
-    List<SchedulingResponse> allSchedulings();
+    List<SchedulingResponse> allSchedulings(StatusEnum status);
 
     SchedulingResponse schedulingById(Integer schedulingId);
 
@@ -19,7 +19,7 @@ public interface SchedulingService {
 
     SchedulingResponse updateScheduling(Integer schedulingId, SchedulingRequest schedulingUpdated);
 
-    List<SchedulingResponse> allSchedulingsByStatus(StatusEnum status);
+//    List<SchedulingResponse> allSchedulingsByStatus(StatusEnum status);
 
     void finishScheduling(Integer schedulingId);
 

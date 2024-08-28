@@ -1,9 +1,6 @@
 package br.com.barbermanager.barbershopmanagement.exception.handler;
 
-import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
-import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
-import br.com.barbermanager.barbershopmanagement.exception.BadRequestException;
-import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
+import br.com.barbermanager.barbershopmanagement.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -38,6 +35,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AlreadyActiveException.class)
     private ResponseEntity<RestErrorMessage> alreadyActiveException(AlreadyActiveException exception){
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.CONFLICT, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
+    }
+
+    @ExceptionHandler(InactiveException.class)
+    private ResponseEntity<RestErrorMessage> inactiveException(InactiveException exception){
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.CONFLICT, exception.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
     }

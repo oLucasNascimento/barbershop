@@ -27,13 +27,8 @@ public class ClientController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ClientSimple>> allClients() {
-        return ResponseEntity.ok(this.clientService.allClients());
-    }
-
-    @GetMapping("/all/status")
-    public ResponseEntity<List<ClientSimple>> clientsByStatus(@RequestParam StatusEnum status){
-        return ResponseEntity.ok(this.clientService.allclientsByStatus(status));
+    public ResponseEntity<List<ClientSimple>> allClients(@RequestParam(required = false) StatusEnum status) {
+        return ResponseEntity.ok(this.clientService.allClients(status));
     }
 
     @GetMapping("/{clientId}")
@@ -42,13 +37,8 @@ public class ClientController {
     }
 
     @GetMapping("/barber-shop/{barberShopId}")
-    public ResponseEntity<List<ClientSimple>> clientsByBarberShop(@PathVariable Integer barberShopId){
-        return ResponseEntity.ok(this.clientService.clientsByBarberShop(barberShopId));
-    }
-
-    @GetMapping("/barber-shop/{barberShopId}/status")
-    public ResponseEntity<List<ClientSimple>> clientsByBarberShopAndStatus(@PathVariable Integer barberShopId, @RequestParam StatusEnum status){
-        return ResponseEntity.ok(this.clientService.clientsByBarberShopAndStatus(barberShopId, status));
+    public ResponseEntity<List<ClientSimple>> clientsByBarberShop(@RequestParam(required = false) StatusEnum status, @PathVariable Integer barberShopId){
+        return ResponseEntity.ok(this.clientService.clientsByBarberShop(barberShopId, status));
     }
 
     @DeleteMapping("/delete/{clientId}")

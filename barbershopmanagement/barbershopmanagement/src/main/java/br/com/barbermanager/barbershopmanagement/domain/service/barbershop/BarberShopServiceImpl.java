@@ -172,6 +172,9 @@ public class BarberShopServiceImpl implements BarberShopService {
         BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
         for (Item itemUpdt : newItems) {
             Item existingItem = this.itemMapper.toItem(this.itemService.itemById(itemUpdt.getItemId()));
+            if(existingItem.getBarberShop() != null){
+                throw new AlreadyActiveException("Item with ID '" + existingItem.getItemId() + "' belongs to other barber shop.");
+            }
             existingItem.setBarberShop(barberShop);
             this.itemService.updateItem(existingItem.getItemId(), (this.itemMapper.toItemRequest(existingItem)));
         }
@@ -244,6 +247,9 @@ public class BarberShopServiceImpl implements BarberShopService {
         BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
         for (Employee employeeUpdt : updatedEmployees) {
             Employee existingEmployee = this.employeeMapper.toEmployee((this.employeeService.employeeById(employeeUpdt.getEmployeeId())));
+            if(existingEmployee.getBarberShop() != null){
+                throw new AlreadyActiveException("Employee with ID '" + existingEmployee.getEmployeeId() + "' belongs to other barber shop.");
+            }
             existingEmployee.setBarberShop(barberShop);
             existingEmployee.setStatus(StatusEnum.ACTIVE);
             this.employeeService.updateEmployee(existingEmployee.getEmployeeId(), (this.employeeMapper.toEmployeeRequest(existingEmployee)));

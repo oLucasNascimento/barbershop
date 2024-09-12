@@ -88,31 +88,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 throw new NotFoundException("There aren't employees with status '" + status + "' at this barbershop.");
             }
             return employeesByStatus;
-//        List<EmployeeSimple> employees = new ArrayList<>();
-//        for (Employee employee : this.employeeRepository.findAll()) {
-//            if ((employee.getBarberShop() != null)) {
-//                if ((employee.getBarberShop().getBarberShopId().equals(barberShopId))) {
-//                    employees.add(employee);
-//                }
-//            }
-//        }
         }
         return employeesByBarberShop;
     }
-
-//    @Override
-//    public List<EmployeeSimple> employeesByBarberShopAndStatus(Integer barberShopId, StatusEnum status) {
-//        List<EmployeeSimple> employees = new ArrayList<>();
-//        for (EmployeeSimple employee : this.employeesByBarberShop(barberShopId)) {
-//            if ((employee.getStatus().equals(status))) {
-//                employees.add(employee);
-//            }
-//        }
-//        if (employees.isEmpty()) {
-//            throw new NotFoundException("There aren't employees at this barbershop.");
-//        }
-//        return employees;
-//    }
 
     @Override
     public void deleteEmployee(Integer employeeId) {

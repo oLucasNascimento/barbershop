@@ -1,18 +1,23 @@
 package br.com.barbermanager.barbershopmanagement.domain.service.scheduling;
 
+import br.com.barbermanager.barbershopmanagement.api.controller.BarberShopController;
 import br.com.barbermanager.barbershopmanagement.api.mapper.EmployeeMapper;
 import br.com.barbermanager.barbershopmanagement.api.mapper.SchedulingMapper;
+import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
+import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
+import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.repository.SchedulingRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import br.com.barbermanager.barbershopmanagement.domain.service.client.ClientService;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
@@ -49,6 +54,9 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Autowired
     private BarberShopService barberShopService;
 
+    @Autowired
+    private ClientService clientService;
+
 //    private Boolean schedulingExists(Integer schedulingId) {
 //        return this.schedulingRepository.existsById(schedulingId);
 //    }
@@ -60,7 +68,6 @@ public class SchedulingServiceImpl implements SchedulingService {
         scheduling.setStatus(StatusEnum.SCHEDULED);
         return this.schedulingMapper.toSchedulingResponse((schedulingRepository.save(scheduling)));
     }
-
 
     private void isSchedulingAvailable(Scheduling scheduling) {
         if (scheduling.getBarberShop() != null) {

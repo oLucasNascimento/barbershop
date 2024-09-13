@@ -3,6 +3,7 @@ package br.com.barbermanager.barbershopmanagement.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,9 @@ public class BarberShop {
     private String adress;
     private String email;
     private String phone;
+
+    private LocalTime openingTime;
+    private LocalTime closingTime;
 
     private StatusEnum status;
 
@@ -86,6 +90,22 @@ public class BarberShop {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public LocalTime getOpeningTime() {
+        return openingTime;
+    }
+
+    public void setOpeningTime(LocalTime openingTime) {
+        this.openingTime = openingTime;
+    }
+
+    public LocalTime getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(LocalTime closingTime) {
+        this.closingTime = closingTime;
     }
 
     public StatusEnum getStatus() {

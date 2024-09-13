@@ -24,6 +24,7 @@ import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsExceptio
 import br.com.barbermanager.barbershopmanagement.exception.BadRequestException;
 import br.com.barbermanager.barbershopmanagement.exception.InactiveException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.beans.PropertyDescriptor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,8 +72,12 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     private void isSchedulingAvailable(Scheduling scheduling) {
+
         if (scheduling.getBarberShop() != null) {
             BarberShopResponse barberShop = this.barberShopService.barberShopById(scheduling.getBarberShop().getBarberShopId());
+            scheduling.getBarberShop().setOpeningTime(barberShop.getOpeningTime());
+            scheduling.getBarberShop().setClosingTime(barberShop.getClosingTime());
+
             if (barberShop.getStatus().equals(StatusEnum.INACTIVE)) {
                 throw new InactiveException("The barber shop informated is inactive");
             }
@@ -240,7 +246,6 @@ public class SchedulingServiceImpl implements SchedulingService {
                 schedulingUpdt.setBarberShop(null);
                 schedulingUpdt.setClient(null);
 
-//                this.isSchedulingAvailable(schedulingUpdt);
 
                 Optional.ofNullable(schedulingUpdt.getEmployee()).ifPresent(sch -> {
                     this.checkEmployee(schedulingUpdt.getEmployee().getEmployeeId(), scheduling.getBarberShop().getBarberShopId());
@@ -260,6 +265,8 @@ public class SchedulingServiceImpl implements SchedulingService {
                 schedulingUpdt.setItems(scheduling.getItems());
                 schedulingUpdt.setEmployee(scheduling.getEmployee());
                 Optional.ofNullable(schedulingUpdt.getSchedulingTime()).ifPresent(time -> {
+
+
                     this.checkSchedulingTime(schedulingUpdt);
                 });
 
@@ -302,13 +309,25 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     private void checkSchedulingTime(Scheduling scheduling) {
+
+
         LocalDate date = scheduling.getSchedulingTime().toLocalDate();
 
         List<ItemResponse> newItems = scheduling.getItems().stream().map(item -> this.itemService.itemById(item.getItemId())).collect(Collectors.toList());
         LocalDateTime newStart = scheduling.getSchedulingTime();
         LocalDateTime newEnd = scheduling.getSchedulingTime().plusMinutes(newItems.stream().mapToInt(ItemResponse::getTime).sum());
 
-        for (Scheduling schedulingOld : this.schedulingRepository.findAllByDate(date)) {
+//        LocalTime openingTime = scheduling.getBarberShop().getOpeningTime();
+//        LocalTime closingTime = scheduling.getBarberShop().getClosingTime();
+
+        LocalDateTime openingTime = LocalDateTime.of(newStart.toLocalDate(), scheduling.getBarberShop().getOpeningTime());
+        LocalDateTime closingTime = LocalDateTime.of(newStart.toLocalDate(), scheduling.getBarberShop().getClosingTime());
+
+        if (newStart.isBefore(openingTime) || newEnd.isAfter(closingTime) || newStart.isAfter(newEnd)) {
+            throw new AlreadyExistsException("This time isn't available for scheduling");
+        }
+
+            for (Scheduling schedulingOld : this.schedulingRepository.findAllByDate(date)) {
             List<ItemResponse> existingItems = schedulingOld.getItems().stream().map(item -> this.itemService.itemById(item.getItemId())).collect(Collectors.toList());
 
             LocalDateTime existingStart = schedulingOld.getSchedulingTime();
@@ -318,6 +337,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                 throw new AlreadyExistsException("This time isn't available for scheduling");
             }
         }
+
     }
 
     private String[] searchEmptyFields(Object source) {

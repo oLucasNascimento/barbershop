@@ -2,12 +2,16 @@ package br.com.barbermanager.barbershopmanagement.api.response.barbershop;
 
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 
+import java.time.LocalTime;
+
 public class BarberShopSimple {
 
     private Integer barberShopId;
     private String name;
     private String phone;
     private String adress;
+    private LocalTime openingTime;
+    private LocalTime closingTime;
     private StatusEnum status;
 
     public Integer getBarberShopId() {
@@ -40,6 +44,22 @@ public class BarberShopSimple {
 
     public void setAdress(String adress) {
         this.adress = adress;
+    }
+
+    public LocalTime getOpeningTime() {
+        return openingTime;
+    }
+
+    public void setOpeningTime(LocalTime openingTime) {
+        this.openingTime = openingTime;
+    }
+
+    public LocalTime getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(LocalTime closingTime) {
+        this.closingTime = closingTime;
     }
 
     public StatusEnum getStatus() {

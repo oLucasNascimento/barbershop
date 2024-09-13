@@ -11,8 +11,8 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {
 
-    @Query("SELECT i FROM Item i WHERE i.name = :name AND i.price = :price")
-    Item existingItem(String name, Double price);
+    @Query("SELECT i FROM Item i WHERE i.name = :name AND i.price = :price AND i.barberShop.barberShopId = :barberShopId")
+    Item existingItem(String name, Double price, Integer barberShopId);
 
     @Query("SELECT i FROM Item i WHERE i.barberShop.barberShopId = :barberShopId")
     List<Item> itemByBarberShop(Integer barberShopId);

@@ -21,10 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -43,12 +40,17 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public ItemResponse createItem(ItemRequest newItem) {
-        if ((itemRepository.existingItem(newItem.getName(), newItem.getPrice())) == null) {
+        if (newItem.getBarberShop() == null) {
+            throw new NotFoundException("A barber shop must be informed.");
+        }
+
+        if ((itemRepository.existingItem(newItem.getName(), newItem.getPrice(), newItem.getBarberShop().getBarberShopId())) == null) {
             newItem.setStatus(StatusEnum.ACTIVE);
             return this.itemMapper.toItemResponse((this.itemRepository.save((this.itemMapper.toItem(newItem)))));
         }
         throw new NotFoundException("Item with name '" + newItem.getName() + "' and price '" + newItem.getPrice() + "' already exists.");
     }
+
 
     @Override
     public List<ItemSimple> allItems(StatusEnum status) {

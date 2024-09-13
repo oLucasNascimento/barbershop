@@ -8,6 +8,7 @@ import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
@@ -19,6 +20,8 @@ public class BarberShopResponse {
     private String adress;
     private String email;
     private String phone;
+    private LocalTime openingTime;
+    private LocalTime closingTime;
     private StatusEnum status;
 
     private List<ItemSimple> items;
@@ -72,6 +75,22 @@ public class BarberShopResponse {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public LocalTime getOpeningTime() {
+        return openingTime;
+    }
+
+    public void setOpeningTime(LocalTime openingTime) {
+        this.openingTime = openingTime;
+    }
+
+    public LocalTime getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(LocalTime closingTime) {
+        this.closingTime = closingTime;
     }
 
     public StatusEnum getStatus() {

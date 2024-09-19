@@ -26,54 +26,55 @@ public class BarberShopController {
         return ResponseEntity.ok(this.barberShopService.createBarberShop(newBarberShop));
     }
 
+//
     @GetMapping("/all")
     public ResponseEntity<List<BarberShopSimple>> allBarberShops(@RequestParam(required = false) StatusEnum status) {
         return ResponseEntity.ok(this.barberShopService.allBarberShops(status));
     }
-
-    @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<BarberShopSimple>> clientsByBarberShop(@RequestParam(required = false) StatusEnum status, @PathVariable Integer clientId){
-        return ResponseEntity.ok(this.barberShopService.barberShopsByClient(clientId, status));
-    }
-
-    @GetMapping("/{barberShopId}")
-    public ResponseEntity<BarberShopResponse> barberShopById(@PathVariable Integer barberShopId) {
-        return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
-    }
-
-    @DeleteMapping("/delete/{barberShopId}")
-    public ResponseEntity deleteBarberShop(@PathVariable Integer barberShopId) {
-        this.barberShopService.deleteBarberShop(barberShopId);
-        return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping("/active-barbershop/{barberShopId}")
-    public ResponseEntity activeBarberShop(@PathVariable Integer barberShopId){
-        this.barberShopService.activeBarberShop(barberShopId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/dismiss/{barberShopId}/{employeeId}")
-    public ResponseEntity dismissEmployee(@PathVariable Integer barberShopId, @PathVariable Integer employeeId) {
-        this.barberShopService.dismissEmployee(barberShopId, employeeId);
-        return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping("/update/{barberShopId}")
-    public ResponseEntity<BarberShopResponse> updateBarberShop(@PathVariable Integer barberShopId, @RequestBody BarberShopRequest updatedBarberShop) {
-        this.barberShopService.updateBarberShop(barberShopId, updatedBarberShop);
-        return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
-    }
-
-    @PatchMapping("/insert-client/{barberShopId}")
-    public ResponseEntity<BarberShopResponse> insertNewClient(@PathVariable Integer barberShopId, @RequestBody BarberShopRequest updatedBarberShop) {
-        return ResponseEntity.ok(this.barberShopService.udpateClientAtBarberShop(barberShopId, updatedBarberShop));
-    }
-
-
-    @DeleteMapping("/remove-client/{barberShopId}/{clientId}")
-    public ResponseEntity removeClient(@PathVariable Integer barberShopId, @PathVariable Integer clientId) {
-        this.barberShopService.removeClient(barberShopId, clientId);
-        return ResponseEntity.ok().build();
-    }
+//
+//    @GetMapping("/client/{clientId}")
+//    public ResponseEntity<List<BarberShopSimple>> clientsByBarberShop(@RequestParam(required = false) StatusEnum status, @PathVariable Integer clientId){
+//        return ResponseEntity.ok(this.barberShopService.barberShopsByClient(clientId, status));
+//    }
+//
+//    @GetMapping("/{barberShopId}")
+//    public ResponseEntity<BarberShopResponse> barberShopById(@PathVariable Integer barberShopId) {
+//        return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
+//    }
+//
+//    @DeleteMapping("/delete/{barberShopId}")
+//    public ResponseEntity deleteBarberShop(@PathVariable Integer barberShopId) {
+//        this.barberShopService.deleteBarberShop(barberShopId);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @PatchMapping("/active-barbershop/{barberShopId}")
+//    public ResponseEntity activeBarberShop(@PathVariable Integer barberShopId){
+//        this.barberShopService.activeBarberShop(barberShopId);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @DeleteMapping("/dismiss/{barberShopId}/{employeeId}")
+//    public ResponseEntity dismissEmployee(@PathVariable Integer barberShopId, @PathVariable Integer employeeId) {
+//        this.barberShopService.dismissEmployee(barberShopId, employeeId);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @PatchMapping("/update/{barberShopId}")
+//    public ResponseEntity<BarberShopResponse> updateBarberShop(@PathVariable Integer barberShopId, @RequestBody BarberShopRequest updatedBarberShop) {
+//        this.barberShopService.updateBarberShop(barberShopId, updatedBarberShop);
+//        return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
+//    }
+//
+//    @PatchMapping("/insert-client/{barberShopId}")
+//    public ResponseEntity<BarberShopResponse> insertNewClient(@PathVariable Integer barberShopId, @RequestBody BarberShopRequest updatedBarberShop) {
+//        return ResponseEntity.ok(this.barberShopService.udpateClientAtBarberShop(barberShopId, updatedBarberShop));
+//    }
+//
+//
+//    @DeleteMapping("/remove-client/{barberShopId}/{clientId}")
+//    public ResponseEntity removeClient(@PathVariable Integer barberShopId, @PathVariable Integer clientId) {
+//        this.barberShopService.removeClient(barberShopId, clientId);
+//        return ResponseEntity.ok().build();
+//    }
 }

@@ -59,9 +59,9 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Autowired
     private ClientService clientService;
 
-//    private Boolean schedulingExists(Integer schedulingId) {
-//        return this.schedulingRepository.existsById(schedulingId);
-//    }
+    private Boolean schedulingExists(Integer schedulingId) {
+        return this.schedulingRepository.existsById(schedulingId);
+    }
 
     @Override
     public SchedulingResponse newScheduling(SchedulingRequest newScheduling) {
@@ -72,9 +72,10 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     private void isSchedulingAvailable(Scheduling scheduling) {
-
+        BarberShopResponse barberShop = this.barberShopService.barberShopById(scheduling.getBarberShop().getBarberShopId());
+        System.out.println("PASSOU LISO");
         if (scheduling.getBarberShop() != null) {
-            BarberShopResponse barberShop = this.barberShopService.barberShopById(scheduling.getBarberShop().getBarberShopId());
+//            BarberShopResponse barberShop = this.barberShopService.barberShopById(scheduling.getBarberShop().getBarberShopId());
             scheduling.getBarberShop().setOpeningTime(barberShop.getOpeningTime());
             scheduling.getBarberShop().setClosingTime(barberShop.getClosingTime());
 
@@ -243,8 +244,9 @@ public class SchedulingServiceImpl implements SchedulingService {
                 if (schedulingUpdt.getClient() != null && schedulingUpdt.getClient().getClientId() != scheduling.getClient().getClientId()) {
                     throw new BadRequestException("Isn't possible to change the client for this scheduling.");
                 }
-                schedulingUpdt.setBarberShop(null);
-                schedulingUpdt.setClient(null);
+                this.isSchedulingAvailable(schedulingUpdt);
+//                schedulingUpdt.setBarberShop(null);
+//                schedulingUpdt.setClient(null);
 
 
                 Optional.ofNullable(schedulingUpdt.getEmployee()).ifPresent(sch -> {
@@ -271,7 +273,7 @@ public class SchedulingServiceImpl implements SchedulingService {
                 });
 
                 schedulingUpdt.setItems(null);
-                BeanUtils.copyProperties((this.schedulingMapper.toScheduling(schedulingUpdt)), scheduling, this.searchEmptyFields(schedulingUpdt));
+                BeanUtils.copyProperties((schedulingUpdt), scheduling, this.searchEmptyFields(schedulingUpdt));
                 return this.schedulingMapper.toSchedulingResponse((this.schedulingRepository.save(scheduling)));
             }
             throw new BadRequestException("This schedule is not available for changes");
@@ -322,6 +324,12 @@ public class SchedulingServiceImpl implements SchedulingService {
 
         LocalDateTime openingTime = LocalDateTime.of(newStart.toLocalDate(), scheduling.getBarberShop().getOpeningTime());
         LocalDateTime closingTime = LocalDateTime.of(newStart.toLocalDate(), scheduling.getBarberShop().getClosingTime());
+
+        System.out.println();
+        System.out.println(newStart + " NEW START - " + openingTime + " OPENING TIME - " + newStart.isBefore(openingTime));
+        System.out.println(newEnd +   " NEW END - " +   closingTime + " CLOSING TIME - " + newEnd.isAfter(closingTime));
+        System.out.println(newStart + " NEW START - " + newEnd +      " NEW END - " + newStart.isAfter(newEnd));
+        System.out.println(newItems.stream().mapToInt(ItemResponse::getTime).sum()  + " TEMPO ITENS");
 
         if (newStart.isBefore(openingTime) || newEnd.isAfter(closingTime) || newStart.isAfter(newEnd)) {
             throw new AlreadyExistsException("This time isn't available for scheduling");

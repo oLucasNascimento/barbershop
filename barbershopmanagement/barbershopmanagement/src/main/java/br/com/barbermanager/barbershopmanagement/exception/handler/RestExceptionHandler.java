@@ -15,6 +15,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 //        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
 //        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
 //    }
+//
+//    @ExceptionHandler(NullPointerException.class)
+//    private ResponseEntity<RestErrorMessage> nullPointerException(NullPointerException exception){
+//        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+//    }
+
     @ExceptionHandler(NotFoundException.class)
     private ResponseEntity<RestErrorMessage> notFoundException(NotFoundException exception){
         RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.NOT_FOUND, exception.getMessage());

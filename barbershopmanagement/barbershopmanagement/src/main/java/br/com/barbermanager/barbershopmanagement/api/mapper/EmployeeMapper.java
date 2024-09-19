@@ -4,43 +4,27 @@ import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRe
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
+import org.mapstruct.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class EmployeeMapper {
+@Mapper(componentModel = "spring")
+public interface EmployeeMapper {
 
-    private final ModelMapper mapper;
+    Employee toEmployee(EmployeeRequest employeeRequest);
+    Employee toEmployee(EmployeeResponse employeeRequest);
 
-    public EmployeeMapper(ModelMapper mapper) {
-        this.mapper = mapper;
-    }
+    EmployeeRequest toEmployeeRequest(Employee employee);
 
-    public Employee toEmployee(Object employeeRequest){
-        return this.mapper.map(employeeRequest, Employee.class);
-    }
+    EmployeeResponse toEmployeeResponse(Employee employee);
 
-    public EmployeeRequest toEmployeeRequest(Object employee){
-        return this.mapper.map(employee, EmployeeRequest.class);
-    }
+    EmployeeSimple toEmployeeSimple(Employee employee);
 
-    public EmployeeResponse toEmployeeResponse(Object employee){
-        return this.mapper.map(employee, EmployeeResponse.class);
-    }
+    List<EmployeeResponse> toEmployeeResponseList(List<Employee> employeeList);
 
-    public EmployeeSimple toEmployeeSimple(Object employee){
-        return this.mapper.map(employee, EmployeeSimple.class);
-    }
-
-    public List<EmployeeResponse> toEmployeeResponseList(List<Employee> employeeList){
-        return employeeList.stream().map(this::toEmployeeResponse).collect(Collectors.toList());
-    }
-
-    public List<EmployeeSimple> toEmployeeSimpleList(List<Employee> employeeList){
-        return employeeList.stream().map(this::toEmployeeSimple).collect(Collectors.toList());
-    }
+    List<EmployeeSimple> toEmployeeSimpleList(List<Employee> employeeList);
 
 }

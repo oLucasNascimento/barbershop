@@ -4,43 +4,29 @@ import br.com.barbermanager.barbershopmanagement.api.request.client.ClientReques
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
+import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class ClientMapper {
 
-    private final ModelMapper mapper;
+@Mapper(componentModel = "spring")
+public interface ClientMapper {
 
-    public ClientMapper(ModelMapper mapper) {
-        this.mapper = mapper;
-    }
+    Client toClient(ClientRequest client);
+    Client toClient(ClientResponse client);
 
-    public Client toClient(Object client){
-        return this.mapper.map(client, Client.class);
-    }
+    ClientRequest toClientRequest(Client client);
 
-    public ClientRequest toClientRequest(Object client){
-        return this.mapper.map(client, ClientRequest.class);
-    }
+    ClientResponse toClientResponse(Client client);
 
-    public ClientResponse toClientResponse(Object client){
-        return this.mapper.map(client, ClientResponse.class);
-    }
+    ClientSimple toClientSimple(Client client);
 
-    public ClientSimple toClientSimple(Object client){
-        return this.mapper.map(client, ClientSimple.class);
-    }
+    List<ClientResponse> toClientResponseList(List<Client> clientList);
 
-    public List<ClientResponse> toClientResponseList(List<Client> clientList){
-        return clientList.stream().map(this::toClientResponse).collect(Collectors.toList());
-    }
-
-    public List<ClientSimple> toClientSimpleList(List<Client> clientList){
-        return clientList.stream().map(this::toClientSimple).collect(Collectors.toList());
-    }
+    List<ClientSimple> toClientSimpleList(List<Client> clientList);
 
 }

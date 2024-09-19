@@ -9,29 +9,21 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class SchedulingMapper {
+import org.mapstruct.Mapper;
 
-    private final ModelMapper mapper;
+import java.util.List;
 
-    public SchedulingMapper(ModelMapper mapper) {
-        this.mapper = mapper;
-    }
+@Mapper(componentModel = "spring")
+public interface SchedulingMapper {
 
-    public Scheduling toScheduling(Object scheduling) {
-        return this.mapper.map(scheduling, Scheduling.class);
-    }
+    Scheduling toScheduling(SchedulingResponse scheduling);
 
-    public SchedulingRequest toSchedulingRequest(Object scheduling) {
-        return this.mapper.map(scheduling, SchedulingRequest.class);
-    }
+    Scheduling toScheduling(SchedulingRequest scheduling);
 
-    public SchedulingResponse toSchedulingResponse(Object scheduling) {
-        return this.mapper.map(scheduling, SchedulingResponse.class);
-    }
+    SchedulingRequest toSchedulingRequest(Object scheduling);
 
-    public List<SchedulingResponse> toSchedulingResponseList(List<Scheduling> schedulingList) {
-        return schedulingList.stream().map(this::toSchedulingResponse).collect(Collectors.toList());
-    }
+    SchedulingResponse toSchedulingResponse(Scheduling scheduling);
+
+    List<SchedulingResponse> toSchedulingResponseList(List<Scheduling> schedulingList);
 
 }

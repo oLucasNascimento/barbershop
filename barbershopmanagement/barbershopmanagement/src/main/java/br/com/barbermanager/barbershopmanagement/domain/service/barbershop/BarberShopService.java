@@ -15,7 +15,7 @@ public interface BarberShopService {
     Boolean barberShopExists(Integer barberShopId);
 
     BarberShopResponse createBarberShop(BarberShopRequest newBarberShop);
-
+//
     List<BarberShopSimple> allBarberShops(StatusEnum status);
 
     void deleteBarberShop(Integer barberShopId);

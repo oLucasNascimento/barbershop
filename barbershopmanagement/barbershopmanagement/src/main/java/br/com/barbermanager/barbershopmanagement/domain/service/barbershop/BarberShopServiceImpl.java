@@ -6,9 +6,6 @@ import br.com.barbermanager.barbershopmanagement.api.mapper.ItemMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.*;
 import br.com.barbermanager.barbershopmanagement.domain.repository.BarberShopRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
@@ -59,7 +56,8 @@ public class BarberShopServiceImpl implements BarberShopService {
     public BarberShopResponse createBarberShop(BarberShopRequest newBarberShop) {
         if ((this.barberShopRepository.findByEmail(newBarberShop.getEmail())) == null) {
             newBarberShop.setStatus(StatusEnum.ACTIVE);
-            return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save((this.barberShopMapper.toBarberShop(newBarberShop)))));
+            return this.barberShopMapper.toBarberShopResponse(this.barberShopMapper.toBarberShop(newBarberShop));
+//            return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save((this.barberShopMapper.toBarberShop(newBarberShop)))));
         }
         throw new AlreadyExistsException("Barber Shop with email '" + newBarberShop.getEmail() + "' already exists.");
     }

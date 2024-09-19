@@ -4,43 +4,28 @@ import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Item;
+import org.mapstruct.Mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class ItemMapper {
+@Mapper(componentModel = "spring")
+public interface ItemMapper {
 
-    private final ModelMapper mapper;
 
-    public ItemMapper(ModelMapper mapper) {
-        this.mapper = mapper;
-    }
+    Item toItem(ItemRequest itemRequest);
+    Item toItem(ItemResponse itemRequest);
 
-    public Item toItem(Object itemRequest) {
-        return this.mapper.map(itemRequest, Item.class);
-    }
+    ItemRequest toItemRequest(Item item);
 
-    public ItemRequest toItemRequest(Object item) {
-        return this.mapper.map(item, ItemRequest.class);
-    }
+    ItemResponse toItemResponse(Item item);
 
-    public ItemResponse toItemResponse(Object item) {
-        return this.mapper.map(item, ItemResponse.class);
-    }
+    ItemSimple toItemSimple(Item item);
 
-    public ItemSimple toItemSimple(Object item) {
-        return this.mapper.map(item, ItemSimple.class);
-    }
+    List<ItemResponse> toItemResponseList(List<Item> itemList);
 
-    public List<ItemResponse> toItemResponseList(List<Item> itemList) {
-        return itemList.stream().map(this::toItemResponse).collect(Collectors.toList());
-    }
-
-    public List<ItemSimple> toItemSimpleList(List<Item> itemList) {
-        return itemList.stream().map(this::toItemSimple).collect(Collectors.toList());
-    }
+    List<ItemSimple> toItemSimpleList(List<Item> itemList);
 
 }

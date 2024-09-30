@@ -2,10 +2,18 @@ package br.com.barbermanager.barbershopmanagement.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Set;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Client {
 
@@ -27,59 +35,4 @@ public class Client {
     @JsonIgnoreProperties("client")
     private List<Scheduling> schedulings;
 
-    public Integer getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Integer clientId) {
-        this.clientId = clientId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public StatusEnum getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusEnum status) {
-        this.status = status;
-    }
-
-    public Set<BarberShop> getBarberShops() {
-        return barberShops;
-    }
-
-    public void setBarberShops(Set<BarberShop> barberShops) {
-        this.barberShops = barberShops;
-    }
-
-    public List<Scheduling> getSchedulings() {
-        return schedulings;
-    }
-
-    public void setSchedulings(List<Scheduling> schedulings) {
-        this.schedulings = schedulings;
-    }
 }

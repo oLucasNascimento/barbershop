@@ -5,11 +5,19 @@ import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimpl
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class SchedulingResponse {
 
     private Integer schedulingId;
@@ -22,59 +30,4 @@ public class SchedulingResponse {
     private LocalDateTime schedulingTime;
     private StatusEnum status;
 
-    public Integer getSchedulingId() {
-        return schedulingId;
-    }
-
-    public void setSchedulingId(Integer schedulingId) {
-        this.schedulingId = schedulingId;
-    }
-
-    public ClientSimple getClient() {
-        return client;
-    }
-
-    public void setClient(ClientSimple client) {
-        this.client = client;
-    }
-
-    public BarberShopSimple getBarberShop() {
-        return barberShop;
-    }
-
-    public void setBarberShop(BarberShopSimple barberShop) {
-        this.barberShop = barberShop;
-    }
-
-    public EmployeeSimple getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(EmployeeSimple employee) {
-        this.employee = employee;
-    }
-
-    public List<ItemSimple> getItems() {
-        return items;
-    }
-
-    public void setItems(List<ItemSimple> items) {
-        this.items = items;
-    }
-
-    public LocalDateTime getSchedulingTime() {
-        return schedulingTime;
-    }
-
-    public void setSchedulingTime(LocalDateTime schedulingTime) {
-        this.schedulingTime = schedulingTime;
-    }
-
-    public StatusEnum getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusEnum status) {
-        this.status = status;
-    }
 }

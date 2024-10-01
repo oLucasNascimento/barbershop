@@ -56,9 +56,7 @@ public class BarberShopServiceImpl implements BarberShopService {
     public BarberShopResponse createBarberShop(BarberShopRequest newBarberShop) {
         if ((this.barberShopRepository.findByEmail(newBarberShop.getEmail())) == null) {
             newBarberShop.setStatus(StatusEnum.ACTIVE);
-            return this.barberShopMapper.toBarberShopResponse(this.barberShopMapper.toBarberShop(newBarberShop));
-//            return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save((this.barberShopMapper.toBarberShop(newBarberShop)))));
-        }
+            return this.barberShopMapper.toBarberShopResponse(this.barberShopMapper.toBarberShop(newBarberShop)); }
         throw new AlreadyExistsException("Barber Shop with email '" + newBarberShop.getEmail() + "' already exists.");
     }
 
@@ -66,7 +64,7 @@ public class BarberShopServiceImpl implements BarberShopService {
     public List<BarberShopSimple> allBarberShops(StatusEnum status) {
         List<BarberShopSimple> barbershops = this.barberShopMapper.toBarberShopSimpleList((this.barberShopRepository.findAll()));
         if (barbershops.isEmpty()) {
-            throw new NotFoundException("There aren't barbershops to show");
+            throw new NotFoundException("There aren't barber shops to show.");
         } else if (status != null) {
             List<BarberShopSimple> barberShopsByStatus = this.barberShopMapper.toBarberShopSimpleList((this.barberShopRepository.findBarberShopsByStatus(status)));
             if (barberShopsByStatus.isEmpty()){
@@ -79,12 +77,12 @@ public class BarberShopServiceImpl implements BarberShopService {
 
     @Override
     public List<BarberShopSimple> barberShopsByClient(Integer clientId, StatusEnum status) {
-        List<BarberShopSimple> schedulings = this.barberShopMapper.toBarberShopSimpleList(this.barberShopRepository.findBarberShopsByClients(clientId));
-        if (schedulings.isEmpty()) {
+        List<BarberShopSimple> barberShopList = this.barberShopMapper.toBarberShopSimpleList(this.barberShopRepository.findBarberShopsByClients(clientId));
+        if (barberShopList.isEmpty()) {
             throw new NotFoundException("There aren't barber shops to show.");
         } else if (status != null) {
             List<BarberShopSimple> barberShops = new ArrayList<>();
-            for (BarberShopSimple barberShop : schedulings) {
+            for (BarberShopSimple barberShop : barberShopList) {
                 if ((barberShop.getStatus().equals(status))) {
                     barberShops.add(barberShop);
                 }
@@ -94,22 +92,8 @@ public class BarberShopServiceImpl implements BarberShopService {
             }
             return barberShops;
         }
-        return schedulings;
+        return barberShopList;
     }
-
-//    @Override
-//    public List<BarberShopSimple> barberShopsByClientAndStatus(Integer clientId, StatusEnum status) {
-//        List<BarberShopSimple> barberShops = new ArrayList<>();
-//        for (BarberShopSimple barberShop : this.barberShopsByClient(clientId)) {
-//            if ((barberShop.getStatus().equals(status))) {
-//                barberShops.add(barberShop);
-//            }
-//        }
-//        if (barberShops.isEmpty()) {
-//            throw new NotFoundException("There aren't barber shops with status '" + status + "' for this client.");
-//        }
-//        return barberShops;
-//    }
 
     @Override
     public BarberShopResponse barberShopById(Integer barberShopId) {
@@ -200,21 +184,21 @@ public class BarberShopServiceImpl implements BarberShopService {
     public void removeClient(Integer barberShopId, Integer clientId) {
         if ((this.barberShopExists(barberShopId))) {
             BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
-            if ((barberShop.getClients() != null)) {
+            if (!(barberShop.getClients().isEmpty())) {
                 List<Client> clients = barberShop.getClients();
                 List<Client> removedClients = new ArrayList<>();
 
-                for (Client client : barberShop.getClients()) {
+                for (Client client : clients) {
                     if (client.getClientId().equals(clientId)) {
                         removedClients.add(client);
                     }
                 }
-                clients.removeAll(removedClients);
-                barberShop.setClients(clients);
-                this.udpateClientAtBarberShop(barberShopId, (this.barberShopMapper.toBarberShopRequest(barberShop)));
                 if (removedClients.isEmpty()) {
                     throw new NotFoundException("Client with ID '" + clientId + "' doesn't belong at the barbershop with ID '" + barberShopId + "'.");
                 }
+                clients.removeAll(removedClients);
+                barberShop.setClients(clients);
+                this.udpateClientAtBarberShop(barberShopId, (this.barberShopMapper.toBarberShopRequest(barberShop)));
                 return;
             }
             throw new NotFoundException("Barber Shop hasn't clients to be removed.");

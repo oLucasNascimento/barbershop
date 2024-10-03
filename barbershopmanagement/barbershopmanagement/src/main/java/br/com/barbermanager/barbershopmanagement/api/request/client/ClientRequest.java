@@ -1,6 +1,7 @@
 package br.com.barbermanager.barbershopmanagement.api.request.client;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
+import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,5 +26,6 @@ public class ClientRequest {
     private StatusEnum status;
 
     private List<BarberShopRequest> barberShops;
+    private List<SchedulingRequest> schedulings;
 
 }

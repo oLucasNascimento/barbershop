@@ -29,7 +29,7 @@ public class Client {
 
     @ManyToMany(mappedBy = "clients")
     @JsonIgnoreProperties("clients")
-    private Set<BarberShop> barberShops;
+    private List<BarberShop> barberShops;
 
     @OneToMany(mappedBy = "client")
     @JsonIgnoreProperties("client")

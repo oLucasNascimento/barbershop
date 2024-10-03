@@ -167,6 +167,7 @@ public class BarberShopServiceImpl implements BarberShopService {
     public BarberShopResponse udpateClientAtBarberShop(Integer barberShopId, BarberShopRequest updatedClients) {
         if (this.barberShopExists(barberShopId)) {
             BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
+//            BarberShop barberShop = this.barberShopMapper.toBarberShop(this.barberShopById(barberShopId));
             BarberShop barberShopUpdt = this.barberShopMapper.toBarberShop(updatedClients);
             List<Client> clients = barberShop.getClients();
             for (Client client : barberShopUpdt.getClients()) {

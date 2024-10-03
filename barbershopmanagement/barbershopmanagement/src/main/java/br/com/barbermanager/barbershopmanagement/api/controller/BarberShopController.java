@@ -26,7 +26,6 @@ public class BarberShopController {
         return ResponseEntity.ok(this.barberShopService.createBarberShop(newBarberShop));
     }
 
-//
     @GetMapping("/all")
     public ResponseEntity<List<BarberShopSimple>> allBarberShops(@RequestParam(required = false) StatusEnum status) {
         return ResponseEntity.ok(this.barberShopService.allBarberShops(status));

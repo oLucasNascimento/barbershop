@@ -50,16 +50,19 @@ class BarberShopServiceImplTest {
     public static final String NO_BARBER_SHOPS = "There aren't barber shops to show.";
 
 
-    BarberShop barberShop = new BarberShop();
-    BarberShopRequest barberShopRequest = new BarberShopRequest();
-    BarberShopResponse barberShopResponse = new BarberShopResponse();
-    BarberShopSimple barberShopSimple = new BarberShopSimple();
-    Client client = new Client();
-    ClientRequest clientRequest = new ClientRequest();
-    ClientSimple clientSimple = new ClientSimple();
-    Employee employee = new Employee();
-    EmployeeResponse employeeResponse = new EmployeeResponse();
-    Item item = new Item();
+    private BarberShop barberShop = new BarberShop();
+    private BarberShopRequest barberShopRequest = new BarberShopRequest();
+    private BarberShopResponse barberShopResponse = new BarberShopResponse();
+    private BarberShopSimple barberShopSimple = new BarberShopSimple();
+
+    private Client client = new Client();
+    private ClientRequest clientRequest = new ClientRequest();
+    private ClientSimple clientSimple = new ClientSimple();
+
+    private Employee employee = new Employee();
+    private EmployeeResponse employeeResponse = new EmployeeResponse();
+
+    private Item item = new Item();
 
     @InjectMocks
     @Spy

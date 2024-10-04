@@ -73,7 +73,7 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     private void isSchedulingAvailable(Scheduling scheduling) {
         BarberShopResponse barberShop = this.barberShopService.barberShopById(scheduling.getBarberShop().getBarberShopId());
-        System.out.println("PASSOU LISO");
+
         if (scheduling.getBarberShop() != null) {
 //            BarberShopResponse barberShop = this.barberShopService.barberShopById(scheduling.getBarberShop().getBarberShopId());
             scheduling.getBarberShop().setOpeningTime(barberShop.getOpeningTime());

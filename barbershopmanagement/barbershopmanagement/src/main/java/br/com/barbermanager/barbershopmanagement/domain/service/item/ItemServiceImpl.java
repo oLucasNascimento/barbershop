@@ -44,7 +44,7 @@ public class ItemServiceImpl implements ItemService {
             throw new NotFoundException("A barber shop must be informed.");
         }
 
-        if ((itemRepository.existingItem(newItem.getName(), newItem.getPrice(), newItem.getBarberShop().getBarberShopId())) == null) {
+        if ((this.itemRepository.existingItem(newItem.getName(), newItem.getPrice(), newItem.getBarberShop().getBarberShopId())) == null) {
             newItem.setStatus(StatusEnum.ACTIVE);
             return this.itemMapper.toItemResponse((this.itemRepository.save((this.itemMapper.toItem(newItem)))));
         }

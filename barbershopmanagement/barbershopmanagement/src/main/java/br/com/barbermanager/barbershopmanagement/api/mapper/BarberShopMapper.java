@@ -22,6 +22,8 @@ public interface BarberShopMapper {
 
     BarberShop toBarberShop(BarberShopResponse barberShop);
 
+    BarberShopSimple toBarberShopSimple(BarberShop barberShop);
+
     BarberShopResponse toBarberShopResponse(BarberShop barberShop);
 
     List<BarberShopSimple> toBarberShopSimpleList(List<BarberShop> barberShops);

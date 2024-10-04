@@ -10,17 +10,17 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
-//    @ExceptionHandler(RuntimeException.class)
-//    private ResponseEntity<RestErrorMessage> runTimeException(RuntimeException exception){
-//        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
-//    }
-//
-//    @ExceptionHandler(NullPointerException.class)
-//    private ResponseEntity<RestErrorMessage> nullPointerException(NullPointerException exception){
-//        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
-//    }
+    @ExceptionHandler(RuntimeException.class)
+    private ResponseEntity<RestErrorMessage> runTimeException(RuntimeException exception){
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    private ResponseEntity<RestErrorMessage> nullPointerException(NullPointerException exception){
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+    }
 
     @ExceptionHandler(NotFoundException.class)
     private ResponseEntity<RestErrorMessage> notFoundException(NotFoundException exception){

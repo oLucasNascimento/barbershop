@@ -57,7 +57,6 @@ public class BarberShopServiceImpl implements BarberShopService {
         if ((this.barberShopRepository.findByEmail(newBarberShop.getEmail())) == null) {
             newBarberShop.setStatus(StatusEnum.ACTIVE);
             return this.barberShopMapper.toBarberShopResponse(this.barberShopMapper.toBarberShop(newBarberShop));
-//            return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save((this.barberShopMapper.toBarberShop(newBarberShop)))));
         }
         throw new AlreadyExistsException("Barber Shop with email '" + newBarberShop.getEmail() + "' already exists.");
     }
@@ -66,10 +65,10 @@ public class BarberShopServiceImpl implements BarberShopService {
     public List<BarberShopSimple> allBarberShops(StatusEnum status) {
         List<BarberShopSimple> barbershops = this.barberShopMapper.toBarberShopSimpleList((this.barberShopRepository.findAll()));
         if (barbershops.isEmpty()) {
-            throw new NotFoundException("There aren't barbershops to show");
+            throw new NotFoundException("There aren't barber shops to show.");
         } else if (status != null) {
             List<BarberShopSimple> barberShopsByStatus = this.barberShopMapper.toBarberShopSimpleList((this.barberShopRepository.findBarberShopsByStatus(status)));
-            if (barberShopsByStatus.isEmpty()){
+            if (barberShopsByStatus.isEmpty()) {
                 throw new NotFoundException("There aren't barber shops with status '" + status + "'.");
             }
             return barberShopsByStatus;
@@ -79,12 +78,12 @@ public class BarberShopServiceImpl implements BarberShopService {
 
     @Override
     public List<BarberShopSimple> barberShopsByClient(Integer clientId, StatusEnum status) {
-        List<BarberShopSimple> schedulings = this.barberShopMapper.toBarberShopSimpleList(this.barberShopRepository.findBarberShopsByClients(clientId));
-        if (schedulings.isEmpty()) {
+        List<BarberShopSimple> barberShopList = this.barberShopMapper.toBarberShopSimpleList(this.barberShopRepository.findBarberShopsByClients(clientId));
+        if (barberShopList.isEmpty()) {
             throw new NotFoundException("There aren't barber shops to show.");
         } else if (status != null) {
             List<BarberShopSimple> barberShops = new ArrayList<>();
-            for (BarberShopSimple barberShop : schedulings) {
+            for (BarberShopSimple barberShop : barberShopList) {
                 if ((barberShop.getStatus().equals(status))) {
                     barberShops.add(barberShop);
                 }
@@ -94,22 +93,8 @@ public class BarberShopServiceImpl implements BarberShopService {
             }
             return barberShops;
         }
-        return schedulings;
+        return barberShopList;
     }
-
-//    @Override
-//    public List<BarberShopSimple> barberShopsByClientAndStatus(Integer clientId, StatusEnum status) {
-//        List<BarberShopSimple> barberShops = new ArrayList<>();
-//        for (BarberShopSimple barberShop : this.barberShopsByClient(clientId)) {
-//            if ((barberShop.getStatus().equals(status))) {
-//                barberShops.add(barberShop);
-//            }
-//        }
-//        if (barberShops.isEmpty()) {
-//            throw new NotFoundException("There aren't barber shops with status '" + status + "' for this client.");
-//        }
-//        return barberShops;
-//    }
 
     @Override
     public BarberShopResponse barberShopById(Integer barberShopId) {
@@ -147,30 +132,35 @@ public class BarberShopServiceImpl implements BarberShopService {
     @Override
     @Transactional
     public BarberShopResponse updateBarberShop(Integer barberShopId, BarberShopRequest updatedBarberShop) {
-        if ((this.barberShopExists(barberShopId))) {
-            if (this.barberShopRepository.findByEmail(updatedBarberShop.getEmail()) == null) {
-                BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
-                BarberShop barberShopUpdt = this.barberShopMapper.toBarberShop(updatedBarberShop);
-                if ((barberShopUpdt.getEmployees() != null)) {
-                    barberShop = this.hireEmployee(barberShopId, barberShopUpdt.getEmployees());
-                }
-                if ((barberShopUpdt.getItems() != null)) {
-                    barberShop = this.insertItem(barberShopId, barberShopUpdt.getItems());
-                }
-                BeanUtils.copyProperties((this.barberShopMapper.toBarberShop(updatedBarberShop)), barberShop, this.searchEmptyFields(updatedBarberShop));
-                this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
-                return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.getById(barberShopId)));
-            }
+        if (updatedBarberShop.getItems() == null || updatedBarberShop.getEmployees() == null) {
+            throw new NullPointerException("Null Fields aren't allowed.");
+        }
+        if (!(this.barberShopExists(barberShopId))) {
+            throw new NotFoundException("Barber Shop with ID '" + barberShopId + "' not found.");
+        }
+        if (this.barberShopRepository.findByEmail(updatedBarberShop.getEmail()) != null) {
             throw new AlreadyExistsException("Barber Shop with email '" + updatedBarberShop.getEmail() + "' already exists.");
         }
-        throw new NotFoundException("Barber Shop with ID '" + barberShopId + "' not found.");
+
+        BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
+        BarberShop barberShopUpdt = this.barberShopMapper.toBarberShop(updatedBarberShop);
+
+        if (!(barberShopUpdt.getEmployees().isEmpty())) {
+            barberShop = this.hireEmployee(barberShopId, barberShopUpdt.getEmployees());
+        }
+        if (!(barberShopUpdt.getItems().isEmpty())) {
+            barberShop = this.insertItem(barberShopId, barberShopUpdt.getItems());
+        }
+        BeanUtils.copyProperties((this.barberShopMapper.toBarberShop(updatedBarberShop)), barberShop, this.searchEmptyFields(updatedBarberShop));
+        return this.barberShopMapper.toBarberShopResponse((this.barberShopRepository.save(barberShop)));
     }
+
 
     private BarberShop insertItem(Integer barberShopId, List<Item> newItems) {
         BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
         for (Item itemUpdt : newItems) {
             Item existingItem = this.itemMapper.toItem(this.itemService.itemById(itemUpdt.getItemId()));
-            if(existingItem.getBarberShop() != null){
+            if (existingItem.getBarberShop() != null) {
                 throw new AlreadyActiveException("Item with ID '" + existingItem.getItemId() + "' belongs to other barber shop.");
             }
             existingItem.setBarberShop(barberShop);
@@ -183,6 +173,7 @@ public class BarberShopServiceImpl implements BarberShopService {
     public BarberShopResponse udpateClientAtBarberShop(Integer barberShopId, BarberShopRequest updatedClients) {
         if (this.barberShopExists(barberShopId)) {
             BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
+//            BarberShop barberShop = this.barberShopMapper.toBarberShop(this.barberShopById(barberShopId));
             BarberShop barberShopUpdt = this.barberShopMapper.toBarberShop(updatedClients);
             List<Client> clients = barberShop.getClients();
             for (Client client : barberShopUpdt.getClients()) {
@@ -200,21 +191,21 @@ public class BarberShopServiceImpl implements BarberShopService {
     public void removeClient(Integer barberShopId, Integer clientId) {
         if ((this.barberShopExists(barberShopId))) {
             BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
-            if ((barberShop.getClients() != null)) {
+            if (!(barberShop.getClients().isEmpty())) {
                 List<Client> clients = barberShop.getClients();
                 List<Client> removedClients = new ArrayList<>();
 
-                for (Client client : barberShop.getClients()) {
+                for (Client client : clients) {
                     if (client.getClientId().equals(clientId)) {
                         removedClients.add(client);
                     }
                 }
-                clients.removeAll(removedClients);
-                barberShop.setClients(clients);
-                this.udpateClientAtBarberShop(barberShopId, (this.barberShopMapper.toBarberShopRequest(barberShop)));
                 if (removedClients.isEmpty()) {
                     throw new NotFoundException("Client with ID '" + clientId + "' doesn't belong at the barbershop with ID '" + barberShopId + "'.");
                 }
+                clients.removeAll(removedClients);
+                barberShop.setClients(clients);
+                this.udpateClientAtBarberShop(barberShopId, (this.barberShopMapper.toBarberShopRequest(barberShop)));
                 return;
             }
             throw new NotFoundException("Barber Shop hasn't clients to be removed.");
@@ -245,7 +236,7 @@ public class BarberShopServiceImpl implements BarberShopService {
         BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
         for (Employee employeeUpdt : updatedEmployees) {
             Employee existingEmployee = this.employeeMapper.toEmployee((this.employeeService.employeeById(employeeUpdt.getEmployeeId())));
-            if(existingEmployee.getBarberShop() != null){
+            if (existingEmployee.getBarberShop() != null) {
                 throw new AlreadyActiveException("Employee with ID '" + existingEmployee.getEmployeeId() + "' belongs to other barber shop.");
             }
             existingEmployee.setBarberShop(barberShop);

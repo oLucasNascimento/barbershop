@@ -2,9 +2,17 @@ package br.com.barbermanager.barbershopmanagement.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Employee {
 
@@ -28,67 +36,4 @@ public class Employee {
     @JsonIgnoreProperties("employee")
     private List<Scheduling> schedulings;
 
-    public Integer getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(Integer employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public BarberShop getBarberShop() {
-        return barberShop;
-    }
-
-    public void setBarberShop(BarberShop barberShop) {
-        this.barberShop = barberShop;
-    }
-
-    public List<Scheduling> getSchedulings() {
-        return schedulings;
-    }
-
-    public void setSchedulings(List<Scheduling> schedulings) {
-        this.schedulings = schedulings;
-    }
-
-    public StatusEnum getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusEnum status) {
-        this.status = status;
-    }
 }

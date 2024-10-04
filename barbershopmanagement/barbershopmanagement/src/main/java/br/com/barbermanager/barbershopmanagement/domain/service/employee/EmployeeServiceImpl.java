@@ -65,8 +65,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponse employeeById(Integer employeeId) {
         if (this.employeeRepository.existsById(employeeId)) {
-            Employee employee = this.employeeRepository.getById(employeeId);
-            this.employeeMapper.toEmployeeResponse(employee);
             return this.employeeMapper.toEmployeeResponse(this.employeeRepository.getById(employeeId));
         }
         throw new NotFoundException("Employee with ID '" + employeeId + "' not found.");

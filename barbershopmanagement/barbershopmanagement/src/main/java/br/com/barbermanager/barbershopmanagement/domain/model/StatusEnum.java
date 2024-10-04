@@ -8,14 +8,4 @@ public enum StatusEnum {
     FINISHED,
     CANCELLED
 
-
-//    ACTIVE("ACTIVE"),
-//    INACTIVE("INACTIVE"),
-//    SCHEDULED("SCHEDULED"),
-//    FINISHED("FINISHED"),
-//    CANCELLED("CANCELlED");
-//
-//    StatusEnum(String active) {
-//    }
-
 }

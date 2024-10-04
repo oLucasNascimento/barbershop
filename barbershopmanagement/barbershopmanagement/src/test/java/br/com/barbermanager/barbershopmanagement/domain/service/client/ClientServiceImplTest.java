@@ -36,13 +36,14 @@ class ClientServiceImplTest {
     public static final String PHONE = "99887766";
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
     public static final StatusEnum STATUS_INACTIVE = StatusEnum.INACTIVE;
-    Client client = new Client();
-    ClientRequest clientRequest = new ClientRequest();
-    ClientResponse clientResponse = new ClientResponse();
-    ClientSimple clientSimple = new ClientSimple();
 
-    BarberShop barberShop = new BarberShop();
-    BarberShopResponse barberShopResponse = new BarberShopResponse();
+    private Client client = new Client();
+    private ClientRequest clientRequest = new ClientRequest();
+    private ClientResponse clientResponse = new ClientResponse();
+    private ClientSimple clientSimple = new ClientSimple();
+
+    private BarberShop barberShop = new BarberShop();
+    private BarberShopResponse barberShopResponse = new BarberShopResponse();
 
     @InjectMocks
     private ClientServiceImpl clientService;
@@ -95,12 +96,12 @@ class ClientServiceImplTest {
         assertNotNull(response);
         assertEquals(ClientResponse.class, response.getClass());
         assertEquals(STATUS_ACTIVE, this.clientRequest.getStatus());
+        verify(this.clientRepository, times(1)).save(any());
     }
 
     @Test
     void whenCreateClientThenThrowAlreadyExistsException() {
-        when(this.clientRepository.findByCpf(anyString())).thenReturn(any());
-
+        when(this.clientRepository.findByCpf(anyString())).thenReturn(this.client);
         try {
             this.clientService.createClient(this.clientRequest);
         } catch (Exception ex) {
@@ -296,6 +297,7 @@ class ClientServiceImplTest {
 
     @Test
     void whenUpdateClientThenReturnSuccess() {
+        this.clientRequest.setSchedulings(null);
         this.client.setBarberShops(List.of(this.barberShop));
 
         when(this.clientService.clientExists(anyInt())).thenReturn(true);

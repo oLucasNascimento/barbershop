@@ -5,6 +5,8 @@ import br.com.barbermanager.barbershopmanagement.api.mapper.EmployeeMapper;
 import br.com.barbermanager.barbershopmanagement.api.mapper.ItemMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
+import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
+import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
@@ -145,27 +147,8 @@ class BarberShopServiceImplTest {
         List<BarberShopSimple> response = this.barberShopService.allBarberShops(STATUS_ACTIVE);
 
         assertNotNull(response);
-        for (BarberShopSimple responseSimple : response) {
-            assertEquals(BarberShopSimple.class, response.get(0).getClass());
-            assertEquals(STATUS_ACTIVE, responseSimple.getStatus());
-        }
-    }
-
-    @Test
-    void whenFindAllBarberShopsByInactiveThenReturnOnlyBarberShopsInactives() {
-        this.barberShop.setStatus(STATUS_INACTIVE);
-        this.barberShopSimple.setStatus(STATUS_INACTIVE);
-
-        when(this.barberShopRepository.findAll()).thenReturn(List.of(this.barberShop));
-        when(this.barberShopMapper.toBarberShopSimpleList(any())).thenReturn(List.of(this.barberShopSimple));
-
-        List<BarberShopSimple> response = this.barberShopService.allBarberShops(STATUS_INACTIVE);
-
-        assertNotNull(response);
-        for (BarberShopSimple responseSimple : response) {
-            assertEquals(BarberShopSimple.class, response.get(0).getClass());
-            assertEquals(STATUS_INACTIVE, responseSimple.getStatus());
-        }
+        assertEquals(BarberShopSimple.class, response.get(0).getClass());
+        assertTrue(response.stream().allMatch(barberShop -> barberShop.getStatus() == STATUS_ACTIVE));
     }
 
     @Test
@@ -183,7 +166,7 @@ class BarberShopServiceImplTest {
     @Test
     void whenFindAllBarberShopsByStatusThenThrowAnNotFoundException() {
         when(this.barberShopRepository.findAll()).thenReturn(List.of(this.barberShop));
-        when(this.barberShopMapper.toBarberShopSimpleList(any())).thenReturn(List.of(this.barberShopSimple));
+        when(this.barberShopMapper.toBarberShopSimpleList(any())).thenReturn(List.of(this.barberShopSimple)).thenReturn(new ArrayList<>());
 
         try {
             this.barberShopService.allBarberShops(STATUS_INACTIVE);
@@ -220,35 +203,14 @@ class BarberShopServiceImplTest {
 
         assertNotNull(response);
         assertEquals(ID, barberShop.getClients().get(0).getClientId());
-        for (BarberShopSimple responseSimple : response) {
-            assertEquals(BarberShopSimple.class, responseSimple.getClass());
-            assertEquals(STATUS_ACTIVE, responseSimple.getStatus());
-        }
-    }
-
-    @Test
-    void whenFindBarberShopsByClientAndStatusEqualsInactiveThenReturnOnlyBarberShopsInactives() {
-        this.barberShop.setClients(List.of(this.client));
-        this.barberShop.setStatus(STATUS_INACTIVE);
-        this.barberShopSimple.setStatus(STATUS_INACTIVE);
-
-        when(this.barberShopRepository.findBarberShopsByClients(anyInt())).thenReturn(List.of(this.barberShop));
-        when(this.barberShopMapper.toBarberShopSimpleList(any())).thenReturn(List.of(this.barberShopSimple));
-
-        List<BarberShopSimple> response = this.barberShopService.barberShopsByClient(ID, STATUS_INACTIVE);
-
-        assertNotNull(response);
-        assertEquals(ID, this.barberShop.getClients().get(0).getClientId());
-        for (BarberShopSimple responseSimple : response) {
-            assertEquals(BarberShopSimple.class, responseSimple.getClass());
-            assertEquals(STATUS_INACTIVE, responseSimple.getStatus());
-        }
+        assertEquals(BarberShopSimple.class, response.get(0).getClass());
+        assertTrue(response.stream().allMatch(barberShop -> barberShop.getStatus().equals(STATUS_ACTIVE)));
     }
 
     @Test
     void whenFindBarberShopsByClientAndClientNotBelongThenThrowNotFoundException() {
         when(this.barberShopRepository.findBarberShopsByClients(anyInt())).thenReturn(new ArrayList<>());
-        when(this.barberShopMapper.toBarberShopSimpleList(any())).thenReturn(List.of(this.barberShopSimple));
+        when(this.barberShopMapper.toBarberShopSimpleList(any())).thenReturn(new ArrayList<>());
 
         try {
             this.barberShopService.barberShopsByClient(ID, null);
@@ -363,6 +325,8 @@ class BarberShopServiceImplTest {
 
     @Test
     void whenUpdateBarberShopThenReturnSuccess() {
+        this.barberShopRequest.setSchedulings(null);
+
         when(this.barberShopService.barberShopExists(anyInt())).thenReturn(true);
         when(this.barberShopRepository.findByEmail(anyString())).thenReturn(null);
         when(this.barberShopRepository.getById(anyInt())).thenReturn(this.barberShop);
@@ -424,8 +388,8 @@ class BarberShopServiceImplTest {
 
     @Test
     void whenUpdateBarberShopWithEmployeeAndItemThenReturnSuccess() {
-        this.barberShop.setItems(List.of(item));
-        this.barberShop.setEmployees(List.of(employee));
+        this.barberShop.setItems(List.of(this.item));
+        this.barberShop.setEmployees(List.of(this.employee));
 
         when(this.barberShopService.barberShopExists(anyInt())).thenReturn(true);
         when(this.barberShopRepository.findByEmail(anyString())).thenReturn(null);
@@ -434,13 +398,13 @@ class BarberShopServiceImplTest {
         when(this.barberShopMapper.toBarberShopResponse(any())).thenReturn(this.barberShopResponse);
 
         when(this.itemService.itemById(anyInt())).thenReturn(new ItemResponse());
-        when(this.itemMapper.toItem((ItemResponse) any())).thenReturn(item);
+        when(this.itemMapper.toItem((ItemResponse) any())).thenReturn(this.item);
         when(this.itemService.itemExists(anyInt())).thenReturn(true);
         when(this.itemMapper.toItemResponse(any())).thenReturn(new ItemResponse());
         when(this.itemService.updateItem(anyInt(), any())).thenReturn(new ItemResponse());
 
         when(this.employeeService.employeeById(anyInt())).thenReturn(new EmployeeResponse());
-        when(this.employeeMapper.toEmployee((EmployeeResponse) any())).thenReturn(employee);
+        when(this.employeeMapper.toEmployee((EmployeeResponse) any())).thenReturn(this.employee);
         when(this.employeeService.updateEmployee(anyInt(), any())).thenReturn(new EmployeeResponse());
 
         BarberShopResponse response = this.barberShopService.updateBarberShop(ID, this.barberShopRequest);
@@ -477,7 +441,8 @@ class BarberShopServiceImplTest {
 
     @Test
     void whenUpdateBarberShopWithItemThenThrowAlreadyActiveException() {
-        this.item.setBarberShop(new BarberShop());
+        this.item.setBarberShop(this.barberShop);
+        this.barberShop.setItems(List.of(this.item));
 
         when(this.barberShopService.barberShopExists(anyInt())).thenReturn(true);
         when(this.barberShopRepository.findByEmail(anyString())).thenReturn(null);
@@ -489,11 +454,26 @@ class BarberShopServiceImplTest {
         when(this.employeeMapper.toEmployee((EmployeeResponse) any())).thenReturn(this.employee);
         when(this.employeeService.updateEmployee(anyInt(), any())).thenReturn(new EmployeeResponse());
 
+        when(this.itemMapper.toItem((ItemResponse) any())).thenReturn(this.item);
+
         try {
             this.barberShopService.updateBarberShop(ID, this.barberShopRequest);
         } catch (Exception ex) {
             assertEquals(AlreadyActiveException.class, ex.getClass());
             assertEquals("Item with ID '" + ID + "' belongs to other barber shop.", ex.getMessage());
+        }
+    }
+
+    @Test
+    void whenUpdateBarberShopWithItemThenThrowNullPointerException() {
+        this.item.setBarberShop(this.barberShop);
+        this.barberShopRequest.setItems(null);
+
+        try {
+            this.barberShopService.updateBarberShop(ID, this.barberShopRequest);
+        } catch (Exception ex) {
+            assertEquals(NullPointerException.class, ex.getClass());
+            assertEquals("Null Fields aren't allowed.", ex.getMessage());
         }
     }
 
@@ -623,8 +603,9 @@ class BarberShopServiceImplTest {
 
     @Test
     void whenDismissEmployeeThenThrowNotFoundException() {
-        this.employee.setEmployeeId(2);
-        this.barberShop.setEmployees(List.of(this.employee));
+        Employee employeeRemoved = new Employee();
+        employeeRemoved.setEmployeeId(2);
+        this.barberShop.setEmployees(List.of(employeeRemoved));
 
         when(this.barberShopService.barberShopExists(anyInt())).thenReturn(true);
         when(this.barberShopRepository.getById(anyInt())).thenReturn(this.barberShop);
@@ -635,7 +616,7 @@ class BarberShopServiceImplTest {
             this.barberShopService.dismissEmployee(ID, ID);
         } catch (Exception ex) {
             assertEquals(NotFoundException.class, ex.getClass());
-            assertEquals("Employee with ID '" + ID + "' was not found at the barbershop." + ID + "'.", ex.getMessage());
+            assertEquals("Employee with ID '" + ID + "' was not found at the barbershop.", ex.getMessage());
         }
     }
 

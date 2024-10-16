@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
-    private ResponseEntity<RestErrorMessage> runTimeException(RuntimeException exception, WebRequest request){
+    protected ResponseEntity<RestErrorMessage> runTimeException(RuntimeException exception, WebRequest request){
         String timestamp = LocalDateTime.now().toString();
         String path = request.getDescription(false).replace("uri=", "");
         String errorCode = "RUNTIME_ERROR"; // Ou algum código apropriado
@@ -38,7 +38,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NullPointerException.class)
-    private ResponseEntity<RestErrorMessage> nullPointerException(NullPointerException exception, WebRequest request){
+    protected ResponseEntity<RestErrorMessage> nullPointerException(NullPointerException exception, WebRequest request){
         String timestamp = LocalDateTime.now().toString();
         String path = request.getDescription(false).replace("uri=", "");
         String errorCode = "NULL_POINTER_ERROR"; // Ou algum código apropriado
@@ -54,7 +54,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    private ResponseEntity<RestErrorMessage> notFoundException(NotFoundException exception, WebRequest request){
+    protected ResponseEntity<RestErrorMessage> notFoundException(NotFoundException exception, WebRequest request){
         String timestamp = LocalDateTime.now().toString();
         String path = request.getDescription(false).replace("uri=", "");
         String errorCode = "NOT_FOUND_ERROR";
@@ -69,7 +69,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AlreadyExistsException.class)
-    private ResponseEntity<RestErrorMessage> alreadyExistsException(AlreadyExistsException exception, WebRequest request){
+    protected ResponseEntity<RestErrorMessage> alreadyExistsException(AlreadyExistsException exception, WebRequest request){
         String timestamp = LocalDateTime.now().toString();
         String path = request.getDescription(false).replace("uri=", "");
         String errorCode = "ALREADY_EXISTS_ERROR"; // Ou algum código apropriado
@@ -85,7 +85,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(BadRequestException.class)
-    private ResponseEntity<RestErrorMessage> badRequestException(BadRequestException exception, WebRequest request){
+    protected ResponseEntity<RestErrorMessage> badRequestException(BadRequestException exception, WebRequest request){
         String timestamp = LocalDateTime.now().toString();
         String path = request.getDescription(false).replace("uri=", "");
         String errorCode = "BAD_REQUEST_ERROR"; // Ou algum código apropriado
@@ -101,7 +101,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AlreadyActiveException.class)
-    private ResponseEntity<RestErrorMessage> alreadyActiveException(AlreadyActiveException exception, WebRequest request){
+    protected ResponseEntity<RestErrorMessage> alreadyActiveException(AlreadyActiveException exception, WebRequest request){
         String timestamp = LocalDateTime.now().toString();
         String path = request.getDescription(false).replace("uri=", "");
         String errorCode = "ALREADY_ACTIVE_ERROR"; // Ou algum código apropriado
@@ -117,10 +117,26 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(InactiveException.class)
-    private ResponseEntity<RestErrorMessage> inactiveException(InactiveException exception, WebRequest request){
+    protected ResponseEntity<RestErrorMessage> inactiveException(InactiveException exception, WebRequest request){
         String timestamp = LocalDateTime.now().toString();
         String path = request.getDescription(false).replace("uri=", "");
         String errorCode = "INACTIVE_ERROR"; // Ou algum código apropriado
+
+        RestErrorMessage errorMessage = new RestErrorMessage(
+                HttpStatus.CONFLICT,
+                exception.getMessage(),
+                timestamp,
+                path,
+                errorCode
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    protected ResponseEntity<RestErrorMessage> businessException(BusinessException exception, WebRequest request){
+        String timestamp = LocalDateTime.now().toString();
+        String path = request.getDescription(false).replace("uri=", "");
+        String errorCode = "BUSINESS_ERROR";
 
         RestErrorMessage errorMessage = new RestErrorMessage(
                 HttpStatus.CONFLICT,

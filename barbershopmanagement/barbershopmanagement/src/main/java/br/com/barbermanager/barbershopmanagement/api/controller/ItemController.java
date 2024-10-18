@@ -1,27 +1,28 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
-import br.com.barbermanager.barbershopmanagement.domain.model.Item;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/item")
+@Validated
 public class ItemController {
 
     @Autowired
     private ItemService itemService;
 
     @PostMapping("/new")
-    public ResponseEntity<ItemResponse> newItem(@RequestBody ItemRequest newItem) {
+    public ResponseEntity<ItemResponse> newItem(@RequestBody @Valid ItemRequest newItem) {
         return ResponseEntity.ok(this.itemService.createItem(newItem));
     }
 

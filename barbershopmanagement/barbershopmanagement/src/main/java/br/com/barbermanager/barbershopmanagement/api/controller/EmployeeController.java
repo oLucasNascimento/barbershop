@@ -5,15 +5,20 @@ import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRe
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/employee")
 public class EmployeeController {
 
@@ -21,7 +26,8 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping("/new")
-    public ResponseEntity<EmployeeResponse> newEmployee(@RequestBody EmployeeRequest newEmployee) {
+    @Validated(OnCreate.class)
+    public ResponseEntity<EmployeeResponse> newEmployee(@RequestBody @Valid EmployeeRequest newEmployee) {
         return ResponseEntity.ok(this.employeeService.createEmployee(newEmployee));
     }
 
@@ -47,7 +53,8 @@ public class EmployeeController {
     }
 
     @PatchMapping("/update/{employeeId}")
-    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Integer employeeId, @RequestBody EmployeeRequest updatedEmployee) {
+    @Validated(AssociatedUpdate.class)
+    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Integer employeeId, @RequestBody @Valid EmployeeRequest updatedEmployee) {
         this.employeeService.updateEmployee(employeeId, updatedEmployee);
         return ResponseEntity.ok(this.employeeService.employeeById(employeeId));
     }

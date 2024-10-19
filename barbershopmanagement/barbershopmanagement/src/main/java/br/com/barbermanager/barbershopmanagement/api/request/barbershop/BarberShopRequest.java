@@ -4,9 +4,12 @@ import br.com.barbermanager.barbershopmanagement.api.request.client.ClientReques
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
-import br.com.barbermanager.barbershopmanagement.domain.model.*;
+import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingCreate;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -17,7 +20,6 @@ import lombok.Setter;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -26,7 +28,7 @@ import java.util.Set;
 public class BarberShopRequest {
 
     @Null(groups = OnCreate.class)
-    @NotNull(groups = SchedulingCreate.class, message = "The BarberShop Id field cannot be null.")
+    @NotNull(groups = {SchedulingCreate.class, AssociatedUpdate.class}, message = "The BarberShop ID field cannot be null.")
     private Integer barberShopId;
 
     @NotBlank(groups = OnCreate.class, message = "The Name field cannot be null.")
@@ -52,9 +54,23 @@ public class BarberShopRequest {
 
     private StatusEnum status;
 
+    @Valid
+    @JsonIgnore
+    @Null(groups = OnCreate.class)
     private List<ItemRequest> items;
+
+    @Valid
+    @JsonIgnore
+    @Null(groups = OnCreate.class)
     private List<EmployeeRequest> employees;
+
+    @Valid
+    @JsonIgnore
+    @Null(groups = OnCreate.class)
     private List<ClientRequest> clients;
+
+    @Null
+    @JsonIgnore
     private List<SchedulingRequest> schedulings;
 
 }

@@ -7,14 +7,20 @@ import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimpl
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/barbershop")
 public class BarberShopController {
 
@@ -22,7 +28,8 @@ public class BarberShopController {
     private BarberShopService barberShopService;
 
     @PostMapping("/new")
-    public ResponseEntity<BarberShopResponse> newBarberShop(@RequestBody BarberShopRequest newBarberShop) {
+    @Validated(OnCreate.class)
+    public ResponseEntity<BarberShopResponse> newBarberShop(@RequestBody @Valid BarberShopRequest newBarberShop) {
         return ResponseEntity.ok(this.barberShopService.createBarberShop(newBarberShop));
     }
 
@@ -60,13 +67,15 @@ public class BarberShopController {
     }
 
     @PatchMapping("/update/{barberShopId}")
-    public ResponseEntity<BarberShopResponse> updateBarberShop(@PathVariable Integer barberShopId, @RequestBody BarberShopRequest updatedBarberShop) {
+    @Validated(AssociatedUpdate.class)
+    public ResponseEntity<BarberShopResponse> updateBarberShop(@PathVariable Integer barberShopId, @RequestBody @Valid BarberShopRequest updatedBarberShop) {
         this.barberShopService.updateBarberShop(barberShopId, updatedBarberShop);
         return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
     }
 
     @PatchMapping("/insert-client/{barberShopId}")
-    public ResponseEntity<BarberShopResponse> insertNewClient(@PathVariable Integer barberShopId, @RequestBody BarberShopRequest updatedBarberShop) {
+    @Validated(AssociatedUpdate.class)
+    public ResponseEntity<BarberShopResponse> insertNewClient(@PathVariable Integer barberShopId, @RequestBody @Valid BarberShopRequest updatedBarberShop) {
         return ResponseEntity.ok(this.barberShopService.udpateClientAtBarberShop(barberShopId, updatedBarberShop));
     }
 

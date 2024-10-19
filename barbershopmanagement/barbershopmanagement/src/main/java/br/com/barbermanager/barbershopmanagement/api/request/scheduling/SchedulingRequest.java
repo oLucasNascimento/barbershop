@@ -24,8 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 public class SchedulingRequest {
 
-    @Null(groups = OnCreate.class)
-    @NotNull(groups = SchedulingCreate.class, message = "The Scheduling Id field cannot be null.")
+    @Null(groups = SchedulingCreate.class)
     private Integer schedulingId;
 
     @Valid
@@ -33,19 +32,19 @@ public class SchedulingRequest {
     private ClientRequest client;
 
     @Valid
-    @NotNull(groups =SchedulingCreate.class, message = "The BarberShop field cannot be null.")
+    @NotNull(groups = SchedulingCreate.class, message = "The BarberShop field cannot be null.")
     private BarberShopRequest barberShop;
 
     @Valid
-    @NotNull(groups =SchedulingCreate.class, message = "The Employee field cannot be null.")
+    @NotNull(groups = SchedulingCreate.class, message = "The Employee field cannot be null.")
     private EmployeeRequest employee;
 
     @Valid
-    @NotNull(groups =SchedulingCreate.class, message = "The Items field cannot be null.")
+    @NotNull(groups = SchedulingCreate.class, message = "The Items field cannot be null.")
     private List<ItemRequest> items;
 
     @Valid
-    @NotNull(groups =SchedulingCreate.class, message = "The Scheduling Time field cannot be null.")
+    @NotNull(groups = SchedulingCreate.class, message = "The Scheduling Time field cannot be null.")
     private LocalDateTime schedulingTime;
 
     private StatusEnum status;

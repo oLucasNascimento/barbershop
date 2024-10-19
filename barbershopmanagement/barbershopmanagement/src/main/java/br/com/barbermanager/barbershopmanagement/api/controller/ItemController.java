@@ -4,6 +4,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,8 @@ public class ItemController {
     }
 
     @PatchMapping("/update/{itemId}")
-    public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer itemId, @RequestBody ItemRequest updatedItem) {
+    @Validated(AssociatedUpdate.class)
+    public ResponseEntity<ItemResponse> updateItem(@PathVariable Integer itemId, @RequestBody @Valid ItemRequest updatedItem) {
         this.itemService.updateItem(itemId, updatedItem);
         return ResponseEntity.ok(this.itemService.itemById(itemId));
     }

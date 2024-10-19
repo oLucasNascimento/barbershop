@@ -7,14 +7,19 @@ import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimpl
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
 import br.com.barbermanager.barbershopmanagement.domain.service.client.ClientService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/client")
 public class ClientController {
 
@@ -22,7 +27,8 @@ public class ClientController {
     private ClientService clientService;
 
     @PostMapping("/new")
-    public ResponseEntity<ClientResponse> newClient(@RequestBody ClientRequest newClient) {
+    @Validated(OnCreate.class)
+    public ResponseEntity<ClientResponse> newClient(@RequestBody @Valid ClientRequest newClient) {
         return ResponseEntity.ok(this.clientService.createClient(newClient));
     }
 
@@ -54,7 +60,8 @@ public class ClientController {
     }
 
     @PatchMapping("/update/{clientId}")
-    public ResponseEntity<ClientResponse> updateClient(@PathVariable Integer clientId, @RequestBody ClientRequest updatedClient) {
+    @Validated(AssociatedUpdate.class)
+    public ResponseEntity<ClientResponse> updateClient(@PathVariable Integer clientId, @RequestBody @Valid ClientRequest updatedClient) {
         this.clientService.updateClient(clientId, updatedClient);
         return ResponseEntity.ok(this.clientService.clientById(clientId));
     }

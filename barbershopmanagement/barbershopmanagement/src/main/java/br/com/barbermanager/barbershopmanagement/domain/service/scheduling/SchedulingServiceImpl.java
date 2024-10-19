@@ -11,19 +11,13 @@ import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeR
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
-import br.com.barbermanager.barbershopmanagement.domain.model.Client;
-import br.com.barbermanager.barbershopmanagement.domain.model.Item;
-import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
-import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.*;
 import br.com.barbermanager.barbershopmanagement.domain.repository.SchedulingRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
 import br.com.barbermanager.barbershopmanagement.domain.service.client.ClientService;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
-import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
-import br.com.barbermanager.barbershopmanagement.exception.BadRequestException;
-import br.com.barbermanager.barbershopmanagement.exception.InactiveException;
-import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
+import br.com.barbermanager.barbershopmanagement.exception.*;
 import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -31,7 +25,9 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -59,28 +55,21 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Autowired
     private ClientService clientService;
 
-    private Boolean schedulingExists(Integer schedulingId) {
-        return this.schedulingRepository.existsById(schedulingId);
-    }
-
     @Override
     public SchedulingResponse newScheduling(SchedulingRequest newScheduling) {
         Scheduling scheduling = this.schedulingMapper.toScheduling(newScheduling);
-        isSchedulingAvailable(scheduling);
+        this.isSchedulingAvailable(scheduling);
         scheduling.setStatus(StatusEnum.SCHEDULED);
         return this.schedulingMapper.toSchedulingResponse((schedulingRepository.save(scheduling)));
     }
 
     private void isSchedulingAvailable(Scheduling scheduling) {
-        BarberShopResponse barberShop = this.barberShopService.barberShopById(scheduling.getBarberShop().getBarberShopId());
-
         if (scheduling.getBarberShop() != null) {
-//            BarberShopResponse barberShop = this.barberShopService.barberShopById(scheduling.getBarberShop().getBarberShopId());
+            BarberShopResponse barberShop = this.barberShopService.barberShopById(scheduling.getBarberShop().getBarberShopId());
             scheduling.getBarberShop().setOpeningTime(barberShop.getOpeningTime());
             scheduling.getBarberShop().setClosingTime(barberShop.getClosingTime());
-
             if (barberShop.getStatus().equals(StatusEnum.INACTIVE)) {
-                throw new InactiveException("The barber shop informated is inactive");
+                throw new InactiveException("The barber shop informated is inactive.");
             }
             Optional.ofNullable(scheduling.getEmployee()).ifPresent(sch -> {
                 this.checkEmployee(scheduling.getEmployee().getEmployeeId(), scheduling.getBarberShop().getBarberShopId());
@@ -119,117 +108,93 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Override
     public List<SchedulingResponse> schedulingsByBarberShop(Integer barberShopId, StatusEnum status) {
         List<SchedulingResponse> schedulings = this.schedulingMapper.toSchedulingResponseList(this.schedulingRepository.findSchedulingsByBarberShop(barberShopId));
-        if (status == null) {
-            if (schedulings.isEmpty()) {
-                throw new NotFoundException("There aren't schedulings for this barber shop.");
-            }
-            return schedulings;
-        } else {
-            List<SchedulingResponse> schedulingByStatus = new ArrayList<>();
-            for (SchedulingResponse scheduling : schedulings) {
-                if (scheduling.getStatus().equals(status)) {
-                    schedulingByStatus.add(scheduling);
-                }
-            }
-            {
-                if (schedulingByStatus.isEmpty()) {
-                    throw new NotFoundException("There aren't schedulings with status '" + status + "' for this barber shop.");
-                }
-                return schedulingByStatus;
-            }
+        if (schedulings.isEmpty()) {
+            throw new NotFoundException("There aren't schedulings for this barber shop.");
         }
+        if (status != null) {
+            List<SchedulingResponse> schedulingByStatus = schedulings.stream().filter(scheduling -> scheduling.getStatus().equals(status)).collect(Collectors.toList());
+            if (schedulingByStatus.isEmpty()) {
+                throw new NotFoundException("There aren't schedulings with status '" + status + "' for this barber shop.");
+            }
+            return schedulingByStatus;
+        }
+        return schedulings;
     }
 
     @Override
     public List<SchedulingResponse> schedulingsByClient(Integer clientId, StatusEnum status) {
         List<SchedulingResponse> schedulings = this.schedulingMapper.toSchedulingResponseList(this.schedulingRepository.findSchedulingsByClient(clientId));
-        if (status == null) {
-            if (schedulings.isEmpty()) {
-                throw new NotFoundException("There aren't schedulings for this client.");
-            }
-            return schedulings;
-        } else {
-            List<SchedulingResponse> schedulingByStatus = new ArrayList<>();
-            for (SchedulingResponse scheduling : schedulings) {
-                if (scheduling.getStatus().equals(status)) {
-                    schedulingByStatus.add(scheduling);
-                }
-            }
+        if (schedulings.isEmpty()) {
+            throw new NotFoundException("There aren't schedulings for this client.");
+        }
+        if (status != null) {
+            List<SchedulingResponse> schedulingByStatus = schedulings.stream().filter(scheduling -> scheduling.getStatus().equals(status)).collect(Collectors.toList());
             if (schedulingByStatus.isEmpty()) {
                 throw new NotFoundException("There aren't schedulings with status '" + status + "' for this client.");
             }
             return schedulingByStatus;
         }
+        return schedulings;
     }
 
     @Override
     public List<SchedulingResponse> schedulingsByEmployee(Integer employeeId, StatusEnum status) {
         List<SchedulingResponse> schedulings = this.schedulingMapper.toSchedulingResponseList(this.schedulingRepository.findSchedulingsByEmployee(employeeId));
-        if (status == null) {
-            if (schedulings.isEmpty()) {
-                throw new NotFoundException("There aren't schedulings for this employee.");
-            }
-            return schedulings;
-        } else {
-            List<SchedulingResponse> schedulingByStatus = new ArrayList<>();
-            for (SchedulingResponse scheduling : schedulings) {
-                if (scheduling.getStatus().equals(status)) {
-                    schedulingByStatus.add(scheduling);
-                }
-            }
-            {
-                if (schedulingByStatus.isEmpty()) {
-                    throw new NotFoundException("There aren't schedulings with status '" + status + "' for this employee.");
-                }
-                return schedulingByStatus;
-            }
+        if (schedulings.isEmpty()) {
+            throw new NotFoundException("There aren't schedulings for this employee.");
         }
+        if (status != null) {
+            List<SchedulingResponse> schedulingByStatus = schedulings.stream().filter(scheduling -> scheduling.getStatus().equals(status)).collect(Collectors.toList());
+            if (schedulingByStatus.isEmpty()) {
+                throw new NotFoundException("There aren't schedulings with status '" + status + "' for this employee.");
+            }
+            return schedulingByStatus;
+        }
+        return schedulings;
     }
 
     @Override
     public List<SchedulingResponse> schedulingsByItem(Integer itemId, StatusEnum status) {
         List<SchedulingResponse> schedulings = this.schedulingMapper.toSchedulingResponseList(this.schedulingRepository.findSchedulingsByItem(itemId));
-        if (status == null) {
-            if (schedulings.isEmpty()) {
-                throw new NotFoundException("There aren't schedulings for this item.");
-            }
-            return schedulings;
-        } else {
-            List<SchedulingResponse> schedulingByStatus = new ArrayList<>();
-            for (SchedulingResponse scheduling : schedulings) {
-                if (scheduling.getStatus().equals(status)) {
-                    schedulingByStatus.add(scheduling);
-                }
-            }
-            {
-                if (schedulingByStatus.isEmpty()) {
-                    throw new NotFoundException("There aren't schedulings with status '" + status + "' for this item.");
-                }
-                return schedulingByStatus;
-            }
+        if (schedulings.isEmpty()) {
+            throw new NotFoundException("There aren't schedulings for this item.");
         }
+        if (status != null) {
+            List<SchedulingResponse> schedulingByStatus = schedulings.stream().filter(scheduling -> scheduling.getStatus().equals(status)).collect(Collectors.toList());
+            if (schedulingByStatus.isEmpty()) {
+                throw new NotFoundException("There aren't schedulings with status '" + status + "' for this item.");
+            }
+            return schedulingByStatus;
+        }
+        return schedulings;
     }
 
     @Override
     public void cancelScheduling(Integer schedulingId) {
         if (this.schedulingRepository.existsById(schedulingId)) {
             Scheduling scheduling = this.schedulingRepository.getById(schedulingId);
-            scheduling.setStatus(StatusEnum.CANCELLED);
-            this.schedulingRepository.save(scheduling);
-            return;
+            if (scheduling.getStatus().equals(StatusEnum.SCHEDULED)) {
+                scheduling.setStatus(StatusEnum.CANCELLED);
+                this.schedulingRepository.save(scheduling);
+                return;
+            }
+            throw new BadRequestException("Unable to cancel scheduling with status '" + scheduling.getStatus() + "'.");
         }
         throw new NotFoundException("Scheduling with ID '" + schedulingId + "' not found.");
     }
 
     @Override
     public void finishScheduling(Integer schedulingId) {
-        Scheduling scheduling = this.schedulingMapper.toScheduling(schedulingById(schedulingId));
-        if (scheduling.getStatus().equals(StatusEnum.SCHEDULED)) {
-            scheduling.setStatus(StatusEnum.FINISHED);
-            this.schedulingRepository.save(scheduling);
-            return;
+        if (this.schedulingRepository.existsById(schedulingId)) {
+            Scheduling scheduling = this.schedulingRepository.getById(schedulingId);
+            if (scheduling.getStatus().equals(StatusEnum.SCHEDULED)) {
+                scheduling.setStatus(StatusEnum.FINISHED);
+                this.schedulingRepository.save(scheduling);
+                return;
+            }
+            throw new BadRequestException("Unable to complete scheduling with status '" + scheduling.getStatus() + "'.");
         }
-        throw new BadRequestException("Unable to complete scheduling with status '" + scheduling.getStatus() + "'.");
+        throw new NotFoundException("Scheduling with ID '" + schedulingId + "' not found.");
     }
 
     @Override
@@ -244,10 +209,6 @@ public class SchedulingServiceImpl implements SchedulingService {
                 if (schedulingUpdt.getClient() != null && schedulingUpdt.getClient().getClientId() != scheduling.getClient().getClientId()) {
                     throw new BadRequestException("Isn't possible to change the client for this scheduling.");
                 }
-                this.isSchedulingAvailable(schedulingUpdt);
-//                schedulingUpdt.setBarberShop(null);
-//                schedulingUpdt.setClient(null);
-
 
                 Optional.ofNullable(schedulingUpdt.getEmployee()).ifPresent(sch -> {
                     this.checkEmployee(schedulingUpdt.getEmployee().getEmployeeId(), scheduling.getBarberShop().getBarberShopId());
@@ -262,30 +223,29 @@ public class SchedulingServiceImpl implements SchedulingService {
                         }
                     }
                     scheduling.setItems(itemsUpdt);
-                    this.schedulingRepository.save(scheduling);
                 });
                 schedulingUpdt.setItems(scheduling.getItems());
                 schedulingUpdt.setEmployee(scheduling.getEmployee());
+
                 Optional.ofNullable(schedulingUpdt.getSchedulingTime()).ifPresent(time -> {
-
-
+                    schedulingUpdt.setBarberShop(scheduling.getBarberShop());
                     this.checkSchedulingTime(schedulingUpdt);
                 });
 
+//                this.schedulingRepository.save(scheduling);
                 schedulingUpdt.setItems(null);
-                BeanUtils.copyProperties((schedulingUpdt), scheduling, this.searchEmptyFields(schedulingUpdt));
+                BeanUtils.copyProperties(schedulingUpdt, scheduling, this.searchEmptyFields(schedulingUpdt));
                 return this.schedulingMapper.toSchedulingResponse((this.schedulingRepository.save(scheduling)));
             }
-            throw new BadRequestException("This schedule is not available for changes");
+            throw new BadRequestException("This schedule is not available for changes.");
         }
         throw new NotFoundException("Scheduling with ID '" + schedulingId + "' not found.");
-
     }
 
     private void checkItem(Item item, Integer barberShopId) {
         ItemResponse itemById = this.itemService.itemById(item.getItemId());
         if (itemById.getStatus() == StatusEnum.INACTIVE) {
-            throw new InactiveException("This item isn't ACTIVE");
+            throw new InactiveException("This item isn't ACTIVE.");
         }
         if (itemById.getBarberShop().getBarberShopId() != barberShopId) {
             throw new BadRequestException("This item doesn't belong to the informed barbershop.");
@@ -302,7 +262,7 @@ public class SchedulingServiceImpl implements SchedulingService {
         for (EmployeeSimple employee : this.employeeService.employeesByBarberShop(barberShopId, null)) {
             if (employee.getEmployeeId().equals(employeeId)) {
                 if (employee.getStatus().equals(StatusEnum.INACTIVE)) {
-                    throw new InactiveException("This employee isn't ACTIVE");
+                    throw new InactiveException("This employee isn't ACTIVE.");
                 }
                 return;
             }
@@ -311,38 +271,32 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     private void checkSchedulingTime(Scheduling scheduling) {
-
-
         LocalDate date = scheduling.getSchedulingTime().toLocalDate();
 
         List<ItemResponse> newItems = scheduling.getItems().stream().map(item -> this.itemService.itemById(item.getItemId())).collect(Collectors.toList());
         LocalDateTime newStart = scheduling.getSchedulingTime();
         LocalDateTime newEnd = scheduling.getSchedulingTime().plusMinutes(newItems.stream().mapToInt(ItemResponse::getTime).sum());
 
-//        LocalTime openingTime = scheduling.getBarberShop().getOpeningTime();
-//        LocalTime closingTime = scheduling.getBarberShop().getClosingTime();
-
         LocalDateTime openingTime = LocalDateTime.of(newStart.toLocalDate(), scheduling.getBarberShop().getOpeningTime());
         LocalDateTime closingTime = LocalDateTime.of(newStart.toLocalDate(), scheduling.getBarberShop().getClosingTime());
 
-        System.out.println();
-        System.out.println(newStart + " NEW START - " + openingTime + " OPENING TIME - " + newStart.isBefore(openingTime));
-        System.out.println(newEnd +   " NEW END - " +   closingTime + " CLOSING TIME - " + newEnd.isAfter(closingTime));
-        System.out.println(newStart + " NEW START - " + newEnd +      " NEW END - " + newStart.isAfter(newEnd));
-        System.out.println(newItems.stream().mapToInt(ItemResponse::getTime).sum()  + " TEMPO ITENS");
-
         if (newStart.isBefore(openingTime) || newEnd.isAfter(closingTime) || newStart.isAfter(newEnd)) {
-            throw new AlreadyExistsException("This time isn't available for scheduling");
+            throw new BusinessException("These hours are outside of the barber shop's working hours.");
         }
 
-            for (Scheduling schedulingOld : this.schedulingRepository.findAllByDate(date)) {
+        for (Scheduling schedulingOld : this.schedulingRepository.findAllByDate(date)) {
             List<ItemResponse> existingItems = schedulingOld.getItems().stream().map(item -> this.itemService.itemById(item.getItemId())).collect(Collectors.toList());
 
             LocalDateTime existingStart = schedulingOld.getSchedulingTime();
             LocalDateTime existingEnd = schedulingOld.getSchedulingTime().plusMinutes(existingItems.stream().mapToInt(ItemResponse::getTime).sum());
 
-            if (((schedulingOld.getStatus() == StatusEnum.SCHEDULED) && (scheduling.getEmployee().getEmployeeId().equals(schedulingOld.getEmployee().getEmployeeId())) && (newStart.isBefore(existingEnd)) && (newEnd.isAfter(existingStart)) && !(newStart.equals(existingEnd)))) {
-                throw new AlreadyExistsException("This time isn't available for scheduling");
+            if (((schedulingOld.getSchedulingId() != scheduling.getSchedulingId())
+                    && (schedulingOld.getStatus() == StatusEnum.SCHEDULED)
+                    && (scheduling.getEmployee().getEmployeeId().equals(schedulingOld.getEmployee().getEmployeeId()))
+                    && (newStart.isBefore(existingEnd))
+                    && (newEnd.isAfter(existingStart))
+                    && !(newStart.equals(existingEnd)))) {
+                throw new BusinessException("This time isn't available for scheduling.");
             }
         }
 

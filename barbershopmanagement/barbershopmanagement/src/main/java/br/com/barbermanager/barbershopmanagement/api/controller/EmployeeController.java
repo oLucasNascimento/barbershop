@@ -2,9 +2,12 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 
 
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
+import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.EmployeeCreate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.EmployeeUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
@@ -13,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -25,9 +30,13 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping("/new")
-    @Validated(OnCreate.class)
-    public ResponseEntity<EmployeeResponse> newEmployee(@RequestBody @Valid EmployeeRequest newEmployee) {
-        return ResponseEntity.ok(this.employeeService.createEmployee(newEmployee));
+    public ResponseEntity<EmployeeResponse> newEmployee(@RequestBody @Validated(EmployeeCreate.class) EmployeeRequest newEmployee) {
+        EmployeeResponse response = this.employeeService.createEmployee(newEmployee);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getEmployeeId())
+                .toUri();
+        return ResponseEntity.created(uri).body(response);
     }
 
     @GetMapping("/all")
@@ -51,17 +60,16 @@ public class EmployeeController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/update/{employeeId}")
-    @Validated(SchedulingUpdate.class)
-    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Integer employeeId, @RequestBody @Valid EmployeeRequest updatedEmployee) {
-        this.employeeService.updateEmployee(employeeId, updatedEmployee);
-        return ResponseEntity.ok(this.employeeService.employeeById(employeeId));
-    }
-
     @PatchMapping("/active-employee/{employeeId}")
     public ResponseEntity activeEmployee(@PathVariable Integer employeeId) {
         this.employeeService.activeEmployee(employeeId);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/update/{employeeId}")
+    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Integer employeeId, @RequestBody @Validated(EmployeeUpdate.class) EmployeeRequest updatedEmployee) {
+        this.employeeService.updateEmployee(employeeId, updatedEmployee);
+        return ResponseEntity.ok(this.employeeService.employeeById(employeeId));
     }
 
 }

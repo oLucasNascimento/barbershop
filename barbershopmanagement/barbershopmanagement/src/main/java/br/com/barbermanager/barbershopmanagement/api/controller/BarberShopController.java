@@ -4,10 +4,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberSh
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.BarberShopUpdate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientInBarberShop;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.*;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +24,7 @@ public class BarberShopController {
     private BarberShopService barberShopService;
 
     @PostMapping("/new")
-    public ResponseEntity<BarberShopResponse> newBarberShop(@RequestBody @Validated(OnCreate.class) BarberShopRequest newBarberShop) {
+    public ResponseEntity<BarberShopResponse> newBarberShop(@RequestBody @Validated(BarberShopCreate.class) BarberShopRequest newBarberShop) {
         BarberShopResponse response = this.barberShopService.createBarberShop(newBarberShop);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

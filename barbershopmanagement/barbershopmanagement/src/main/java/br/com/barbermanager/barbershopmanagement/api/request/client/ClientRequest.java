@@ -26,18 +26,18 @@ public class ClientRequest {
     @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class, ClientInBarberShop.class}, message = "The Client ID field cannot be null.")
     private Integer clientId;
 
-    @NotBlank(groups = OnCreate.class, message = "The Name field cannot be null.")
+    @NotBlank(groups = ClientCreate.class, message = "The Name field cannot be null.")
     private String name;
 
-    @NotBlank(groups = OnCreate.class, message = "The CPF field cannot be null.")
+    @NotBlank(groups = ClientCreate.class, message = "The CPF field cannot be null.")
     private String cpf;
 
-    @NotBlank(groups = OnCreate.class, message = "The Phone field cannot be null.")
+    @NotBlank(groups = ClientCreate.class, message = "The Phone field cannot be null.")
     private String phone;
 
     private StatusEnum status;
 
-    @Null(groups = OnCreate.class, message = "The BarberShop field must be null.")
+    @Null(groups = ClientCreate.class, message = "The BarberShop field must be null.")
     @JsonIgnoreProperties({"items", "employees", "clients"})
     @Valid
     private List<BarberShopRequest> barberShops;

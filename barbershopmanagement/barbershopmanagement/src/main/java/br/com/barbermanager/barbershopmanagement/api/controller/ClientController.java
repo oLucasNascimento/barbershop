@@ -5,6 +5,7 @@ import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberS
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientCreate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
@@ -28,7 +29,7 @@ public class ClientController {
     private ClientService clientService;
 
     @PostMapping("/new")
-    public ResponseEntity<ClientResponse> newClient(@RequestBody @Validated(OnCreate.class) ClientRequest newClient) {
+    public ResponseEntity<ClientResponse> newClient(@RequestBody @Validated(ClientCreate.class) ClientRequest newClient) {
         ClientResponse response = this.clientService.createClient(newClient);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

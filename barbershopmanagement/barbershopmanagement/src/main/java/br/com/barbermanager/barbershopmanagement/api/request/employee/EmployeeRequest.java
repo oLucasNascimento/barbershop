@@ -20,28 +20,28 @@ import lombok.Setter;
 @NoArgsConstructor
 public class EmployeeRequest {
 
-    @Null(groups = OnCreate.class, message = "The Employee ID field must be null.")
+    @Null(groups = EmployeeCreate.class, message = "The Employee ID field must be null.")
     @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class}, message = "The Employee ID field cannot be null.")
     private Integer employeeId;
 
-    @NotBlank(groups = OnCreate.class, message = "The Name field cannot be null.")
+    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The Name field cannot be null.")
     private String name;
 
-    @NotBlank(groups = OnCreate.class, message = "The CPF field cannot be null.")
+    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The CPF field cannot be null.")
     private String cpf;
 
     @Email
-    @NotBlank(groups = OnCreate.class, message = "The Email field cannot be null.")
+    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The Email field cannot be null.")
     private String email;
 
-    @NotBlank(groups = OnCreate.class, message = "The Phone field cannot be null.")
+    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The Phone field cannot be null.")
     private String phone;
 
     private StatusEnum status;
 
-    @Valid
+    @NotNull(groups = EmployeeCreate.class, message = "The BarberShop field cannot be null.")
     @JsonIgnoreProperties({"items", "employees", "clients"})
-    @NotNull(groups = EmployeeCreate.class, message = "The Barber Shop field cannot be null.")
+    @Valid
     private BarberShopRequest barberShop;
 
 }

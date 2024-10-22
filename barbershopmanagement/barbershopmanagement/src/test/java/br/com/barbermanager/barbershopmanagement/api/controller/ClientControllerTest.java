@@ -120,7 +120,7 @@ class ClientControllerTest {
 
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
 
-        assertEquals("The Barber Shop field must be null.", restError.getMessage());
+        assertEquals("The BarberShop field must be null.", restError.getMessage());
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/client/new", restError.getPath());
@@ -277,7 +277,7 @@ class ClientControllerTest {
 
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
 
-        assertEquals("The Barber Shop ID field cannot be null.", restError.getMessage());
+        assertEquals("The BarberShop ID field cannot be null.", restError.getMessage());
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/client/update/1", restError.getPath());

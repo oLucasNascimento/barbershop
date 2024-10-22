@@ -1,13 +1,10 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
-import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
 import br.com.barbermanager.barbershopmanagement.domain.service.client.ClientService;
 import jakarta.validation.Valid;
@@ -60,7 +57,7 @@ public class ClientController {
     }
 
     @PatchMapping("/update/{clientId}")
-    @Validated(AssociatedUpdate.class)
+    @Validated(SchedulingUpdate.class)
     public ResponseEntity<ClientResponse> updateClient(@PathVariable Integer clientId, @RequestBody @Valid ClientRequest updatedClient) {
         this.clientService.updateClient(clientId, updatedClient);
         return ResponseEntity.ok(this.clientService.clientById(clientId));

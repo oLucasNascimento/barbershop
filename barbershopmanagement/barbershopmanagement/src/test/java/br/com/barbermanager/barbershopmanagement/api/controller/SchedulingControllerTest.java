@@ -65,9 +65,6 @@ class SchedulingControllerTest {
     public static final int TIME = 70;
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
 
-    private SchedulingRequest schedulingRequest = new SchedulingRequest();
-    private SchedulingResponse schedulingResponse = new SchedulingResponse();
-
     private BarberShopRequest barberShopRequest = new BarberShopRequest();
     private BarberShopSimple barberShopSimple = new BarberShopSimple();
 
@@ -79,6 +76,9 @@ class SchedulingControllerTest {
 
     private ItemRequest itemRequest = new ItemRequest();
     private ItemSimple itemSimple = new ItemSimple();
+
+    private SchedulingRequest schedulingRequest = new SchedulingRequest();
+    private SchedulingResponse schedulingResponse = new SchedulingResponse();
 
     @Autowired
     private MockMvc mockMvc;
@@ -455,7 +455,7 @@ class SchedulingControllerTest {
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
 
-        assertEquals("The Barber Shop ID field cannot be null.", restError.getMessage());
+        assertEquals("The BarberShop ID field cannot be null.", restError.getMessage());
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/scheduling/update/1", restError.getPath());
@@ -472,7 +472,7 @@ class SchedulingControllerTest {
     }
 
     private void startUser() {
-        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.itemRequest), List.of(this.employeeRequest), List.of(this.clientRequest), new ArrayList<>());
+        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.itemRequest), List.of(this.employeeRequest), List.of(this.clientRequest));
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
 
         this.clientRequest = new ClientRequest(ID, NAME, CPF, PHONE, STATUS_ACTIVE, List.of(this.barberShopRequest), new ArrayList<>());
@@ -481,7 +481,7 @@ class SchedulingControllerTest {
         this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, MAIL, PHONE, STATUS_ACTIVE, this.barberShopRequest);
         this.employeeSimple = new EmployeeSimple(ID, NAME, PHONE, STATUS_ACTIVE);
 
-        this.itemRequest = new ItemRequest(ID, NAME, PRICE, TIME, STATUS_ACTIVE, this.barberShopRequest, new ArrayList<>());
+        this.itemRequest = new ItemRequest(ID, NAME, PRICE, TIME, STATUS_ACTIVE, this.barberShopRequest);
         this.itemSimple = new ItemSimple(ID, NAME, PRICE, TIME, STATUS_ACTIVE);
 
         this.schedulingRequest = new SchedulingRequest(null, this.clientRequest, this.barberShopRequest, this.employeeRequest, List.of(this.itemRequest), DATE_10, null);

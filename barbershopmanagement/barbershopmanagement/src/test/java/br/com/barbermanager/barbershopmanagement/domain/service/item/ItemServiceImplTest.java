@@ -335,7 +335,7 @@ class ItemServiceImplTest {
     private void startUser() {
         this.item = new Item(ID, NAME, PRICE, TIME, STATUS_ACTIVE, null, new ArrayList<>());
         this.itemSimple = new ItemSimple(ID, NAME, PRICE, TIME, STATUS_ACTIVE);
-        this.itemRequest = new ItemRequest(ID, NAME, PRICE, TIME, STATUS_ACTIVE, null, new ArrayList<>());
+        this.itemRequest = new ItemRequest(ID, NAME, PRICE, TIME, STATUS_ACTIVE, null);
         this.itemResponse = new ItemResponse(ID, NAME, PRICE, TIME, STATUS_ACTIVE, null, new ArrayList<>());
     }
 

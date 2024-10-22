@@ -1,13 +1,9 @@
 package br.com.barbermanager.barbershopmanagement.api.request.employee;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
-import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.EmployeeCreate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingCreate;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -24,8 +20,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class EmployeeRequest {
 
-    @Null(groups = OnCreate.class)
-    @NotNull(groups = {SchedulingCreate.class, AssociatedUpdate.class}, message = "The Employee ID field cannot be null.")
+    @Null(groups = OnCreate.class, message = "The Employee ID field must be null.")
+    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class}, message = "The Employee ID field cannot be null.")
     private Integer employeeId;
 
     @NotBlank(groups = OnCreate.class, message = "The Name field cannot be null.")
@@ -44,7 +40,7 @@ public class EmployeeRequest {
     private StatusEnum status;
 
     @Valid
-    @JsonIgnore
+    @JsonIgnoreProperties({"items", "employees", "clients"})
     @NotNull(groups = EmployeeCreate.class, message = "The Barber Shop field cannot be null.")
     private BarberShopRequest barberShop;
 

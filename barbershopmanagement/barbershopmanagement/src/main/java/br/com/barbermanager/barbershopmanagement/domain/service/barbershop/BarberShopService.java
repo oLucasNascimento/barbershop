@@ -3,9 +3,6 @@ package br.com.barbermanager.barbershopmanagement.domain.service.barbershop;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
-import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 
 import java.util.List;
@@ -22,7 +19,7 @@ public interface BarberShopService {
 
     BarberShopResponse updateBarberShop(Integer barberShopId, BarberShopRequest updatedBarberShop);
 
-    BarberShopResponse udpateClientAtBarberShop(Integer barberShopId, BarberShopRequest updatedClients);
+    BarberShopResponse updateClientAtBarberShop(Integer barberShopId, BarberShopRequest updatedClients);
 
     void removeClient(Integer barberShopId, Integer clientId);
 

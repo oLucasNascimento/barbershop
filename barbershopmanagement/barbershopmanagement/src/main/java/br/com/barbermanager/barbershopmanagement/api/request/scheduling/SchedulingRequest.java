@@ -7,6 +7,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingCreate;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -24,22 +25,26 @@ import java.util.List;
 @NoArgsConstructor
 public class SchedulingRequest {
 
-    @Null(groups = SchedulingCreate.class)
+    @Null(groups = SchedulingCreate.class, message = "The Scheduling ID field must be null.")
     private Integer schedulingId;
 
     @Valid
+    @JsonIgnoreProperties({"barberShops", "schedulings"})
     @NotNull(groups = SchedulingCreate.class, message = "The Client field cannot be null.")
     private ClientRequest client;
 
     @Valid
+    @JsonIgnoreProperties({"items", "employees", "clients"})
     @NotNull(groups = SchedulingCreate.class, message = "The BarberShop field cannot be null.")
     private BarberShopRequest barberShop;
 
     @Valid
+    @JsonIgnoreProperties("barberShop")
     @NotNull(groups = SchedulingCreate.class, message = "The Employee field cannot be null.")
     private EmployeeRequest employee;
 
     @Valid
+    @JsonIgnoreProperties("barberShop")
     @NotNull(groups = SchedulingCreate.class, message = "The Items field cannot be null.")
     private List<ItemRequest> items;
 

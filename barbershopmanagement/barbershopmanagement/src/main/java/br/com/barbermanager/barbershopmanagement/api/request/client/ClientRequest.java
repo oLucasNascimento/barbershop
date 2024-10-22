@@ -3,12 +3,8 @@ package br.com.barbermanager.barbershopmanagement.api.request.client;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnUpdate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingCreate;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,8 +22,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ClientRequest {
 
-    @Null(groups = OnCreate.class)
-    @NotNull(groups = {SchedulingCreate.class, AssociatedUpdate.class}, message = "The Client ID field cannot be null.")
+    @Null(groups = OnCreate.class, message = "The Client ID field must be null.")
+    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class, ClientInBarberShop.class}, message = "The Client ID field cannot be null.")
     private Integer clientId;
 
     @NotBlank(groups = OnCreate.class, message = "The Name field cannot be null.")
@@ -43,12 +39,12 @@ public class ClientRequest {
 
     @Valid
     @Null(groups = OnCreate.class, message = "The Barber Shop field must be null.")
-    @JsonIgnore
+    @JsonIgnoreProperties({"items", "employees", "clients"})
     private List<BarberShopRequest> barberShops;
 
     @Valid
     @Null(groups = OnCreate.class, message = "The Scheduling field must be null.")
-    @JsonIgnore
+    @JsonIgnoreProperties({"barberShop", "items", "employees", "clients"})
     private List<SchedulingRequest> schedulings;
 
 }

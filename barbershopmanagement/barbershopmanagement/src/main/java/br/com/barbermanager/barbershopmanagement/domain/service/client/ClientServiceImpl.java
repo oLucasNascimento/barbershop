@@ -147,7 +147,7 @@ public class ClientServiceImpl implements ClientService {
             clients.add(client);
             BarberShop barberShop = this.barberShopMapper.toBarberShop((this.barberShopService.barberShopById((barberShopUpdt.getBarberShopId()))));
             barberShop.setClients(clients);
-            this.barberShopService.udpateClientAtBarberShop(barberShop.getBarberShopId(), this.barberShopMapper.toBarberShopRequest(barberShop));
+            this.barberShopService.updateClientAtBarberShop(barberShop.getBarberShopId(), this.barberShopMapper.toBarberShopRequest(barberShop));
         }
         return client;
     }

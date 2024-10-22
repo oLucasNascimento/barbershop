@@ -3,16 +3,14 @@ package br.com.barbermanager.barbershopmanagement.api.request.barbershop;
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
-import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientInBarberShop;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingCreate;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,8 +25,8 @@ import java.util.List;
 @NoArgsConstructor
 public class BarberShopRequest {
 
-    @Null(groups = OnCreate.class)
-    @NotNull(groups = {SchedulingCreate.class, AssociatedUpdate.class}, message = "The BarberShop ID field cannot be null.")
+    @Null(groups = OnCreate.class, message = "The BarberShop ID field must be null.")
+    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class}, message = "The BarberShop ID field cannot be null.")
     private Integer barberShopId;
 
     @NotBlank(groups = OnCreate.class, message = "The Name field cannot be null.")
@@ -54,23 +52,20 @@ public class BarberShopRequest {
 
     private StatusEnum status;
 
+    @Null(groups = {OnCreate.class, ClientInBarberShop.class}, message = "The Item field must be null.")
+    @JsonIgnoreProperties({"barberShop", "schedulings"})
     @Valid
-    @JsonIgnore
-    @Null(groups = OnCreate.class)
     private List<ItemRequest> items;
 
+    @Null(groups = {OnCreate.class, ClientInBarberShop.class}, message = "The Employee field must be null.")
+    @JsonIgnoreProperties("barberShop")
     @Valid
-    @JsonIgnore
-    @Null(groups = OnCreate.class)
     private List<EmployeeRequest> employees;
 
+    @Null(groups = OnCreate.class, message = "The Client field must be null.")
+    @NotNull(groups = ClientInBarberShop.class, message = "The Client field cannot be null.")
+    @JsonIgnoreProperties({"barberShops", "schedulings"})
     @Valid
-    @JsonIgnore
-    @Null(groups = OnCreate.class)
     private List<ClientRequest> clients;
-
-    @Null
-    @JsonIgnore
-    private List<SchedulingRequest> schedulings;
 
 }

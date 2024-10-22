@@ -5,10 +5,9 @@ import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRe
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
-import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +52,7 @@ public class EmployeeController {
     }
 
     @PatchMapping("/update/{employeeId}")
-    @Validated(AssociatedUpdate.class)
+    @Validated(SchedulingUpdate.class)
     public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Integer employeeId, @RequestBody @Valid EmployeeRequest updatedEmployee) {
         this.employeeService.updateEmployee(employeeId, updatedEmployee);
         return ResponseEntity.ok(this.employeeService.employeeById(employeeId));

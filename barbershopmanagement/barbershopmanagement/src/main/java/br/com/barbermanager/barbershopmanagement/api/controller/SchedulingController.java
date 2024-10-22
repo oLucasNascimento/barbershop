@@ -3,7 +3,7 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.AssociatedUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingCreate;
 import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class SchedulingController {
     }
 
     @PatchMapping("/update/{schedulingId}")
-    public ResponseEntity<SchedulingResponse> updateScheduling(@PathVariable Integer schedulingId, @RequestBody @Validated(AssociatedUpdate.class) SchedulingRequest schedulingUpdated) {
+    public ResponseEntity<SchedulingResponse> updateScheduling(@PathVariable Integer schedulingId, @RequestBody @Validated(SchedulingUpdate.class) SchedulingRequest schedulingUpdated) {
         this.schedulingService.updateScheduling(schedulingId, schedulingUpdated);
         return ResponseEntity.ok(this.schedulingService.schedulingById(schedulingId));
     }

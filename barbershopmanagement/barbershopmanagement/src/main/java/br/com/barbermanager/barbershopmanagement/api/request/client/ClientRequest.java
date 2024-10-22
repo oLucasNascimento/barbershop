@@ -37,14 +37,14 @@ public class ClientRequest {
 
     private StatusEnum status;
 
-    @Valid
     @Null(groups = OnCreate.class, message = "The Barber Shop field must be null.")
     @JsonIgnoreProperties({"items", "employees", "clients"})
+    @Valid
     private List<BarberShopRequest> barberShops;
 
-    @Valid
-    @Null(groups = OnCreate.class, message = "The Scheduling field must be null.")
+    @Null(message = "The Scheduling field must be null.")
     @JsonIgnoreProperties({"barberShop", "items", "employees", "clients"})
+    @Valid
     private List<SchedulingRequest> schedulings;
 
 }

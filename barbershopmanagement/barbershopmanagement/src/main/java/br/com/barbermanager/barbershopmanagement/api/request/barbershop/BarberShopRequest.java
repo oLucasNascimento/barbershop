@@ -4,10 +4,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.client.ClientReques
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientInBarberShop;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingCreate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -26,7 +23,7 @@ import java.util.List;
 public class BarberShopRequest {
 
     @Null(groups = OnCreate.class, message = "The BarberShop ID field must be null.")
-    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class}, message = "The BarberShop ID field cannot be null.")
+    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, ClientUpdate.class}, message = "The BarberShop ID field cannot be null.")
     private Integer barberShopId;
 
     @NotBlank(groups = OnCreate.class, message = "The Name field cannot be null.")

@@ -96,7 +96,6 @@ class BarberShopControllerTest {
     void whenCreateNewBarberShopThenReturnSuccess() throws Exception {
         when(this.barberShopService.createBarberShop(any())).thenReturn(this.barberShopResponse);
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
-        System.out.println("\n\n\nUSER JSON -> " + userJson);
         String responseContent = mockMvc.perform(post("/barbershop/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))

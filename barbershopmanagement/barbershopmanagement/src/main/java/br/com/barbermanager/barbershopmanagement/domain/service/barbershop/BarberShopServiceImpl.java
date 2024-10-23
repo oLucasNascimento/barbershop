@@ -170,7 +170,7 @@ public class BarberShopServiceImpl implements BarberShopService {
     }
 
     @Override
-    public BarberShopResponse udpateClientAtBarberShop(Integer barberShopId, BarberShopRequest updatedClients) {
+    public BarberShopResponse updateClientAtBarberShop(Integer barberShopId, BarberShopRequest updatedClients) {
         if (this.barberShopExists(barberShopId)) {
             BarberShop barberShop = this.barberShopRepository.getById(barberShopId);
 //            BarberShop barberShop = this.barberShopMapper.toBarberShop(this.barberShopById(barberShopId));
@@ -205,7 +205,7 @@ public class BarberShopServiceImpl implements BarberShopService {
                 }
                 clients.removeAll(removedClients);
                 barberShop.setClients(clients);
-                this.udpateClientAtBarberShop(barberShopId, (this.barberShopMapper.toBarberShopRequest(barberShop)));
+                this.updateClientAtBarberShop(barberShopId, (this.barberShopMapper.toBarberShopRequest(barberShop)));
                 return;
             }
             throw new NotFoundException("Barber Shop hasn't clients to be removed.");

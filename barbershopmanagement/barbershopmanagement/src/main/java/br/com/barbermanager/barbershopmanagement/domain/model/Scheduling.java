@@ -2,18 +2,12 @@ package br.com.barbermanager.barbershopmanagement.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -23,7 +17,7 @@ public class Scheduling {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer schedulingId;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "fk_client")
     private Client client;
 

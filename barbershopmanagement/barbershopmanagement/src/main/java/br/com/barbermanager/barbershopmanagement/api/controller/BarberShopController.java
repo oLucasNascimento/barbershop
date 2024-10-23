@@ -3,18 +3,23 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
-import br.com.barbermanager.barbershopmanagement.domain.model.Scheduling;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.BarberShopCreate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.BarberShopUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientInBarberShop;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/barbershop")
 public class BarberShopController {
 
@@ -22,8 +27,13 @@ public class BarberShopController {
     private BarberShopService barberShopService;
 
     @PostMapping("/new")
-    public ResponseEntity<BarberShopResponse> newBarberShop(@RequestBody BarberShopRequest newBarberShop) {
-        return ResponseEntity.ok(this.barberShopService.createBarberShop(newBarberShop));
+    public ResponseEntity<BarberShopResponse> newBarberShop(@RequestBody @Validated(BarberShopCreate.class) BarberShopRequest newBarberShop) {
+        BarberShopResponse response = this.barberShopService.createBarberShop(newBarberShop);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getBarberShopId())
+                .toUri();
+        return ResponseEntity.created(uri).body(response);
     }
 
     @GetMapping("/all")
@@ -32,7 +42,7 @@ public class BarberShopController {
     }
 
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<BarberShopSimple>> clientsByBarberShop(@RequestParam(required = false) StatusEnum status, @PathVariable Integer clientId){
+    public ResponseEntity<List<BarberShopSimple>> barberShopsByClient(@RequestParam(required = false) StatusEnum status, @PathVariable Integer clientId){
         return ResponseEntity.ok(this.barberShopService.barberShopsByClient(clientId, status));
     }
 
@@ -60,16 +70,16 @@ public class BarberShopController {
     }
 
     @PatchMapping("/update/{barberShopId}")
-    public ResponseEntity<BarberShopResponse> updateBarberShop(@PathVariable Integer barberShopId, @RequestBody BarberShopRequest updatedBarberShop) {
+    @Validated(SchedulingUpdate.class)
+    public ResponseEntity<BarberShopResponse> updateBarberShop(@PathVariable Integer barberShopId, @RequestBody @Validated(BarberShopUpdate.class) BarberShopRequest updatedBarberShop) {
         this.barberShopService.updateBarberShop(barberShopId, updatedBarberShop);
         return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
     }
 
     @PatchMapping("/insert-client/{barberShopId}")
-    public ResponseEntity<BarberShopResponse> insertNewClient(@PathVariable Integer barberShopId, @RequestBody BarberShopRequest updatedBarberShop) {
-        return ResponseEntity.ok(this.barberShopService.udpateClientAtBarberShop(barberShopId, updatedBarberShop));
+    public ResponseEntity<BarberShopResponse> insertNewClient(@PathVariable Integer barberShopId, @RequestBody @Validated(ClientInBarberShop.class) BarberShopRequest updatedBarberShop) {
+        return ResponseEntity.ok(this.barberShopService.updateClientAtBarberShop(barberShopId, updatedBarberShop));
     }
-
 
     @DeleteMapping("/remove-client/{barberShopId}/{clientId}")
     public ResponseEntity removeClient(@PathVariable Integer barberShopId, @PathVariable Integer clientId) {

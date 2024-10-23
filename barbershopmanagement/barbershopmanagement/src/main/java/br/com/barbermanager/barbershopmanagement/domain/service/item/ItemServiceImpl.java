@@ -64,6 +64,8 @@ public class ItemServiceImpl implements ItemService {
             }
             return itemSimples;
         }
+        System.out.println(itemResponses.get(0).getName());
+        System.out.println((this.itemRepository.findAll()).get(0).getName());
         return itemResponses;
     }
 

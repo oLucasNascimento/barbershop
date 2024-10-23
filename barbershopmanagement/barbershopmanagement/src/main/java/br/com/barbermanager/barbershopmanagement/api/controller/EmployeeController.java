@@ -5,15 +5,20 @@ import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRe
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.EmployeeCreate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.EmployeeUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
-import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/employee")
 public class EmployeeController {
 
@@ -21,8 +26,13 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping("/new")
-    public ResponseEntity<EmployeeResponse> newEmployee(@RequestBody EmployeeRequest newEmployee) {
-        return ResponseEntity.ok(this.employeeService.createEmployee(newEmployee));
+    public ResponseEntity<EmployeeResponse> newEmployee(@RequestBody @Validated(EmployeeCreate.class) EmployeeRequest newEmployee) {
+        EmployeeResponse response = this.employeeService.createEmployee(newEmployee);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getEmployeeId())
+                .toUri();
+        return ResponseEntity.created(uri).body(response);
     }
 
     @GetMapping("/all")
@@ -46,16 +56,16 @@ public class EmployeeController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/update/{employeeId}")
-    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Integer employeeId, @RequestBody EmployeeRequest updatedEmployee) {
-        this.employeeService.updateEmployee(employeeId, updatedEmployee);
-        return ResponseEntity.ok(this.employeeService.employeeById(employeeId));
-    }
-
     @PatchMapping("/active-employee/{employeeId}")
     public ResponseEntity activeEmployee(@PathVariable Integer employeeId) {
         this.employeeService.activeEmployee(employeeId);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/update/{employeeId}")
+    public ResponseEntity<EmployeeResponse> updateEmployee(@PathVariable Integer employeeId, @RequestBody @Validated(EmployeeUpdate.class) EmployeeRequest updatedEmployee) {
+        this.employeeService.updateEmployee(employeeId, updatedEmployee);
+        return ResponseEntity.ok(this.employeeService.employeeById(employeeId));
     }
 
 }

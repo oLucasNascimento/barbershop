@@ -1,16 +1,22 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
-import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingService;
 import br.com.barbermanager.barbershopmanagement.api.request.scheduling.SchedulingRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingCreate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/scheduling")
 public class SchedulingController {
 
@@ -18,8 +24,13 @@ public class SchedulingController {
     private SchedulingService schedulingService;
 
     @PostMapping("/new")
-    public ResponseEntity<SchedulingResponse> newScheduling(@RequestBody SchedulingRequest newScheduling) {
-        return ResponseEntity.ok(this.schedulingService.newScheduling(newScheduling));
+    public ResponseEntity<SchedulingResponse> newScheduling(@RequestBody @Validated(SchedulingCreate.class) SchedulingRequest newScheduling) {
+        SchedulingResponse response = this.schedulingService.newScheduling(newScheduling);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getSchedulingId())
+                .toUri();
+        return ResponseEntity.created(uri).body(response);
     }
 
     @GetMapping("/all")
@@ -59,7 +70,7 @@ public class SchedulingController {
     }
 
     @PatchMapping("/update/{schedulingId}")
-    public ResponseEntity updateScheduling(@PathVariable Integer schedulingId, @RequestBody SchedulingRequest schedulingUpdated) {
+    public ResponseEntity<SchedulingResponse> updateScheduling(@PathVariable Integer schedulingId, @RequestBody @Validated(SchedulingUpdate.class) SchedulingRequest schedulingUpdated) {
         this.schedulingService.updateScheduling(schedulingId, schedulingUpdated);
         return ResponseEntity.ok(this.schedulingService.schedulingById(schedulingId));
     }

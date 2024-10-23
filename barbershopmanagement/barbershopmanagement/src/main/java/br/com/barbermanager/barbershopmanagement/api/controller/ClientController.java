@@ -1,20 +1,23 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
-import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientCreate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.service.client.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
+@Validated
 @RequestMapping("/client")
 public class ClientController {
 
@@ -22,8 +25,13 @@ public class ClientController {
     private ClientService clientService;
 
     @PostMapping("/new")
-    public ResponseEntity<ClientResponse> newClient(@RequestBody ClientRequest newClient) {
-        return ResponseEntity.ok(this.clientService.createClient(newClient));
+    public ResponseEntity<ClientResponse> newClient(@RequestBody @Validated(ClientCreate.class) ClientRequest newClient) {
+        ClientResponse response = this.clientService.createClient(newClient);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(response.getClientId())
+                .toUri();
+        return ResponseEntity.created(uri).body(response);
     }
 
     @GetMapping("/all")
@@ -32,12 +40,12 @@ public class ClientController {
     }
 
     @GetMapping("/{clientId}")
-    public ResponseEntity<ClientResponse> barberShopById(@PathVariable Integer clientId) {
+    public ResponseEntity<ClientResponse> clientById(@PathVariable Integer clientId) {
         return ResponseEntity.ok(this.clientService.clientById(clientId));
     }
 
     @GetMapping("/barber-shop/{barberShopId}")
-    public ResponseEntity<List<ClientSimple>> clientsByBarberShop(@RequestParam(required = false) StatusEnum status, @PathVariable Integer barberShopId){
+    public ResponseEntity<List<ClientSimple>> clientsByBarberShop(@RequestParam(required = false) StatusEnum status, @PathVariable Integer barberShopId) {
         return ResponseEntity.ok(this.clientService.clientsByBarberShop(barberShopId, status));
     }
 
@@ -48,13 +56,13 @@ public class ClientController {
     }
 
     @PatchMapping("/active-client/{clientId}")
-    public ResponseEntity activeClient(@PathVariable Integer clientId){
+    public ResponseEntity activeClient(@PathVariable Integer clientId) {
         this.clientService.activeClient(clientId);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/update/{clientId}")
-    public ResponseEntity<ClientResponse> updateClient(@PathVariable Integer clientId, @RequestBody ClientRequest updatedClient) {
+    public ResponseEntity<ClientResponse> updateClient(@PathVariable Integer clientId, @RequestBody @Validated(ClientUpdate.class) ClientRequest updatedClient) {
         this.clientService.updateClient(clientId, updatedClient);
         return ResponseEntity.ok(this.clientService.clientById(clientId));
     }

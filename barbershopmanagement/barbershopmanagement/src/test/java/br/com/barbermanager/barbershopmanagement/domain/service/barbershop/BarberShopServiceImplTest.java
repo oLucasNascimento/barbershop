@@ -5,8 +5,6 @@ import br.com.barbermanager.barbershopmanagement.api.mapper.EmployeeMapper;
 import br.com.barbermanager.barbershopmanagement.api.mapper.ItemMapper;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
-import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
-import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
@@ -328,8 +326,7 @@ class BarberShopServiceImplTest {
 
     @Test
     void whenUpdateBarberShopThenReturnSuccess() {
-        this.barberShopRequest.setSchedulings(null);
-
+        this.barberShopRequest.setAdress(null);
         when(this.barberShopService.barberShopExists(anyInt())).thenReturn(true);
         when(this.barberShopRepository.findByEmail(anyString())).thenReturn(null);
         when(this.barberShopRepository.getById(anyInt())).thenReturn(this.barberShop);
@@ -515,7 +512,7 @@ class BarberShopServiceImplTest {
         when(this.barberShopMapper.toBarberShop((BarberShopRequest) any())).thenReturn(this.barberShop);
         when(this.barberShopMapper.toBarberShopResponse(any())).thenReturn(this.barberShopResponse);
 
-        BarberShopResponse response = this.barberShopService.udpateClientAtBarberShop(ID, this.barberShopRequest);
+        BarberShopResponse response = this.barberShopService.updateClientAtBarberShop(ID, this.barberShopRequest);
 
         assertNotNull(response);
         assertEquals(BarberShopResponse.class, response.getClass());
@@ -527,7 +524,7 @@ class BarberShopServiceImplTest {
     void whenUpdateClientAtBarberShopThenThrowNotFoundException() {
         when(this.barberShopService.barberShopExists(anyInt())).thenReturn(false);
         try {
-            this.barberShopService.udpateClientAtBarberShop(ID, this.barberShopRequest);
+            this.barberShopService.updateClientAtBarberShop(ID, this.barberShopRequest);
         } catch (Exception ex) {
             assertEquals(NotFoundException.class, ex.getClass());
             assertEquals("Barber Shop with ID '" + ID + "' not found.", ex.getMessage());
@@ -546,7 +543,7 @@ class BarberShopServiceImplTest {
         this.barberShopService.removeClient(ID, ID);
 
         assertTrue(this.barberShop.getClients().isEmpty());
-        verify(this.barberShopService, times(1)).udpateClientAtBarberShop(anyInt(), any());
+        verify(this.barberShopService, times(1)).updateClientAtBarberShop(anyInt(), any());
     }
 
     @Test
@@ -650,7 +647,7 @@ class BarberShopServiceImplTest {
 
     private void startDomains() {
         this.barberShop = new BarberShop(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         this.barberShopResponse = new BarberShopResponse(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, NUMBER, ADRESS, OPENING, CLOSING, STATUS_ACTIVE);
 

@@ -14,5 +14,8 @@ public class RestErrorMessage {
 
     private HttpStatus status;
     private String message;
+    private String timestamp;
+    private String path;
+    private String errorCode;
 
 }

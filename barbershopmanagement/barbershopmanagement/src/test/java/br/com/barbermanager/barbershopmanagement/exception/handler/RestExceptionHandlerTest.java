@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -153,6 +154,28 @@ class RestExceptionHandlerTest {
         assertEquals("BUSINESS_ERROR", response.getBody().getErrorCode());
         assertEquals("/some-path", response.getBody().getPath());
     }
+
+    @Test
+    void handleHttpMessageNotReadable() {
+        HttpMessageNotReadableException exception = mock(HttpMessageNotReadableException.class);
+        HttpHeaders headers = new HttpHeaders();
+        WebRequest webRequest = mock(WebRequest.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        when(bindingResult.getFieldErrors()).thenReturn(Arrays.asList(new FieldError("station", "name", "An error occurred while processing the information. Please ensure all data is correct and try again.")));
+//        when(exception.getBindingResult()).thenReturn(bindingResult);
+        when(webRequest.getDescription(false)).thenReturn("/some-path");
+
+        ResponseEntity<Object> response = this.handler.handleHttpMessageNotReadable(exception,headers,HttpStatus.BAD_REQUEST, webRequest);
+
+        RestErrorMessage body = (RestErrorMessage) response.getBody();
+        assertEquals(HttpStatus.BAD_REQUEST, body.getStatus());
+        assertNotNull(body);
+        assertEquals("An error occurred while processing the information. Please ensure all data is correct and try again.", body.getMessage());
+        assertEquals("DESERIALIZE_ERROR", body.getErrorCode());
+        assertEquals("/some-path", body.getPath());
+    }
+
     @Test
     void handleMethodArgumentNotValid() {
         MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);

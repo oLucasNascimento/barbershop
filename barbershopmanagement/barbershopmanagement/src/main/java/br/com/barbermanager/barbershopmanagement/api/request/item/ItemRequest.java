@@ -2,7 +2,10 @@ package br.com.barbermanager.barbershopmanagement.api.request.item;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.*;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.BarberShopUpdate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.ItemCreate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingCreate;
+import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -19,24 +22,24 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ItemRequest {
 
-    @Null(groups = OnCreate.class, message = "The Item ID field must be null.")
+    @Null(groups = ItemCreate.class, message = "The Item ID field must be null.")
     @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class}, message = "The Item ID field cannot be null.")
     private Integer itemId;
 
-    @NotBlank(groups = OnCreate.class, message = "The Name field cannot be null.")
+    @NotBlank(groups = ItemCreate.class, message = "The Name field cannot be null.")
     private String name;
 
-    @NotNull(groups = OnCreate.class, message = "The Price field cannot be null.")
+    @NotNull(groups = ItemCreate.class, message = "The Price field cannot be null.")
     private Double price;
 
-    @NotNull(groups = OnCreate.class, message = "The Name field cannot be null.")
+    @NotNull(groups = ItemCreate.class, message = "The Time field cannot be null.")
     private Integer time;
 
     private StatusEnum status;
 
-    @Valid
+    @NotNull(groups = ItemCreate.class, message = "The BarberShop field cannot be null.")
     @JsonIgnoreProperties({"items", "employees", "clients"})
-    @NotNull(groups = ItemCreate.class, message = "The Barber Shop field cannot be null.")
+    @Valid
     private BarberShopRequest barberShop;
 
 }

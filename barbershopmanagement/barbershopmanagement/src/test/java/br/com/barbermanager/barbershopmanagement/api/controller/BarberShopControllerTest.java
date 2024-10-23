@@ -105,6 +105,7 @@ class BarberShopControllerTest {
 
         assertNotNull(response);
         assertEquals(ID, response.getBarberShopId());
+        verify(this.barberShopService,times(1)).createBarberShop(any());
     }
 
     @Test
@@ -123,6 +124,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
+        verify(this.barberShopService,times(0)).createBarberShop(any());
     }
 
     @Test
@@ -141,6 +143,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
+        verify(this.barberShopService,times(0)).createBarberShop(any());
     }
 
     @Test
@@ -159,6 +162,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
+        verify(this.barberShopService,times(0)).createBarberShop(any());
     }
 
     @Test
@@ -177,6 +181,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
+        verify(this.barberShopService,times(0)).createBarberShop(any());
     }
 
 //    @Test
@@ -214,6 +219,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
+        verify(this.barberShopService,times(0)).createBarberShop(any());
     }
 
     @Test
@@ -232,6 +238,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
+        verify(this.barberShopService,times(0)).createBarberShop(any());
     }
 
     @Test
@@ -250,6 +257,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
+        verify(this.barberShopService,times(0)).createBarberShop(any());
     }
 
     @Test
@@ -268,6 +276,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
+        verify(this.barberShopService,times(0)).createBarberShop(any());
     }
 
     @Test
@@ -286,6 +295,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
+        verify(this.barberShopService,times(0)).createBarberShop(any());
     }
 
     @Test
@@ -304,6 +314,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
+        verify(this.barberShopService,times(0)).createBarberShop(any());
     }
 
     @Test
@@ -319,6 +330,7 @@ class BarberShopControllerTest {
 
         assertEquals(1, response.size());
         assertEquals(ID, response.get(0).getBarberShopId());
+        verify(this.barberShopService,times(1)).allBarberShops(any());
     }
 
     @Test
@@ -334,6 +346,7 @@ class BarberShopControllerTest {
 
         assertEquals(1, response.size());
         assertEquals(ID, response.get(0).getBarberShopId());
+        verify(this.barberShopService,times(1)).barberShopsByClient(anyInt(),any());
     }
 
     @Test
@@ -348,6 +361,8 @@ class BarberShopControllerTest {
 
         assertNotNull(response);
         assertEquals(ID, response.getBarberShopId());
+
+        verify(this.barberShopService,times(1)).barberShopById(anyInt());
     }
 
     @Test
@@ -394,6 +409,7 @@ class BarberShopControllerTest {
 
         assertNotNull(response);
         assertEquals(ID, response.getBarberShopId());
+        verify(this.barberShopService,times(1)).updateBarberShop(anyInt(), any());
     }
 
     @Test
@@ -413,14 +429,14 @@ class BarberShopControllerTest {
 
         assertNotNull(response);
         assertEquals(ID, response.getBarberShopId());
+        verify(this.barberShopService,times(1)).updateBarberShop(anyInt(), any());
+        verify(this.barberShopService,times(1)).barberShopById(anyInt());
     }
 
     @Test
     void whenUpdateBarberShopWithItemIdNullThenThrowAnBadRequestException() throws Exception {
         this.itemRequest.setItemId(null);
         this.barberShopRequest.setItems(List.of(this.itemRequest));
-        when(this.barberShopService.updateBarberShop(anyInt(), any())).thenReturn(this.barberShopResponse);
-        when(this.barberShopService.barberShopById(anyInt())).thenReturn(this.barberShopResponse);
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
         String responseContent = mockMvc.perform(patch("/barbershop/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -433,6 +449,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/update/1", restError.getPath());
+        verify(this.barberShopService,times(0)).updateBarberShop(anyInt(), any());
     }
 
     @Test
@@ -453,6 +470,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/update/1", restError.getPath());
+        verify(this.barberShopService,times(0)).updateBarberShop(anyInt(), any());
     }
 
     @Test
@@ -473,6 +491,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/update/1", restError.getPath());
+        verify(this.barberShopService,times(0)).updateBarberShop(anyInt(), any());
     }
 
     @Test

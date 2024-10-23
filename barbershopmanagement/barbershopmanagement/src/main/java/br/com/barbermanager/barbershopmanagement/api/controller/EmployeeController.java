@@ -2,16 +2,12 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 
 
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.EmployeeCreate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.EmployeeUpdate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.OnCreate;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

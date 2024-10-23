@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ClientRequest {
 
-    @Null(groups = OnCreate.class, message = "The Client ID field must be null.")
+    @Null(groups = ClientCreate.class, message = "The Client ID field must be null.")
     @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class, ClientInBarberShop.class}, message = "The Client ID field cannot be null.")
     private Integer clientId;
 

@@ -1,0 +1,15 @@
+services:
+  db-postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysql
+      POSTGRES_DB: barbershop
+    ports:
+      - "5432:5432"
+  api-barbershop:
+    image: barber-shop-management
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db-postgres

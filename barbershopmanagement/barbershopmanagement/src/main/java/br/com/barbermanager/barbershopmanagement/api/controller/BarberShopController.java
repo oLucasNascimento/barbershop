@@ -42,7 +42,7 @@ public class BarberShopController {
     }
 
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<BarberShopSimple>> barberShopsByClient(@RequestParam(required = false) StatusEnum status, @PathVariable Integer clientId){
+    public ResponseEntity<List<BarberShopSimple>> barberShopsByClient(@RequestParam(required = false) StatusEnum status, @PathVariable Integer clientId) {
         return ResponseEntity.ok(this.barberShopService.barberShopsByClient(clientId, status));
     }
 
@@ -58,7 +58,7 @@ public class BarberShopController {
     }
 
     @PatchMapping("/active-barbershop/{barberShopId}")
-    public ResponseEntity activeBarberShop(@PathVariable Integer barberShopId){
+    public ResponseEntity activeBarberShop(@PathVariable Integer barberShopId) {
         this.barberShopService.activeBarberShop(barberShopId);
         return ResponseEntity.ok().build();
     }

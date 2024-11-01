@@ -7,8 +7,9 @@ import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.BarberShopCreate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.BarberShopUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientInBarberShop;
-import br.com.barbermanager.barbershopmanagement.domain.model.validations.SchedulingUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -26,6 +27,7 @@ public class BarberShopController {
     @Autowired
     private BarberShopService barberShopService;
 
+    @Operation(summary = "Criar Barbearia", description = "Cria uma nova Barbearia", tags = "Barbearia")
     @PostMapping("/new")
     public ResponseEntity<BarberShopResponse> newBarberShop(@RequestBody @Validated(BarberShopCreate.class) BarberShopRequest newBarberShop) {
         BarberShopResponse response = this.barberShopService.createBarberShop(newBarberShop);
@@ -36,51 +38,60 @@ public class BarberShopController {
         return ResponseEntity.created(uri).body(response);
     }
 
+    @Operation(summary = "Buscar Barbearia", description = "Busca todas as Barbearias", tags = "Barbearia")
     @GetMapping("/all")
     public ResponseEntity<List<BarberShopSimple>> allBarberShops(@RequestParam(required = false) StatusEnum status) {
         return ResponseEntity.ok(this.barberShopService.allBarberShops(status));
     }
 
+    @Operation(summary = "Buscar por Cliente", description = "Busca as Barbearias de um Cliente", tags = "Barbearia")
     @GetMapping("/client/{clientId}")
     public ResponseEntity<List<BarberShopSimple>> barberShopsByClient(@RequestParam(required = false) StatusEnum status, @PathVariable Integer clientId) {
         return ResponseEntity.ok(this.barberShopService.barberShopsByClient(clientId, status));
     }
 
+    @Operation(summary = "Buscar por ID", description = "Busca a Barbearia pelo ID informado", tags = "Barbearia")
     @GetMapping("/{barberShopId}")
     public ResponseEntity<BarberShopResponse> barberShopById(@PathVariable Integer barberShopId) {
         return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
     }
 
+    @Operation(summary = "Deletar", description = "Exclui a Barbearia com o ID informado", tags = "Barbearia")
     @DeleteMapping("/delete/{barberShopId}")
     public ResponseEntity deleteBarberShop(@PathVariable Integer barberShopId) {
         this.barberShopService.deleteBarberShop(barberShopId);
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Ativar", description = "Ativa a Barbearia especificada", tags = "Barbearia")
     @PatchMapping("/active-barbershop/{barberShopId}")
     public ResponseEntity activeBarberShop(@PathVariable Integer barberShopId) {
         this.barberShopService.activeBarberShop(barberShopId);
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Demitir", description = "Demite o Funcionário de uma Barbearia", tags = "Barbearia")
     @DeleteMapping("/dismiss/{barberShopId}/{employeeId}")
     public ResponseEntity dismissEmployee(@PathVariable Integer barberShopId, @PathVariable Integer employeeId) {
         this.barberShopService.dismissEmployee(barberShopId, employeeId);
         return ResponseEntity.ok().build();
     }
 
+
+    @Operation(summary = "Atualizar", description = "Atualiza os campos da Barbearia", tags = "Barbearia")
     @PatchMapping("/update/{barberShopId}")
-    @Validated(SchedulingUpdate.class)
-    public ResponseEntity<BarberShopResponse> updateBarberShop(@PathVariable Integer barberShopId, @RequestBody @Validated(BarberShopUpdate.class) BarberShopRequest updatedBarberShop) {
+    public ResponseEntity<BarberShopResponse> updateBarberShop(@Parameter(description = "ID da barbearia para atualizar", example = "1") @PathVariable Integer barberShopId, @RequestBody @Validated(BarberShopUpdate.class) BarberShopRequest updatedBarberShop) {
         this.barberShopService.updateBarberShop(barberShopId, updatedBarberShop);
         return ResponseEntity.ok(this.barberShopService.barberShopById(barberShopId));
     }
 
+    @Operation(summary = "Inserir Cliente", description = "Insere o Cliente em uma Barbearia", tags = "Barbearia")
     @PatchMapping("/insert-client/{barberShopId}")
     public ResponseEntity<BarberShopResponse> insertNewClient(@PathVariable Integer barberShopId, @RequestBody @Validated(ClientInBarberShop.class) BarberShopRequest updatedBarberShop) {
         return ResponseEntity.ok(this.barberShopService.updateClientAtBarberShop(barberShopId, updatedBarberShop));
     }
 
+    @Operation(summary = "Remover Cliente", description = "Exclui o Cliente de uma Barbearia", tags = "Barbearia")
     @DeleteMapping("/remove-client/{barberShopId}/{clientId}")
     public ResponseEntity removeClient(@PathVariable Integer barberShopId, @PathVariable Integer clientId) {
         this.barberShopService.removeClient(barberShopId, clientId);

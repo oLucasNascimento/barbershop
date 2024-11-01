@@ -5,6 +5,7 @@ import br.com.barbermanager.barbershopmanagement.api.request.scheduling.Scheduli
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -22,19 +23,24 @@ import java.util.List;
 @NoArgsConstructor
 public class ClientRequest {
 
+    @Schema(hidden = true)
     @Null(groups = ClientCreate.class, message = "The Client ID field must be null.")
     @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class, ClientInBarberShop.class}, message = "The Client ID field cannot be null.")
     private Integer clientId;
 
+    @Schema(description = "Nome do Cliente", example = "Tiago Ferreira")
     @NotBlank(groups = ClientCreate.class, message = "The Name field cannot be null.")
     private String name;
 
+    @Schema(description = "CPF do Cliente", example = "98564753475")
     @NotBlank(groups = ClientCreate.class, message = "The CPF field cannot be null.")
     private String cpf;
 
+    @Schema(description = "Telefone do Cliente", example = "99887766")
     @NotBlank(groups = ClientCreate.class, message = "The Phone field cannot be null.")
     private String phone;
 
+    @Schema(hidden = true)
     private StatusEnum status;
 
     @Null(groups = ClientCreate.class, message = "The BarberShop field must be null.")

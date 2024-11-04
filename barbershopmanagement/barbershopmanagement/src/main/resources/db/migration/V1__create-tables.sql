@@ -45,7 +45,7 @@ fk_barber_shop INT,
 fk_employee INT,
 fk_client INT,
 scheduling_time TIMESTAMP,
-status VARCHAR(5),
+status SMALLINT DEFAULT NULL,
 FOREIGN KEY (fk_barber_shop) REFERENCES barber_shop (barber_shop_id),
 FOREIGN KEY (fk_employee) REFERENCES employee (employee_id),
 FOREIGN KEY (fk_client) REFERENCES client (client_id)

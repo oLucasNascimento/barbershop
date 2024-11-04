@@ -43,7 +43,7 @@ public class ItemRequest {
     @Schema(hidden = true)
     private StatusEnum status;
 
-    @Schema(description = "Barbearia do Funcionário")
+    @Schema(description = "Barbearia do Funcionário", example = "{\"barberShopId\":\"1\"}")
     @NotNull(groups = ItemCreate.class, message = "The BarberShop field cannot be null.")
     @JsonIgnoreProperties({"items", "employees", "clients"})
     @Valid

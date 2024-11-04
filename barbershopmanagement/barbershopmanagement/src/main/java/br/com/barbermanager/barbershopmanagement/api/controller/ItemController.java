@@ -27,7 +27,6 @@ public class ItemController {
     private ItemService itemService;
 
     @Operation(summary = "Criar Serviço", description = "Cria um novo Serviço", tags = "Serviço")
-    @Parameter(description = "Necessário informar a Barbearia do Serviço após o campo 'time'",example = ",\"barberShop\":{ \"barberShopId\": \"1\" }")
     @PostMapping("/new")
     public ResponseEntity<ItemResponse> newItem(@RequestBody @Validated(ItemCreate.class) ItemRequest newItem) {
         ItemResponse response = this.itemService.createItem(newItem);

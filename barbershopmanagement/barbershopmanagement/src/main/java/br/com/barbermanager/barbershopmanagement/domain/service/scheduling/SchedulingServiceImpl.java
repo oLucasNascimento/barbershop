@@ -96,7 +96,10 @@ public class SchedulingServiceImpl implements SchedulingService {
         List<SchedulingResponse> schedulings = this.schedulingMapper.toSchedulingResponseList((this.schedulingRepository.findAll()));
         if (schedulings.isEmpty()) {
             throw new NotFoundException("There aren't schedulings to show.");
-        } else if (status != null) {
+        }
+        if (status != null) {
+            this.schedulingRepository.findSchedulingsByStatus(status);
+            System.out.println("TESTE");
             List<SchedulingResponse> schedulingsByStatus = this.schedulingMapper.toSchedulingResponseList((this.schedulingRepository.findSchedulingsByStatus(status)));
             if (schedulingsByStatus.isEmpty()) {
                 throw new NotFoundException("There aren't schedulings with status '" + status + "'.");

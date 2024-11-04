@@ -56,7 +56,7 @@ public class BarberShopServiceImpl implements BarberShopService {
     public BarberShopResponse createBarberShop(BarberShopRequest newBarberShop) {
         if ((this.barberShopRepository.findByEmail(newBarberShop.getEmail())) == null) {
             newBarberShop.setStatus(StatusEnum.ACTIVE);
-            return this.barberShopMapper.toBarberShopResponse(this.barberShopMapper.toBarberShop(newBarberShop));
+            return this.barberShopMapper.toBarberShopResponse(this.barberShopRepository.save(this.barberShopMapper.toBarberShop(newBarberShop)));
         }
         throw new AlreadyExistsException("Barber Shop with email '" + newBarberShop.getEmail() + "' already exists.");
     }

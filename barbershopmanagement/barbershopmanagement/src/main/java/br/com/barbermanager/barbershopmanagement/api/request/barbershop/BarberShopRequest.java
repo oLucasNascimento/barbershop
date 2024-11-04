@@ -27,7 +27,7 @@ import java.util.List;
 public class BarberShopRequest {
 
     @Schema(hidden = true)
-    @Null(groups = {ClientCreate.class, BarberShopCreate.class}, message = "The BarberShop ID field must be null.")
+    @Null(groups = BarberShopCreate.class, message = "The BarberShop ID field must be null.")
     @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, ClientUpdate.class, EmployeeCreate.class, ItemUpdate.class, ItemCreate.class}, message = "The BarberShop ID field cannot be null.")
     private Integer barberShopId;
 
@@ -62,16 +62,19 @@ public class BarberShopRequest {
     @Schema(hidden = true)
     private StatusEnum status;
 
+    @Schema(description = "Itens da Barbearia")
     @Null(groups = {BarberShopCreate.class, ClientInBarberShop.class}, message = "The Item field must be null.")
     @JsonIgnoreProperties({"barberShop", "schedulings"})
     @Valid
     private List<ItemRequest> items;
 
+    @Schema(description = "Funcionários da Barbearia")
     @Null(groups = {BarberShopCreate.class, ClientInBarberShop.class}, message = "The Employee field must be null.")
     @JsonIgnoreProperties("barberShop")
     @Valid
     private List<EmployeeRequest> employees;
 
+    @Schema(description = "Clientes da Barbearia")
     @Null(groups = BarberShopCreate.class, message = "The Client field must be null.")
     @NotNull(groups = ClientInBarberShop.class, message = "The Client field cannot be null.")
     @JsonIgnoreProperties({"barberShops", "schedulings"})

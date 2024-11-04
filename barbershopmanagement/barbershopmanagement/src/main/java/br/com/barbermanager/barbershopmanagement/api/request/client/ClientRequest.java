@@ -48,6 +48,7 @@ public class ClientRequest {
     @Valid
     private List<BarberShopRequest> barberShops;
 
+    @Schema(description = "Agendamentos do Cliente")
     @Null(message = "The Scheduling field must be null.")
     @JsonIgnoreProperties({"barberShop", "items", "employees", "clients"})
     @Valid

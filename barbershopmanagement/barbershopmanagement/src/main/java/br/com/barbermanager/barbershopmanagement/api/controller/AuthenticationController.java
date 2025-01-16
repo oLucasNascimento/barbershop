@@ -1,6 +1,8 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
+import br.com.barbermanager.barbershopmanagement.config.security.TokenService;
 import br.com.barbermanager.barbershopmanagement.domain.model.user.AuthenticationDTO;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.LoginResponseDTO;
 import br.com.barbermanager.barbershopmanagement.domain.model.user.RegisterDTO;
 import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
 import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
@@ -22,16 +24,19 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TokenService tokenService;
+
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data){
-        this.userService.login(data);
-        return ResponseEntity.ok().build();
+    public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data) {
+        var token = tokenService.generateToken((User) this.userService.login(data).getPrincipal());
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid RegisterDTO data){
+    public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
         boolean auth = this.userService.register(data);
-        if(auth) return ResponseEntity.ok().build();
+        if (auth) return ResponseEntity.ok().build();
         else return ResponseEntity.badRequest().build();
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +22,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public void login(AuthenticationDTO data){
+    public Authentication login(AuthenticationDTO data){
         var userNamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         try{
-            this.authenticationManager.authenticate(userNamePassword);
+          return this.authenticationManager.authenticate(userNamePassword);
         } catch (Exception ex){
             throw new BadRequestException(ex.getMessage());
         }

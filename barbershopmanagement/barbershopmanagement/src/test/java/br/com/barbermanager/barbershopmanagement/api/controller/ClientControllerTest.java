@@ -58,6 +58,7 @@ class ClientControllerTest {
     public static final String NAME = "Lucas";
     public static final String CPF = "123456789";
     public static final String PHONE = "99887766";
+    public static final String PASSWORD = "123";
     public static final double PRICE = 20.0;
     public static final int TIME = 70;
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
@@ -290,7 +291,7 @@ class ClientControllerTest {
         this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
 
         this.clientSimple = new ClientSimple(ID, NAME, PHONE, STATUS_ACTIVE);
-        this.clientRequest = new ClientRequest(null, NAME, CPF, PHONE, STATUS_ACTIVE, null, new ArrayList<>());
+        this.clientRequest = new ClientRequest(null, NAME, CPF, PHONE,PASSWORD, STATUS_ACTIVE, null, new ArrayList<>());
         this.clientResponse = new ClientResponse(ID, NAME, CPF, PHONE, STATUS_ACTIVE, List.of(this.barberShopSimple), new ArrayList<>());
     }
 }

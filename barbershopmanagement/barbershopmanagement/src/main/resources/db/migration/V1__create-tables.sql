@@ -21,7 +21,6 @@ status SMALLINT DEFAULT NULL
 CREATE TABLE IF NOT EXISTS employee (
 employee_id SERIAL PRIMARY KEY,
 cpf VARCHAR(255) DEFAULT NULL,
-email VARCHAR(255) DEFAULT NULL,
 name VARCHAR(255) DEFAULT NULL,
 phone VARCHAR(255) DEFAULT NULL,
 status SMALLINT DEFAULT NULL,
@@ -73,9 +72,9 @@ INSERT INTO client (cpf, name, phone, status) VALUES
 ('123.456.789-00', 'João Silva', '(11) 9988-7766', 0),
 ('987.654.321-00', 'Maria Souza', '(11) 5544-3322', 0);
 
-INSERT INTO employee (cpf, email, name, phone, status, fk_barber_shop) VALUES
-('111.222.333-44', 'jose@barbeariaestilo.com', 'José Almeida', '(11) 1122-3344', 0, 1),
-('444.555.666-77', 'ana@barbeariaelegante.com', 'Ana Costa', '(11) 2233-4455', 0, 2);
+INSERT INTO employee (cpf, name, phone, status, fk_barber_shop) VALUES
+('111.222.333-44', 'José Almeida', '(11) 1122-3344', 0, 1),
+('444.555.666-77', 'Ana Costa', '(11) 2233-4455', 0, 2);
 
 INSERT INTO item (name, price, time, fk_barber_shop, status) VALUES
 ('Corte de Cabelo', 25.00, 30, 1, 0),

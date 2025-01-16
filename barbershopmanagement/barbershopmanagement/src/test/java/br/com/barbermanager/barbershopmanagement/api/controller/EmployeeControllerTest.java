@@ -174,23 +174,23 @@ class EmployeeControllerTest {
         verify(this.employeeService, times(0)).createEmployee(any());
     }
 
-    @Test
-    void whenCreateNewEmployeeWithEmailNullThenThrowAnBadRequestException() throws Exception {
-        this.employeeRequest.setEmail(null);
-        String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
-        String responseContent = mockMvc.perform(post("/employee/new")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(userJson))
-                .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
-
-        RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
-
-        assertEquals("The Email field cannot be null.", restError.getMessage());
-        assertEquals("VALIDATION_ERROR", restError.getErrorCode());
-        assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
-        assertEquals("/employee/new", restError.getPath());
-        verify(this.employeeService, times(0)).createEmployee(any());
-    }
+//    @Test
+//    void whenCreateNewEmployeeWithEmailNullThenThrowAnBadRequestException() throws Exception {
+//        this.employeeRequest.setEmail(null);
+//        String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
+//        String responseContent = mockMvc.perform(post("/employee/new")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(userJson))
+//                .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
+//
+//        RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
+//
+//        assertEquals("The Email field cannot be null.", restError.getMessage());
+//        assertEquals("VALIDATION_ERROR", restError.getErrorCode());
+//        assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
+//        assertEquals("/employee/new", restError.getPath());
+//        verify(this.employeeService, times(0)).createEmployee(any());
+//    }
 
     @Test
     void whenCreateNewEmployeeWithPhoneNullThenThrowAnBadRequestException() throws Exception {
@@ -294,15 +294,15 @@ class EmployeeControllerTest {
 
         assertNotNull(response);
         assertEquals(ID, response.getEmployeeId());
-        verify(this.employeeService, times(1)).updateEmployee(anyInt(),any());
+        verify(this.employeeService, times(1)).updateEmployee(anyInt(), any());
     }
 
     private void startUser() {
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
         this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
 
-        this.employeeRequest = new EmployeeRequest(null, NAME, CPF, MAIL, PHONE, STATUS_ACTIVE, this.barberShopRequest);
-        this.employeeResponse = new EmployeeResponse(ID, NAME, CPF, MAIL, PHONE, STATUS_ACTIVE, this.barberShopSimple, List.of());
+        this.employeeRequest = new EmployeeRequest(null, NAME, CPF, PHONE, STATUS_ACTIVE, this.barberShopRequest);
+        this.employeeResponse = new EmployeeResponse(ID, NAME, CPF, PHONE, STATUS_ACTIVE, this.barberShopSimple, List.of());
         this.employeeSimple = new EmployeeSimple(ID, NAME, PHONE, STATUS_ACTIVE);
     }
 }

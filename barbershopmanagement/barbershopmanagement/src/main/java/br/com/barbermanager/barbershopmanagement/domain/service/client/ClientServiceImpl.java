@@ -8,8 +8,11 @@ import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimpl
 import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import br.com.barbermanager.barbershopmanagement.domain.model.Client;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.RegisterDTO;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.UserRole;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ClientRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import br.com.barbermanager.barbershopmanagement.domain.service.user.UserService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
@@ -40,6 +43,8 @@ public class ClientServiceImpl implements ClientService {
     @Autowired
     private ClientMapper clientMapper;
 
+    @Autowired
+    private UserService userService;
 
     @Override
     public Boolean clientExists(Integer clientId) {
@@ -50,6 +55,8 @@ public class ClientServiceImpl implements ClientService {
     public ClientResponse createClient(ClientRequest newClient) {
         if ((this.clientRepository.findByCpf(newClient.getCpf())) == null) {
             newClient.setStatus(StatusEnum.ACTIVE);
+            RegisterDTO registerDTO = new RegisterDTO(newClient.getCpf(), newClient.getPassword(), UserRole.CLIENT);
+            this.userService.register(registerDTO);
             return this.clientMapper.toClientResponse((this.clientRepository.save((this.clientMapper.toClient(newClient)))));
         }
         throw new AlreadyExistsException("Client with CPF '" + newClient.getCpf() + "' already exists.");

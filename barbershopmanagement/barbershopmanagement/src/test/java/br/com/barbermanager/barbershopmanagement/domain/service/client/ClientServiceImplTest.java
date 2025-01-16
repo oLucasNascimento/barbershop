@@ -34,6 +34,7 @@ class ClientServiceImplTest {
     public static final String NAME = "Lucas";
     public static final String CPF = "123456789";
     public static final String PHONE = "99887766";
+    public static final String PASSWORD = "123";
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
     public static final StatusEnum STATUS_INACTIVE = StatusEnum.INACTIVE;
 
@@ -365,7 +366,7 @@ class ClientServiceImplTest {
 
     private void startDomains() {
         this.client = new Client(ID, NAME, CPF, PHONE, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>());
-        this.clientRequest = new ClientRequest(ID, NAME, CPF, PHONE, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>());
+        this.clientRequest = new ClientRequest(ID, NAME, CPF, PHONE,PASSWORD, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>());
         this.clientResponse = new ClientResponse(ID, NAME, CPF, PHONE, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>());
         this.clientSimple = new ClientSimple(ID, NAME, PHONE, STATUS_ACTIVE);
 

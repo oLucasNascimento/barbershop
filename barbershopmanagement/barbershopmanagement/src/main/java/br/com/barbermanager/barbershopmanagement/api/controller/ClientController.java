@@ -30,6 +30,7 @@ public class ClientController {
     @PostMapping("/new")
     public ResponseEntity<ClientResponse> newClient(@RequestBody @Validated(ClientCreate.class) ClientRequest newClient) {
         ClientResponse response = this.clientService.createClient(newClient);
+
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(response.getClientId())

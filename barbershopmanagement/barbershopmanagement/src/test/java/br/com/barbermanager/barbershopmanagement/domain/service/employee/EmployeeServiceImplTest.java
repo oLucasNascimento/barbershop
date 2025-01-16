@@ -273,7 +273,7 @@ class EmployeeServiceImplTest {
     void whenUpdateEmployeeThenThrowAnNotFoundException() {
         when(this.employeeRepository.existsById(anyInt())).thenReturn(false);
 
-        try{
+        try {
             this.employeeService.updateEmployee(ID, this.employeeRequest);
         } catch (Exception ex) {
             assertEquals(NotFoundException.class, ex.getClass());
@@ -310,9 +310,9 @@ class EmployeeServiceImplTest {
         when(this.employeeRepository.existsById(anyInt())).thenReturn(true);
         when(this.employeeRepository.getById(anyInt())).thenReturn(this.employee);
 
-        try{
+        try {
             this.employeeService.activeEmployee(ID);
-        }  catch (Exception ex) {
+        } catch (Exception ex) {
             assertEquals(AlreadyActiveException.class, ex.getClass());
             assertEquals("Employee with ID '" + ID + "' is already active.", ex.getMessage());
         }
@@ -322,18 +322,18 @@ class EmployeeServiceImplTest {
     void whenActiveEmployeeThenThrowAnNotFoundException() {
         when(this.employeeRepository.existsById(anyInt())).thenReturn(false);
 
-        try{
+        try {
             this.employeeService.activeEmployee(ID);
-        }  catch (Exception ex) {
+        } catch (Exception ex) {
             assertEquals(NotFoundException.class, ex.getClass());
             assertEquals("Employee with ID '" + ID + "' not found.", ex.getMessage());
         }
     }
 
     private void startUser() {
-        this.employee = new Employee(ID, NAME, CPF, MAIL, PHONE, STATUS_ACTIVE, null, new ArrayList<>());
-        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, MAIL, PHONE, STATUS_ACTIVE, null);
-        this.employeeResponse = new EmployeeResponse(ID, NAME, CPF, MAIL, PHONE, STATUS_ACTIVE, null, new ArrayList<>());
+        this.employee = new Employee(ID, NAME, CPF, PHONE, STATUS_ACTIVE, null, new ArrayList<>());
+        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, STATUS_ACTIVE, null);
+        this.employeeResponse = new EmployeeResponse(ID, NAME, CPF, PHONE, STATUS_ACTIVE, null, new ArrayList<>());
         this.employeeSimple = new EmployeeSimple(ID, NAME, PHONE, STATUS_ACTIVE);
     }
 }

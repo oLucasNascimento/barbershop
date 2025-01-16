@@ -34,11 +34,6 @@ public class EmployeeRequest {
     @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The CPF field cannot be null.")
     private String cpf;
 
-    @Schema(description = "Email do Funcionário", example = "igorsilva@gmail.com")
-    @Email
-    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The Email field cannot be null.")
-    private String email;
-
     @Schema(description = "Telefone do Funcionário", example = "11223344")
     @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The Phone field cannot be null.")
     private String phone;

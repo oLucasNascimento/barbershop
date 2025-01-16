@@ -61,6 +61,7 @@ class SchedulingControllerTest {
     public static final String NAME = "Lucas";
     public static final String CPF = "123456789";
     public static final String PHONE = "99887766";
+    public static final String PASSWORD = "123";
     public static final double PRICE = 20.0;
     public static final int TIME = 70;
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
@@ -475,10 +476,10 @@ class SchedulingControllerTest {
         this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.itemRequest), List.of(this.employeeRequest), List.of(this.clientRequest));
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
 
-        this.clientRequest = new ClientRequest(ID, NAME, CPF, PHONE, STATUS_ACTIVE, List.of(this.barberShopRequest), new ArrayList<>());
+        this.clientRequest = new ClientRequest(ID, NAME, CPF, PHONE,PASSWORD, STATUS_ACTIVE, List.of(this.barberShopRequest), new ArrayList<>());
         this.clientSimple = new ClientSimple(ID, NAME, PHONE, STATUS_ACTIVE);
 
-        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, MAIL, PHONE, STATUS_ACTIVE, this.barberShopRequest);
+        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, STATUS_ACTIVE, this.barberShopRequest);
         this.employeeSimple = new EmployeeSimple(ID, NAME, PHONE, STATUS_ACTIVE);
 
         this.itemRequest = new ItemRequest(ID, NAME, PRICE, TIME, STATUS_ACTIVE, this.barberShopRequest);

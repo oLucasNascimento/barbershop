@@ -22,7 +22,6 @@ public class Employee {
 
     private String name;
     private String cpf;
-    private String email;
     private String phone;
 
     private StatusEnum status;

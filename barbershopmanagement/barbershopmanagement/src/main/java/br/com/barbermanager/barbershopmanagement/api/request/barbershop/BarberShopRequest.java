@@ -59,6 +59,7 @@ public class BarberShopRequest {
     @NotNull(groups = BarberShopCreate.class, message = "The Closing Time field cannot be null.")
     private LocalTime closingTime;
 
+
     @Schema(hidden = true)
     private StatusEnum status;
 

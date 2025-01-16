@@ -36,6 +36,10 @@ public class ClientRequest {
     @NotBlank(groups = ClientCreate.class, message = "The CPF field cannot be null.")
     private String cpf;
 
+    @Schema(description = "Senha do Cliente", example = "1234567890")
+    @NotBlank(groups = ClientCreate.class, message = "The Password field cannot be null.")
+    private String password;
+
     @Schema(description = "Telefone do Cliente", example = "99887766")
     @NotBlank(groups = ClientCreate.class, message = "The Phone field cannot be null.")
     private String phone;

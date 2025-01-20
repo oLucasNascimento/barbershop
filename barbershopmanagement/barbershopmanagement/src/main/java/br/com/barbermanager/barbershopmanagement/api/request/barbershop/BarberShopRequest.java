@@ -47,6 +47,10 @@ public class BarberShopRequest {
     @NotBlank(groups = BarberShopCreate.class, message = "The Email field cannot be null.")
     private String email;
 
+    @Schema(description = "Senha da Barbearia", example = "barber1234")
+    @NotBlank(groups = BarberShopCreate.class, message = "The Password field cannot be null.")
+    private String password;
+
     @Schema(description = "Telefone da Barbearia", example = "99887766")
     @NotBlank(groups = BarberShopCreate.class, message = "The Phone field cannot be null.")
     private String phone;
@@ -58,7 +62,6 @@ public class BarberShopRequest {
     @Schema(description = "Horario de fechamento da Barbearia", example = "20:00:00")
     @NotNull(groups = BarberShopCreate.class, message = "The Closing Time field cannot be null.")
     private LocalTime closingTime;
-
 
     @Schema(hidden = true)
     private StatusEnum status;

@@ -32,6 +32,7 @@ class EmployeeServiceImplTest {
     public static final String CPF = "99988877766";
     public static final String MAIL = "luquinha@mail.com";
     public static final String PHONE = "99887766";
+    public static final String PASSWORD = "1234";
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
     public static final StatusEnum STATUS_INACTIVE = StatusEnum.INACTIVE;
 
@@ -332,7 +333,7 @@ class EmployeeServiceImplTest {
 
     private void startUser() {
         this.employee = new Employee(ID, NAME, CPF, PHONE, STATUS_ACTIVE, null, new ArrayList<>());
-        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, STATUS_ACTIVE, null);
+        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, PASSWORD, STATUS_ACTIVE, null);
         this.employeeResponse = new EmployeeResponse(ID, NAME, CPF, PHONE, STATUS_ACTIVE, null, new ArrayList<>());
         this.employeeSimple = new EmployeeSimple(ID, NAME, PHONE, STATUS_ACTIVE);
     }

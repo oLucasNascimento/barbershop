@@ -288,7 +288,7 @@ class ClientControllerTest {
 
     private void startUser() {
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
-        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
+        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, PASSWORD, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
 
         this.clientSimple = new ClientSimple(ID, NAME, PHONE, STATUS_ACTIVE);
         this.clientRequest = new ClientRequest(null, NAME, CPF, PHONE,PASSWORD, STATUS_ACTIVE, null, new ArrayList<>());

@@ -564,7 +564,7 @@ class BarberShopControllerTest {
         this.clientRequest = new ClientRequest(ID, NAME, CPF, PHONE,PASSWORD,  STATUS_ACTIVE, List.of(this.barberShopRequest), new ArrayList<>());
         this.clientSimple = new ClientSimple(ID, NAME, PHONE, STATUS_ACTIVE);
 
-        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, STATUS_ACTIVE, this.barberShopRequest);
+        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, PASSWORD, STATUS_ACTIVE, this.barberShopRequest);
         this.employeeSimple = new EmployeeSimple(ID, NAME, PHONE, STATUS_ACTIVE);
 
         this.itemRequest = new ItemRequest(ID, NAME, PRICE, TIME, STATUS_ACTIVE, this.barberShopRequest);
@@ -572,6 +572,6 @@ class BarberShopControllerTest {
 
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
         this.barberShopResponse = new BarberShopResponse(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.itemSimple), List.of(this.employeeSimple), List.of(this.clientSimple), List.of());
-        this.barberShopRequest = new BarberShopRequest(null, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
+        this.barberShopRequest = new BarberShopRequest(null, NAME_BARBER, ZIP_CODE, PASSWORD, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
     }
 }

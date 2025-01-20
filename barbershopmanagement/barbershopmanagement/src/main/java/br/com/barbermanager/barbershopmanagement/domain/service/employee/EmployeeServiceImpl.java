@@ -6,7 +6,10 @@ import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeR
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.RegisterDTO;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.UserRole;
 import br.com.barbermanager.barbershopmanagement.domain.repository.EmployeeRepository;
+import br.com.barbermanager.barbershopmanagement.domain.service.user.UserService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
@@ -32,6 +35,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeMapper employeeMapper;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public Boolean employeeExists(Integer employeeId) {
         return this.employeeRepository.existsById(employeeId);
@@ -42,6 +48,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponse createEmployee(EmployeeRequest newEmployee) {
         if ((this.employeeRepository.findByCpf(newEmployee.getCpf())) == null) {
             newEmployee.setStatus(StatusEnum.ACTIVE);
+            RegisterDTO registerDTO = new RegisterDTO(newEmployee.getCpf(), newEmployee.getPassword(), UserRole.EMPLOYEE);
+            this.userService.register(registerDTO);
             return this.employeeMapper.toEmployeeResponse((this.employeeRepository.save((this.employeeMapper.toEmployee(newEmployee)))));
         }
         throw new AlreadyExistsException("Employee with CPF '" + newEmployee.getCpf() + "' already exists.");

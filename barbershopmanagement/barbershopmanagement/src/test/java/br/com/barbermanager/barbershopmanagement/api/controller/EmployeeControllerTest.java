@@ -53,6 +53,7 @@ class EmployeeControllerTest {
     public static final String ADRESS = "Rua Macaparana";
     public static final String MAIL = "el@bigodon.hair";
     public static final String NUMBER = "99887766";
+    public static final String PASSWORD = "1234";
     public static final LocalTime OPENING = LocalTime.of(9, 0);
     public static final LocalTime CLOSING = LocalTime.of(18, 0);
     public static final String NAME = "Lucas";
@@ -299,9 +300,9 @@ class EmployeeControllerTest {
 
     private void startUser() {
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
-        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
+        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, PASSWORD, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
 
-        this.employeeRequest = new EmployeeRequest(null, NAME, CPF, PHONE, STATUS_ACTIVE, this.barberShopRequest);
+        this.employeeRequest = new EmployeeRequest(null, NAME, CPF, PHONE, PASSWORD, STATUS_ACTIVE, this.barberShopRequest);
         this.employeeResponse = new EmployeeResponse(ID, NAME, CPF, PHONE, STATUS_ACTIVE, this.barberShopSimple, List.of());
         this.employeeSimple = new EmployeeSimple(ID, NAME, PHONE, STATUS_ACTIVE);
     }

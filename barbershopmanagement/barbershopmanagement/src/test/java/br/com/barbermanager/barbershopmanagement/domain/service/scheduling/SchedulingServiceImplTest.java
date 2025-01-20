@@ -1169,12 +1169,12 @@ class SchedulingServiceImplTest {
 
         this.barberShop = new BarberShop(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.item), List.of(this.employee), List.of(this.client), new ArrayList<>());
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
-        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.itemRequest), List.of(this.employeeRequest), List.of(this.clientRequest));
+        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, PASSWORD, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.itemRequest), List.of(this.employeeRequest), List.of(this.clientRequest));
         this.barberShopResponse = new BarberShopResponse(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.itemSimple), List.of(this.employeeSimple), List.of(this.clientSimple), new ArrayList<>());
 
         this.employee = new Employee(ID, NAME, CPF, PHONE, STATUS_ACTIVE, this.barberShop, new ArrayList<>());
         this.employeeSimple = new EmployeeSimple(ID, NAME, PHONE, STATUS_ACTIVE);
-        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, STATUS_ACTIVE, this.barberShopRequest);
+        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, PASSWORD, STATUS_ACTIVE, this.barberShopRequest);
         this.employeeResponse = new EmployeeResponse(ID, NAME, CPF, PHONE, STATUS_ACTIVE, this.barberShopSimple, new ArrayList<>());
 
         this.item = new Item(ID, NAME, PRICE, TIME, STATUS_ACTIVE, this.barberShop, new ArrayList<>());
@@ -1186,7 +1186,6 @@ class SchedulingServiceImplTest {
         this.schedulingRequest = new SchedulingRequest(ID, this.clientRequest, this.barberShopRequest, this.employeeRequest, List.of(this.itemRequest), DATE_10, null);
         this.schedulingResponse = new SchedulingResponse(ID, this.clientSimple, this.barberShopSimple, this.employeeSimple, List.of(this.itemSimple), DATE_10, null);
         this.schedulingOld = new Scheduling(ID, this.client, this.barberShop, this.employee, List.of(this.item), DATE_10, null);
-        ;
-    }
 
+    }
 }

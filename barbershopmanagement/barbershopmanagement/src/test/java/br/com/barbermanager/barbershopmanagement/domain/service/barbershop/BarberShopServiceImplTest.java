@@ -41,6 +41,7 @@ class BarberShopServiceImplTest {
     public static final String ADRESS = "Rua Macaparana";
     public static final String MAIL = "el@bigodon.hair";
     public static final String NUMBER = "99887766";
+    public static final String PASSWORD = "1234";
     public static final LocalTime OPENING = LocalTime.of(9, 0);
     public static final LocalTime CLOSING = LocalTime.of(18, 0);
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
@@ -647,7 +648,7 @@ class BarberShopServiceImplTest {
 
     private void startDomains() {
         this.barberShop = new BarberShop(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, PASSWORD, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         this.barberShopResponse = new BarberShopResponse(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, NUMBER, ADRESS, OPENING, CLOSING, STATUS_ACTIVE);
 

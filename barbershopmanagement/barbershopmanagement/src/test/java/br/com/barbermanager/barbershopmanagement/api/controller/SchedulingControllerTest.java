@@ -473,13 +473,13 @@ class SchedulingControllerTest {
     }
 
     private void startUser() {
-        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.itemRequest), List.of(this.employeeRequest), List.of(this.clientRequest));
+        this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, PASSWORD, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.itemRequest), List.of(this.employeeRequest), List.of(this.clientRequest));
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
 
         this.clientRequest = new ClientRequest(ID, NAME, CPF, PHONE,PASSWORD, STATUS_ACTIVE, List.of(this.barberShopRequest), new ArrayList<>());
         this.clientSimple = new ClientSimple(ID, NAME, PHONE, STATUS_ACTIVE);
 
-        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, STATUS_ACTIVE, this.barberShopRequest);
+        this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, PASSWORD, STATUS_ACTIVE, this.barberShopRequest);
         this.employeeSimple = new EmployeeSimple(ID, NAME, PHONE, STATUS_ACTIVE);
 
         this.itemRequest = new ItemRequest(ID, NAME, PRICE, TIME, STATUS_ACTIVE, this.barberShopRequest);

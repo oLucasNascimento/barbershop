@@ -7,9 +7,12 @@ import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberSh
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.*;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.RegisterDTO;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.UserRole;
 import br.com.barbermanager.barbershopmanagement.domain.repository.BarberShopRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
+import br.com.barbermanager.barbershopmanagement.domain.service.user.UserService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
@@ -47,6 +50,9 @@ public class BarberShopServiceImpl implements BarberShopService {
     @Autowired
     private ItemMapper itemMapper;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public Boolean barberShopExists(Integer barberShopId) {
         return this.barberShopRepository.existsById(barberShopId);
@@ -56,6 +62,8 @@ public class BarberShopServiceImpl implements BarberShopService {
     public BarberShopResponse createBarberShop(BarberShopRequest newBarberShop) {
         if ((this.barberShopRepository.findByEmail(newBarberShop.getEmail())) == null) {
             newBarberShop.setStatus(StatusEnum.ACTIVE);
+            RegisterDTO registerDTO = new RegisterDTO(newBarberShop.getEmail(), newBarberShop.getPassword(), UserRole.BARBERSHOP);
+            this.userService.register(registerDTO);
             return this.barberShopMapper.toBarberShopResponse(this.barberShopRepository.save(this.barberShopMapper.toBarberShop(newBarberShop)));
         }
         throw new AlreadyExistsException("Barber Shop with email '" + newBarberShop.getEmail() + "' already exists.");

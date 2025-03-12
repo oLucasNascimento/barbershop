@@ -2,6 +2,7 @@ package br.com.barbermanager.barbershopmanagement.domain.model.user;
 
 public enum UserRole {
 
+    ADMIN("admin"),
     BARBERSHOP("barber_shop"),
     CLIENT("client"),
     EMPLOYEE("employee");

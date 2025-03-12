@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-
 public class SecurityConfiguration {
 
     @Autowired
@@ -28,26 +28,36 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/auth/register").permitAll()
                         .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/client").hasRole("CLIENT")
                         .requestMatchers("/client/new").permitAll()
-                        .requestMatchers("/client/barber-shop/").hasAnyRole("BARBERSHOP", "CLIENT", "EMPLOYEE")
-                        .requestMatchers("/barbershop").hasRole("BARBERSHOP")
+                        .requestMatchers("/client/{clientId}").hasAnyRole("CLIENT", "ADMIN")
+                        .requestMatchers("/client/barber-shop/**").hasAnyRole("BARBERSHOP","EMPLOYEE","ADMIN")
+                        .requestMatchers("/client/**").hasAnyRole("CLIENT","ADMIN")
                         .requestMatchers("/barbershop/new").permitAll()
-                        .requestMatchers("/barbershop/client").hasAnyRole("BARBERSHOP", "CLIENT", "EMPLOYEE")
-                        .requestMatchers("/employee").hasAnyRole("EMPLOYEE", "BARBERSHOP")
-                        .requestMatchers("/employee/active-employee").hasRole("BARBERSHOP")
-                        .requestMatchers("/employee/delete").hasRole("BARBERSHOP")
-                        .requestMatchers("/employee/new").permitAll()
-                        .requestMatchers("/employee/barbershop/").hasAnyRole("EMPLOYEE","BARBERSHOP", "CLIENT")
-                        .requestMatchers("/item").authenticated()
-                        .requestMatchers("/item/new").hasAnyRole("EMPLOYEE", "BARBERSHOP")
-                        .requestMatchers("/item/delete").hasAnyRole("EMPLOYEE", "BARBERSHOP")
-                        .requestMatchers("/item/update").hasAnyRole("EMPLOYEE", "BARBERSHOP")
-                        .requestMatchers("/item/active-item").hasAnyRole("EMPLOYEE", "BARBERSHOP")
-                        .requestMatchers("/item/all").authenticated()
-                        .anyRequest()
-                        .authenticated()
+                        .requestMatchers("/barbershop/all").permitAll()
+                        .requestMatchers("/barbershop/{barberShopId}").permitAll()
+                        .requestMatchers("/barbershop/client/**").hasAnyRole("CLIENT","ADMIN")
+                        .requestMatchers("/barbershop/insert-client/**").authenticated()
+                        .requestMatchers("/barbershop/remove-client/**").authenticated()
+                        .requestMatchers("/barbershop/**").hasAnyRole("BARBERSHOP","ADMIN")
+                        .requestMatchers("/employee/{employeeId}").permitAll()
+                        .requestMatchers("/employee/barbershop/**").permitAll()
+                        .requestMatchers("/employee/delete/**").hasAnyRole("BARBERSHOP","EMPLOYEE","ADMIN")
+                        .requestMatchers("/employee/active-employee/**").hasAnyRole("BARBERSHOP","EMPLOYEE","ADMIN")
+                        .requestMatchers("/employee/update/**").hasAnyRole("BARBERSHOP","EMPLOYEE","ADMIN")
+                        .requestMatchers("/employee/**").hasAnyRole("BARBERSHOP","ADMIN")
+                        .requestMatchers("/item/new").hasAnyRole("BARBERSHOP","EMPLOYEE","ADMIN")
+                        .requestMatchers("/item/{itemId}").permitAll()
+                        .requestMatchers("/item/**").hasAnyRole("BARBERSHOP","EMPLOYEE","ADMIN")
+                        .requestMatchers("/scheduling/barbershop/**").hasAnyRole("BARBERSHOP","EMPLOYEE","ADMIN")
+                        .requestMatchers("/scheduling/client/**").hasRole("CLIENT")
+                        .requestMatchers("/scheduling/employee/**").hasAnyRole("BARBERSHOP","EMPLOYEE","ADMIN")
+                        .requestMatchers("/scheduling/item/**").hasAnyRole("BARBERSHOP","EMPLOYEE","ADMIN")
+                        .requestMatchers("/scheduling/finish/**").hasAnyRole("BARBERSHOP","EMPLOYEE","ADMIN")
+                        .requestMatchers("/scheduling/all").hasRole("ADMIN")
+                        .requestMatchers("/scheduling/**").authenticated()
+                        .anyRequest().hasRole("ADMIN")
                 )
                 .addFilterBefore(this.securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

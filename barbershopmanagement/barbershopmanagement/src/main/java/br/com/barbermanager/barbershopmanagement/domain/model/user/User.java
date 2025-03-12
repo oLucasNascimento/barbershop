@@ -35,6 +35,7 @@ public class User implements UserDetails {
         if (this.role == UserRole.BARBERSHOP) return List.of(new SimpleGrantedAuthority("ROLE_BARBERSHOP"), new SimpleGrantedAuthority("ROLE_BARBERSHOP"));
         else if(this.role == UserRole.CLIENT) return List.of(new SimpleGrantedAuthority("ROLE_CLIENT"));
         else if(this.role == UserRole.EMPLOYEE) return List.of(new SimpleGrantedAuthority("ROLE_EMPLOYEE"));
+        else if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
         return null;
     }
 

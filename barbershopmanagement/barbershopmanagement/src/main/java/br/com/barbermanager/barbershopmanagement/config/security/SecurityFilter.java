@@ -1,5 +1,6 @@
 package br.com.barbermanager.barbershopmanagement.config.security;
 
+import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
 import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,7 +30,6 @@ public class SecurityFilter extends OncePerRequestFilter {
         if(token != null) {
             var login = tokenService.validateToken(token);
             UserDetails userDetails = this.userRepository.findByLogin(login);
-
             var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

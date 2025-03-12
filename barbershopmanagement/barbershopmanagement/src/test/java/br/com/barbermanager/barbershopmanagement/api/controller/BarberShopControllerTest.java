@@ -10,6 +10,7 @@ import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimpl
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
 import br.com.barbermanager.barbershopmanagement.exception.handler.RestErrorMessage;
 import com.fasterxml.jackson.core.type.TypeReference;

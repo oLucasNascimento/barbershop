@@ -1,17 +1,15 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
-import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
-import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
+import br.com.barbermanager.barbershopmanagement.config.security.TokenService;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.UserRole;
+import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.exception.handler.RestErrorMessage;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,12 +26,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -45,9 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class EmployeeControllerTest {
 
-
     public static final Integer ID = 1;
-    public static final Integer ID2 = 2;
     public static final String NAME_BARBER = "El Bigodon";
     public static final String ZIP_CODE = "55000000";
     public static final String ADRESS = "Rua Macaparana";
@@ -60,6 +54,11 @@ class EmployeeControllerTest {
     public static final String CPF = "71290252475";
     public static final String PHONE = "99887766";
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
+    public static final String LOGIN = "lucas";
+    public static final UserRole ROLE_BARBERSHOP = UserRole.BARBERSHOP;
+    public static final String TOKEN = "tokenFake";
+    public static final UserRole ROLE_EMPLOYEE = UserRole.EMPLOYEE;
+    public static final UserRole ROLE_ADMIN = UserRole.ADMIN;
 
     private BarberShopSimple barberShopSimple = new BarberShopSimple();
     private BarberShopRequest barberShopRequest = new BarberShopRequest();
@@ -68,17 +67,21 @@ class EmployeeControllerTest {
     private EmployeeResponse employeeResponse = new EmployeeResponse();
     private EmployeeSimple employeeSimple = new EmployeeSimple();
 
+    private User userAuth = new User();
+
     @Autowired
     private MockMvc mockMvc;
-
-    @InjectMocks
-    private EmployeeController employeeController;
 
     @MockBean
     private EmployeeService employeeService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    @MockBean
+    private TokenService tokenService;
+
+    @MockBean
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
@@ -89,10 +92,15 @@ class EmployeeControllerTest {
 
     @Test
     void whenCreateNewEmployeeThenReturnSuccess() throws Exception {
+        this.userAuth.setRole(ROLE_ADMIN);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.employeeService.createEmployee(any())).thenReturn(this.employeeResponse);
         String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
         String responseContent = mockMvc.perform(post("/employee/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
 
@@ -105,10 +113,15 @@ class EmployeeControllerTest {
 
     @Test
     void whenCreateNewEmployeeWithoutBarberShopThenThrowAnBadRequestException() throws Exception {
+        this.userAuth.setRole(ROLE_ADMIN);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.employeeRequest.setBarberShop(null);
         String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
         String responseContent = mockMvc.perform(post("/employee/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -123,10 +136,15 @@ class EmployeeControllerTest {
 
     @Test
     void whenCreateNewEmployeeWithBarberShopIdNullThenThrowAnBadRequestException() throws Exception {
+        this.userAuth.setRole(ROLE_ADMIN);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.barberShopRequest.setBarberShopId(null);
         String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
         String responseContent = mockMvc.perform(post("/employee/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -141,10 +159,15 @@ class EmployeeControllerTest {
 
     @Test
     void whenCreateNewEmployeeWithNameNullThenThrowAnBadRequestException() throws Exception {
+        this.userAuth.setRole(ROLE_ADMIN);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.employeeRequest.setName(null);
         String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
         String responseContent = mockMvc.perform(post("/employee/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -159,10 +182,15 @@ class EmployeeControllerTest {
 
     @Test
     void whenCreateNewEmployeeWithCPFNullThenThrowAnBadRequestException() throws Exception {
+        this.userAuth.setRole(ROLE_ADMIN);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.employeeRequest.setCpf(null);
         String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
         String responseContent = mockMvc.perform(post("/employee/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -181,6 +209,7 @@ class EmployeeControllerTest {
 //        String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
 //        String responseContent = mockMvc.perform(post("/employee/new")
 //                        .contentType(MediaType.APPLICATION_JSON)
+//                        .header("Authorization", "Bearer " + TOKEN)
 //                        .content(userJson))
 //                .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 //
@@ -195,10 +224,15 @@ class EmployeeControllerTest {
 
     @Test
     void whenCreateNewEmployeeWithPhoneNullThenThrowAnBadRequestException() throws Exception {
+        this.userAuth.setRole(ROLE_ADMIN);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.employeeRequest.setPhone(null);
         String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
         String responseContent = mockMvc.perform(post("/employee/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -213,10 +247,15 @@ class EmployeeControllerTest {
 
     @Test
     void whenFindAllEmployeesThenReturnAnListOfEmployees() throws Exception {
+        this.userAuth.setRole(ROLE_ADMIN);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.employeeService.allEmployees(any())).thenReturn(List.of(this.employeeSimple));
         String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
         String responseContent = mockMvc.perform(get("/employee/all")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         List<EmployeeSimple> response = this.objectMapper.readValue(responseContent, new TypeReference<List<EmployeeSimple>>() {
@@ -261,10 +300,14 @@ class EmployeeControllerTest {
 
     @Test
     void whenDeleteEmployeeThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.employeeService).deleteEmployee(anyInt());
         String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
         mockMvc.perform(delete("/employee/delete/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isOk());
         verify(this.employeeService, times(1)).deleteEmployee(anyInt());
@@ -272,10 +315,14 @@ class EmployeeControllerTest {
 
     @Test
     void whenActiveEmployeeThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.employeeService).activeEmployee(anyInt());
         String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
         mockMvc.perform(patch("/employee/active-employee/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isOk());
         verify(this.employeeService, times(1)).activeEmployee(anyInt());
@@ -283,11 +330,15 @@ class EmployeeControllerTest {
 
     @Test
     void whenUpdateEmployeeThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.employeeService.updateEmployee(anyInt(), any())).thenReturn(this.employeeResponse);
         when(this.employeeService.employeeById(anyInt())).thenReturn(this.employeeResponse);
         String userJson = this.objectMapper.writeValueAsString(this.employeeRequest);
         String responseContent = mockMvc.perform(patch("/employee/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
@@ -299,6 +350,8 @@ class EmployeeControllerTest {
     }
 
     private void startUser() {
+        this.userAuth = new User(LOGIN, PASSWORD, ROLE_EMPLOYEE);
+
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
         this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, PASSWORD, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
 

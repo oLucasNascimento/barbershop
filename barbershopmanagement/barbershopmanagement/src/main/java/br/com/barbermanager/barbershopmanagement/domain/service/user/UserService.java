@@ -6,7 +6,6 @@ import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
 import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
 import br.com.barbermanager.barbershopmanagement.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

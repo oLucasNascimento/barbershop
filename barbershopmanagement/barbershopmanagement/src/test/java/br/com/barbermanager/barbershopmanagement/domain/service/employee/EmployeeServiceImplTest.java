@@ -8,6 +8,7 @@ import br.com.barbermanager.barbershopmanagement.domain.model.BarberShop;
 import br.com.barbermanager.barbershopmanagement.domain.model.Employee;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.repository.EmployeeRepository;
+import br.com.barbermanager.barbershopmanagement.domain.service.user.UserService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
@@ -50,6 +51,9 @@ class EmployeeServiceImplTest {
     @Mock
     private EmployeeMapper employeeMapper;
 
+    @Mock
+    private UserService userService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -80,6 +84,7 @@ class EmployeeServiceImplTest {
         when(this.employeeRepository.findByCpf(anyString())).thenReturn(null);
         when(this.employeeMapper.toEmployee((EmployeeRequest) any())).thenReturn(this.employee);
         when(this.employeeMapper.toEmployeeResponse(any())).thenReturn(this.employeeResponse);
+        when(this.userService.register(any())).thenReturn(true);
 
         EmployeeResponse response = this.employeeService.createEmployee(this.employeeRequest);
 

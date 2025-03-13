@@ -2,17 +2,14 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
-import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
-import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
-import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
+import br.com.barbermanager.barbershopmanagement.config.security.TokenService;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.UserRole;
+import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.client.ClientService;
 import br.com.barbermanager.barbershopmanagement.exception.handler.RestErrorMessage;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -35,7 +32,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -46,7 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ClientControllerTest {
 
     public static final Integer ID = 1;
-    public static final Integer ID2 = 2;
     public static final String NAME_BARBER = "El Bigodon";
     public static final String ZIP_CODE = "55000000";
     public static final String ADRESS = "Rua Macaparana";
@@ -62,6 +59,10 @@ class ClientControllerTest {
     public static final double PRICE = 20.0;
     public static final int TIME = 70;
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
+    public static final String LOGIN = "lucas";
+    public static final UserRole ROLE_BARBERSHOP = UserRole.BARBERSHOP;
+    public static final String TOKEN = "tokenFake";
+    public static final UserRole ROLE_CLIENT = UserRole.CLIENT;
 
     //    private EmployeeSimple employeeSimple = new EmployeeSimple();
 //    private EmployeeRequest employeeRequest = new EmployeeRequest();
@@ -76,6 +77,8 @@ class ClientControllerTest {
     private BarberShopSimple barberShopSimple = new BarberShopSimple();
     private BarberShopRequest barberShopRequest = new BarberShopRequest();
 
+    private User userAuth = new User();
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -84,6 +87,12 @@ class ClientControllerTest {
 
     @MockBean
     private ClientService clientService;
+
+    @MockBean
+    private TokenService tokenService;
+
+    @MockBean
+    private UserRepository userRepository;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -184,12 +193,15 @@ class ClientControllerTest {
 
     @Test
     void whenFindAllClientsThenReturnAnListOfClients() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.clientService.allClients(any())).thenReturn(List.of(this.clientSimple));
-
         String responseContent = mockMvc.perform(get("/client/all")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
-
         List<ClientSimple> response = this.objectMapper.readValue(responseContent, new TypeReference<List<ClientSimple>>() {
         });
 
@@ -200,10 +212,15 @@ class ClientControllerTest {
 
     @Test
     void whenFindClientByIdThenReturnAnClient() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.clientService.clientById(anyInt())).thenReturn(this.clientResponse);
 
         String responseContent = mockMvc.perform(get("/client/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         ClientResponse response = this.objectMapper.readValue(responseContent, ClientResponse.class);
@@ -215,10 +232,16 @@ class ClientControllerTest {
 
     @Test
     void whenFindClientsByBarberShopThenReturnAnListOfClients() throws Exception {
+        this.userAuth.setRole(ROLE_BARBERSHOP);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.clientService.clientsByBarberShop(anyInt(), any())).thenReturn(List.of(this.clientSimple));
 
         String responseContent = mockMvc.perform(get("/client/barber-shop/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         List<ClientSimple> response = this.objectMapper.readValue(responseContent, new TypeReference<List<ClientSimple>>() {
@@ -231,9 +254,14 @@ class ClientControllerTest {
 
     @Test
     void whenDeleteClientThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.clientService).deleteClient(anyInt());
         mockMvc.perform(delete("/client/delete/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isOk());
 
         verify(this.clientService, times(1)).deleteClient(anyInt());
@@ -241,9 +269,14 @@ class ClientControllerTest {
 
     @Test
     void whenActiveClientThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.clientService).deleteClient(anyInt());
         mockMvc.perform(patch("/client/active-client/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isOk());
 
         verify(this.clientService, times(1)).activeClient(anyInt());
@@ -251,29 +284,39 @@ class ClientControllerTest {
 
     @Test
     void whenUpdateClientThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.clientService.updateClient(anyInt(), any())).thenReturn(this.clientResponse);
         when(this.clientService.clientById(anyInt())).thenReturn(this.clientResponse);
         String userJson = this.objectMapper.writeValueAsString(this.clientRequest);
         String responseContent = mockMvc.perform(patch("/client/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(userJson))
+                        .content(userJson)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         ClientResponse response = this.objectMapper.readValue(responseContent, ClientResponse.class);
 
         assertNotNull(response);
         assertEquals(ID, response.getClientId());
-        verify(this.clientService, times(1)).updateClient(anyInt(),any());
+        verify(this.clientService, times(1)).updateClient(anyInt(), any());
     }
 
     @Test
     void whenUpdateClientWithBarberShopIdNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.barberShopRequest.setBarberShopId(null);
         this.clientRequest.setBarberShops(List.of(this.barberShopRequest));
         String userJson = this.objectMapper.writeValueAsString(this.clientRequest);
         String responseContent = mockMvc.perform(patch("/client/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(userJson))
+                        .content(userJson)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -287,11 +330,13 @@ class ClientControllerTest {
 
 
     private void startUser() {
+        this.userAuth = new User(LOGIN, PASSWORD, ROLE_CLIENT);
+
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
         this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, PASSWORD, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
 
         this.clientSimple = new ClientSimple(ID, NAME, PHONE, STATUS_ACTIVE);
-        this.clientRequest = new ClientRequest(null, NAME, CPF, PHONE,PASSWORD, STATUS_ACTIVE, null, new ArrayList<>());
+        this.clientRequest = new ClientRequest(null, NAME, CPF, PHONE, PASSWORD, STATUS_ACTIVE, null, new ArrayList<>());
         this.clientResponse = new ClientResponse(ID, NAME, CPF, PHONE, STATUS_ACTIVE, List.of(this.barberShopSimple), new ArrayList<>());
     }
 }

@@ -10,19 +10,26 @@ import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberS
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
+import br.com.barbermanager.barbershopmanagement.config.security.TokenService;
 import br.com.barbermanager.barbershopmanagement.domain.model.*;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.RegisterDTO;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.UserRole;
 import br.com.barbermanager.barbershopmanagement.domain.repository.BarberShopRepository;
+import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
+import br.com.barbermanager.barbershopmanagement.domain.service.user.UserService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
+import jakarta.validation.constraints.Email;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -47,7 +54,6 @@ class BarberShopServiceImplTest {
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
     public static final StatusEnum STATUS_INACTIVE = StatusEnum.INACTIVE;
     public static final String NO_BARBER_SHOPS = "There aren't barber shops to show.";
-
 
     private BarberShop barberShop = new BarberShop();
     private BarberShopRequest barberShopRequest = new BarberShopRequest();
@@ -85,6 +91,9 @@ class BarberShopServiceImplTest {
     @Mock
     private ItemMapper itemMapper;
 
+    @Mock
+    private UserService userService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -110,6 +119,7 @@ class BarberShopServiceImplTest {
     void whenCreateBarberShopThenReturnAnBarberShopResponse() {
         when(this.barberShopRepository.findByEmail(anyString())).thenReturn(null);
         when(this.barberShopMapper.toBarberShopResponse(any())).thenReturn(this.barberShopResponse);
+        when(this.userService.register(any())).thenReturn(true);
 
         BarberShopResponse response = this.barberShopService.createBarberShop(this.barberShopRequest);
 

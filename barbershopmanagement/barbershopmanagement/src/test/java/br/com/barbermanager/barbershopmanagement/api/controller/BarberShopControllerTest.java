@@ -9,8 +9,11 @@ import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberS
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
+import br.com.barbermanager.barbershopmanagement.config.security.TokenService;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.UserRole;
+import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
 import br.com.barbermanager.barbershopmanagement.exception.handler.RestErrorMessage;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -46,7 +49,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BarberShopControllerTest {
 
     public static final Integer ID = 1;
-    public static final Integer ID2 = 2;
     public static final String NAME_BARBER = "El Bigodon";
     public static final String ZIP_CODE = "55000000";
     public static final String ADRESS = "Rua Macaparana";
@@ -62,6 +64,12 @@ class BarberShopControllerTest {
     public static final double PRICE = 20.0;
     public static final int TIME = 70;
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
+    public static final String LOGIN = "lucas";
+    public static final UserRole ROLE_BARBERSHOP = UserRole.BARBERSHOP;
+    public static final String TOKEN = "tokenFake";
+    public static final UserRole ROLE_CLIENT = UserRole.CLIENT;
+
+    private User userAuth = new User();
 
     private BarberShopSimple barberShopSimple = new BarberShopSimple();
     private BarberShopRequest barberShopRequest = new BarberShopRequest();
@@ -85,6 +93,12 @@ class BarberShopControllerTest {
     @MockBean
     private BarberShopService barberShopService;
 
+    @MockBean
+    private TokenService tokenService;
+
+    @MockBean
+    private UserRepository userRepository;
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
@@ -107,14 +121,13 @@ class BarberShopControllerTest {
 
         assertNotNull(response);
         assertEquals(ID, response.getBarberShopId());
-        verify(this.barberShopService,times(1)).createBarberShop(any());
+        verify(this.barberShopService, times(1)).createBarberShop(any());
     }
 
     @Test
     void whenCreateNewBarberShopWithNameFieldNullThenThrowAnBadRequestException() throws Exception {
         this.barberShopRequest.setName(null);
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
-
         String responseContent = mockMvc.perform(post("/barbershop/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
@@ -126,7 +139,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
-        verify(this.barberShopService,times(0)).createBarberShop(any());
+        verify(this.barberShopService, times(0)).createBarberShop(any());
     }
 
     @Test
@@ -145,7 +158,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
-        verify(this.barberShopService,times(0)).createBarberShop(any());
+        verify(this.barberShopService, times(0)).createBarberShop(any());
     }
 
     @Test
@@ -164,7 +177,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
-        verify(this.barberShopService,times(0)).createBarberShop(any());
+        verify(this.barberShopService, times(0)).createBarberShop(any());
     }
 
     @Test
@@ -183,7 +196,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
-        verify(this.barberShopService,times(0)).createBarberShop(any());
+        verify(this.barberShopService, times(0)).createBarberShop(any());
     }
 
 //    @Test
@@ -221,7 +234,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
-        verify(this.barberShopService,times(0)).createBarberShop(any());
+        verify(this.barberShopService, times(0)).createBarberShop(any());
     }
 
     @Test
@@ -240,7 +253,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
-        verify(this.barberShopService,times(0)).createBarberShop(any());
+        verify(this.barberShopService, times(0)).createBarberShop(any());
     }
 
     @Test
@@ -259,7 +272,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
-        verify(this.barberShopService,times(0)).createBarberShop(any());
+        verify(this.barberShopService, times(0)).createBarberShop(any());
     }
 
     @Test
@@ -278,7 +291,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
-        verify(this.barberShopService,times(0)).createBarberShop(any());
+        verify(this.barberShopService, times(0)).createBarberShop(any());
     }
 
     @Test
@@ -297,7 +310,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
-        verify(this.barberShopService,times(0)).createBarberShop(any());
+        verify(this.barberShopService, times(0)).createBarberShop(any());
     }
 
     @Test
@@ -316,7 +329,7 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());
-        verify(this.barberShopService,times(0)).createBarberShop(any());
+        verify(this.barberShopService, times(0)).createBarberShop(any());
     }
 
     @Test
@@ -332,15 +345,22 @@ class BarberShopControllerTest {
 
         assertEquals(1, response.size());
         assertEquals(ID, response.get(0).getBarberShopId());
-        verify(this.barberShopService,times(1)).allBarberShops(any());
+        verify(this.barberShopService, times(1)).allBarberShops(any());
     }
 
     @Test
     void whenFindBarberShopsByClientThenReturnAnListOfBarberShops() throws Exception {
+        this.userAuth.setRole(ROLE_CLIENT);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
+
         when(this.barberShopService.barberShopsByClient(anyInt(), any())).thenReturn(List.of(this.barberShopSimple));
 
         String responseContent = mockMvc.perform(get("/barbershop/client/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         List<BarberShopSimple> response = this.objectMapper.readValue(responseContent, new TypeReference<List<BarberShopSimple>>() {
@@ -348,7 +368,7 @@ class BarberShopControllerTest {
 
         assertEquals(1, response.size());
         assertEquals(ID, response.get(0).getBarberShopId());
-        verify(this.barberShopService,times(1)).barberShopsByClient(anyInt(),any());
+        verify(this.barberShopService, times(1)).barberShopsByClient(anyInt(), any());
     }
 
     @Test
@@ -364,14 +384,19 @@ class BarberShopControllerTest {
         assertNotNull(response);
         assertEquals(ID, response.getBarberShopId());
 
-        verify(this.barberShopService,times(1)).barberShopById(anyInt());
+        verify(this.barberShopService, times(1)).barberShopById(anyInt());
     }
 
     @Test
     void whenDeleteBarberShopThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.barberShopService).deleteBarberShop(anyInt());
         mockMvc.perform(delete("/barbershop/delete/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isOk());
 
         verify(this.barberShopService, times(1)).deleteBarberShop(anyInt());
@@ -379,9 +404,14 @@ class BarberShopControllerTest {
 
     @Test
     void whenActiveBarberShopThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
+
         doNothing().when(this.barberShopService).deleteBarberShop(anyInt());
         mockMvc.perform(patch("/barbershop/active-barbershop/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk());
 
         verify(this.barberShopService, times(1)).activeBarberShop(anyInt());
@@ -389,9 +419,14 @@ class BarberShopControllerTest {
 
     @Test
     void whenDismissEmployeeThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.barberShopService).deleteBarberShop(anyInt());
         mockMvc.perform(delete("/barbershop/dismiss/1/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isOk());
 
         verify(this.barberShopService, times(1)).dismissEmployee(anyInt(), anyInt());
@@ -399,11 +434,15 @@ class BarberShopControllerTest {
 
     @Test
     void whenUpdateBarberShopEqualsCreatedThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.barberShopService.updateBarberShop(anyInt(), any())).thenReturn(this.barberShopResponse);
         when(this.barberShopService.barberShopById(anyInt())).thenReturn(this.barberShopResponse);
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
         String responseContent = mockMvc.perform(patch("/barbershop/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
@@ -411,11 +450,14 @@ class BarberShopControllerTest {
 
         assertNotNull(response);
         assertEquals(ID, response.getBarberShopId());
-        verify(this.barberShopService,times(1)).updateBarberShop(anyInt(), any());
+        verify(this.barberShopService, times(1)).updateBarberShop(anyInt(), any());
     }
 
     @Test
     void whenUpdateBarberShopWithAllFieldFilledThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.barberShopRequest.setClients(List.of(this.clientRequest));
         this.barberShopRequest.setItems(List.of(this.itemRequest));
         this.barberShopRequest.setEmployees(List.of(this.employeeRequest));
@@ -424,6 +466,7 @@ class BarberShopControllerTest {
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
         String responseContent = mockMvc.perform(patch("/barbershop/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
@@ -431,17 +474,21 @@ class BarberShopControllerTest {
 
         assertNotNull(response);
         assertEquals(ID, response.getBarberShopId());
-        verify(this.barberShopService,times(1)).updateBarberShop(anyInt(), any());
-        verify(this.barberShopService,times(1)).barberShopById(anyInt());
+        verify(this.barberShopService, times(1)).updateBarberShop(anyInt(), any());
+        verify(this.barberShopService, times(1)).barberShopById(anyInt());
     }
 
     @Test
     void whenUpdateBarberShopWithItemIdNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.itemRequest.setItemId(null);
         this.barberShopRequest.setItems(List.of(this.itemRequest));
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
         String responseContent = mockMvc.perform(patch("/barbershop/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -451,11 +498,14 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/update/1", restError.getPath());
-        verify(this.barberShopService,times(0)).updateBarberShop(anyInt(), any());
+        verify(this.barberShopService, times(0)).updateBarberShop(anyInt(), any());
     }
 
     @Test
     void whenUpdateBarberShopWithEmployeeIdNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.employeeRequest.setEmployeeId(null);
         this.barberShopRequest.setEmployees(List.of(this.employeeRequest));
         when(this.barberShopService.updateBarberShop(anyInt(), any())).thenReturn(this.barberShopResponse);
@@ -463,6 +513,7 @@ class BarberShopControllerTest {
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
         String responseContent = mockMvc.perform(patch("/barbershop/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -472,11 +523,14 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/update/1", restError.getPath());
-        verify(this.barberShopService,times(0)).updateBarberShop(anyInt(), any());
+        verify(this.barberShopService, times(0)).updateBarberShop(anyInt(), any());
     }
 
     @Test
     void whenUpdateBarberShopWithClientIdNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.clientRequest.setClientId(null);
         this.barberShopRequest.setClients(List.of(this.clientRequest));
         when(this.barberShopService.updateBarberShop(anyInt(), any())).thenReturn(this.barberShopResponse);
@@ -484,6 +538,8 @@ class BarberShopControllerTest {
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
         String responseContent = mockMvc.perform(patch("/barbershop/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -493,32 +549,41 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/update/1", restError.getPath());
-        verify(this.barberShopService,times(0)).updateBarberShop(anyInt(), any());
+        verify(this.barberShopService, times(0)).updateBarberShop(anyInt(), any());
     }
 
     @Test
     void whenInsertNewClientThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.barberShopRequest.setClients(List.of(this.clientRequest));
         when(this.barberShopService.updateClientAtBarberShop(anyInt(), any())).thenReturn(this.barberShopResponse);
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
         String responseContent = mockMvc.perform(patch("/barbershop/insert-client/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+
                         .content(userJson))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         BarberShopResponse response = this.objectMapper.readValue(responseContent, BarberShopResponse.class);
 
-        verify(this.barberShopService, times(1)).updateClientAtBarberShop(anyInt(),any());
+        verify(this.barberShopService, times(1)).updateClientAtBarberShop(anyInt(), any());
         assertNotNull(response);
         assertEquals(ID, response.getBarberShopId());
     }
 
     @Test
     void whenInsertNewClientWithoutClientFilledThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.barberShopService.updateClientAtBarberShop(anyInt(), any())).thenReturn(this.barberShopResponse);
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
         String responseContent = mockMvc.perform(patch("/barbershop/insert-client/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -528,17 +593,21 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/insert-client/1", restError.getPath());
-        verify(this.barberShopService, times(0)).updateClientAtBarberShop(anyInt(),any());
+        verify(this.barberShopService, times(0)).updateClientAtBarberShop(anyInt(), any());
     }
 
     @Test
     void whenInsertNewClientWithClientIdNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.clientRequest.setClientId(null);
         this.barberShopRequest.setClients(List.of(this.clientRequest));
         when(this.barberShopService.updateClientAtBarberShop(anyInt(), any())).thenReturn(this.barberShopResponse);
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
         String responseContent = mockMvc.perform(patch("/barbershop/insert-client/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -548,21 +617,28 @@ class BarberShopControllerTest {
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/insert-client/1", restError.getPath());
-        verify(this.barberShopService, times(0)).updateClientAtBarberShop(anyInt(),any());
+        verify(this.barberShopService, times(0)).updateClientAtBarberShop(anyInt(), any());
     }
 
     @Test
     void whenRemoveClientThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.barberShopService).removeClient(anyInt(), anyInt());
         mockMvc.perform(delete("/barbershop/remove-client/1/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
+                )
                 .andExpect(status().isOk());
 
         verify(this.barberShopService, times(1)).removeClient(anyInt(), anyInt());
     }
 
     private void startUser() {
-        this.clientRequest = new ClientRequest(ID, NAME, CPF, PHONE,PASSWORD,  STATUS_ACTIVE, List.of(this.barberShopRequest), new ArrayList<>());
+        this.userAuth = new User(LOGIN, PASSWORD, ROLE_BARBERSHOP);
+
+        this.clientRequest = new ClientRequest(ID, NAME, CPF, PHONE, PASSWORD, STATUS_ACTIVE, List.of(this.barberShopRequest), new ArrayList<>());
         this.clientSimple = new ClientSimple(ID, NAME, PHONE, STATUS_ACTIVE);
 
         this.employeeRequest = new EmployeeRequest(ID, NAME, CPF, PHONE, PASSWORD, STATUS_ACTIVE, this.barberShopRequest);

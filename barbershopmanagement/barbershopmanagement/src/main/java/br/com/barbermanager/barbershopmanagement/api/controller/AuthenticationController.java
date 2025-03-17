@@ -7,6 +7,7 @@ import br.com.barbermanager.barbershopmanagement.domain.model.user.RegisterDTO;
 import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
 import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,8 @@ public class AuthenticationController {
 
     @Autowired
     private TokenService tokenService;
+
+    @Operation(summary = "Realizar Login", description = "Realizar login para usar os Endpoints", tags = "Login")
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid AuthenticationDTO data) {

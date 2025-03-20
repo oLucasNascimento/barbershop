@@ -37,10 +37,10 @@ public class AuthenticationController {
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
-        boolean auth = this.userService.register(data);
-        if (auth) return ResponseEntity.ok().build();
-        else return ResponseEntity.badRequest().build();
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity register(@RequestBody @Valid RegisterDTO data) {
+//        boolean auth = this.userService.register(data);
+//        if (auth) return ResponseEntity.ok().build();
+//        else return ResponseEntity.badRequest().build();
+//    }
 }

@@ -3,6 +3,7 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
+import br.com.barbermanager.barbershopmanagement.config.security.SecurityConfiguration;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.BarberShopCreate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.BarberShopUpdate;
@@ -10,6 +11,7 @@ import br.com.barbermanager.barbershopmanagement.domain.model.validations.Client
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +25,7 @@ import java.util.List;
 @RestController
 @Validated
 @RequestMapping("/barbershop")
+@SecurityRequirement(name = SecurityConfiguration.SECURITY)
 public class BarberShopController {
 
     @Autowired

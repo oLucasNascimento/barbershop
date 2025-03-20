@@ -6,6 +6,8 @@ services:
     depends_on:
       db-postgres:
         condition: service_healthy
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
   db-postgres:
     image: postgres:latest
     healthcheck:
@@ -15,7 +17,7 @@ services:
       retries: 3
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: dev
+      POSTGRES_PASSWORD: prod
       POSTGRES_DB: barbershop
     ports:
       - "5432:5432"

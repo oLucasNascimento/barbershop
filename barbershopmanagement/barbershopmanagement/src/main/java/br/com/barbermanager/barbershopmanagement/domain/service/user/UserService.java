@@ -27,7 +27,7 @@ public class UserService {
         try{
           return this.authenticationManager.authenticate(userNamePassword);
         } catch (Exception ex){
-            throw new BadRequestException("Email/Username invalido");
+            throw new BadRequestException("Email/Username invalid.");
         }
     }
 

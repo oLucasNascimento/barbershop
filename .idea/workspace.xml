@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="895b93a9-9586-49d6-8e3b-2fd71ecd9e3c" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="Use Maven wrapper" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2v62TDUDuV0OF5DDEOMWY80j2OR" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "last_opened_file_path": "C:/Users/lucas/Estudos/Back End/Projetos/barbershop",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "discord-application",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="br.com.barbermanager.barbershopmanagement.domain.service.user" />
+      <recent name="br.com.barbermanager.barbershopmanagement.config.security" />
+      <recent name="br.com.barbermanager.barbershopmanagement.api.controller" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.java in barbershopmanagement">
+    <configuration name="TokenServiceTest.whenValidateTokenThenReturnFalse" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="barbershopmanagement" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.barbermanager.barbershopmanagement.config.security.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="br.com.barbermanager.barbershopmanagement.config.security" />
+      <option name="MAIN_CLASS_NAME" value="br.com.barbermanager.barbershopmanagement.config.security.TokenServiceTest" />
+      <option name="METHOD_NAME" value="whenValidateTokenThenReturnFalse" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceTest.whenDologinThenReturnAuthenticated" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="barbershopmanagement" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.barbermanager.barbershopmanagement.domain.service.user.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="br.com.barbermanager.barbershopmanagement.domain.service.user" />
+      <option name="MAIN_CLASS_NAME" value="br.com.barbermanager.barbershopmanagement.domain.service.user.UserServiceTest" />
+      <option name="METHOD_NAME" value="whenDologinThenReturnAuthenticated" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceTest.whenRegisterThenReturnSuccess" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="barbershopmanagement" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.barbermanager.barbershopmanagement.domain.service.user.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="br.com.barbermanager.barbershopmanagement.domain.service.user" />
+      <option name="MAIN_CLASS_NAME" value="br.com.barbermanager.barbershopmanagement.domain.service.user.UserServiceTest" />
+      <option name="METHOD_NAME" value="whenRegisterThenReturnSuccess" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceTest.whenTryloginWithLoginInvalidThenThrowAnBadRequestException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="barbershopmanagement" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.com.barbermanager.barbershopmanagement.domain.service.user.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="br.com.barbermanager.barbershopmanagement.domain.service.user" />
+      <option name="MAIN_CLASS_NAME" value="br.com.barbermanager.barbershopmanagement.domain.service.user.UserServiceTest" />
+      <option name="METHOD_NAME" value="whenTryloginWithLoginInvalidThenThrowAnBadRequestException" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="java in barbershopmanagement" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="barbershopmanagement" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/barbershopmanagement/barbershopmanagement/src/test/java" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BarbershopmanagementApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="barbershopmanagement" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="br.com.barbermanager.barbershopmanagement.BarbershopmanagementApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.java in barbershopmanagement" />
+        <item itemvalue="JUnit.UserServiceTest.whenRegisterThenReturnSuccess" />
+        <item itemvalue="JUnit.UserServiceTest.whenTryloginWithLoginInvalidThenThrowAnBadRequestException" />
+        <item itemvalue="JUnit.UserServiceTest.whenDologinThenReturnAuthenticated" />
+        <item itemvalue="JUnit.TokenServiceTest.whenValidateTokenThenReturnFalse" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="895b93a9-9586-49d6-8e3b-2fd71ecd9e3c" name="Changes" comment="" />
+      <created>1743451208840</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1743451208840</updated>
+      <workItem from="1743451210816" duration="5205000" />
+      <workItem from="1749497476256" duration="15266000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/barbershop$java_in_barbershopmanagement.ic" NAME="java in barbershopmanagement Coverage Results" MODIFIED="1749586305982" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+    <SUITE FILE_PATH="coverage/barbershop$controller_in_barbershopmanagement.ic" NAME="controller in barbershopmanagement Coverage Results" MODIFIED="1749497903167" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>

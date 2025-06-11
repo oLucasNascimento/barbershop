@@ -331,7 +331,7 @@ class BarberShopServiceImplTest {
 
     @Test
     void whenUpdateBarberShopThenReturnSuccess() {
-        this.barberShopRequest.setAdress(null);
+        this.barberShopRequest.setAddress(null);
         when(this.barberShopService.barberShopExists(anyInt())).thenReturn(true);
         when(this.barberShopRepository.findByEmail(anyString())).thenReturn(null);
         when(this.barberShopRepository.getById(anyInt())).thenReturn(this.barberShop);

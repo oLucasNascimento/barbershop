@@ -6,9 +6,9 @@ import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -27,60 +27,61 @@ import java.util.List;
 public class BarberShopRequest {
 
     @Schema(hidden = true)
-    @Null(groups = BarberShopCreate.class, message = "The BarberShop ID field must be null.")
-    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, ClientUpdate.class, EmployeeCreate.class, ItemUpdate.class, ItemCreate.class}, message = "The BarberShop ID field cannot be null.")
+    @Null(groups = BarberShopCreate.class, message = "{barber.id.null}")
+    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, ClientUpdate.class, EmployeeCreate.class, ItemUpdate.class, ItemCreate.class}, message = "{barber.id.not.null}")
     private Integer barberShopId;
 
-    @Schema(description = "Nome da Barbearia", example = "Senta Que Lá Vem Corte")
-    @NotBlank(groups = BarberShopCreate.class, message = "The Name field cannot be null.")
+    @Schema(description = "BarberShop's Name", example = "Elite Cuts Barbershop")
+    @NotBlank(groups = BarberShopCreate.class, message = "{barber.name.not.blank}")
     private String name;
 
-    @Schema(description = "CEP da Barbearia", example = "08577000")
-    @NotBlank(groups = BarberShopCreate.class, message = "The ZipCode field cannot be null.")
+    @Schema(description = "BarberShop's Zip Code", example = "10001")
+    @NotBlank(groups = BarberShopCreate.class, message = "{barber.zip.code.not.blank}")
     private String zipCode;
 
-    @Schema(description = "Endereco da Barbearia", example = "Rua Navalha Afiada")
-    @NotBlank(groups = BarberShopCreate.class, message = "The Adress field cannot be null.")
-    private String adress;
+    @Schema(description = "BarberShop's Address", example = "123 Main Street, Brooklyn, NY")
+    @NotBlank(groups = BarberShopCreate.class, message = "{barber.address.not.blank}")
+    private String address;
 
-    @Schema(description = "Email da Barbearia", example = "sqlvc@hair.com")
-    @NotBlank(groups = BarberShopCreate.class, message = "The Email field cannot be null.")
+    @Schema(description = "BarberShop's Email", example = "contact@elitecuts.com")
+    @Email
+    @NotBlank(groups = BarberShopCreate.class, message = "{barber.email.not.blank}")
     private String email;
 
-    @Schema(description = "Senha da Barbearia", example = "barber1234")
-    @NotBlank(groups = BarberShopCreate.class, message = "The Password field cannot be null.")
+    @Schema(description = "BarberShop's Password", example = "securePass123!")
+    @NotBlank(groups = BarberShopCreate.class, message = "{barber.password.not.blank}")
     private String password;
 
-    @Schema(description = "Telefone da Barbearia", example = "99887766")
-    @NotBlank(groups = BarberShopCreate.class, message = "The Phone field cannot be null.")
+    @Schema(description = "BarberShop's Phone", example = "+1 (555) 123-4567")
+    @NotBlank(groups = BarberShopCreate.class, message = "{barber.phone.not.blank}")
     private String phone;
 
-    @Schema(description = "Horario de abertura da Barbearia", example = "09:00:00")
-    @NotNull(groups = BarberShopCreate.class, message = "The Opening Time field cannot be null.")
+    @Schema(description = "BarberShop's Opening Time", example = "09:00:00")
+    @NotNull(groups = BarberShopCreate.class, message = "{barber.opening.time.not.null}")
     private LocalTime openingTime;
 
-    @Schema(description = "Horario de fechamento da Barbearia", example = "20:00:00")
-    @NotNull(groups = BarberShopCreate.class, message = "The Closing Time field cannot be null.")
+    @Schema(description = "BarberShop's Closing Time", example = "20:00:00")
+    @NotNull(groups = BarberShopCreate.class, message = "{barber.closing.time.not.null}")
     private LocalTime closingTime;
 
     @Schema(hidden = true)
     private StatusEnum status;
 
-    @Schema(description = "Itens da Barbearia")
-    @Null(groups = {BarberShopCreate.class, ClientInBarberShop.class}, message = "The Item field must be null.")
+    @Schema(description = "BarberShop's Items")
+    @Null(groups = {BarberShopCreate.class, ClientInBarberShop.class}, message = "{barber.item.null}")
     @JsonIgnoreProperties({"barberShop", "schedulings"})
     @Valid
     private List<ItemRequest> items;
 
-    @Schema(description = "Funcionários da Barbearia")
-    @Null(groups = {BarberShopCreate.class, ClientInBarberShop.class}, message = "The Employee field must be null.")
+    @Schema(description = "BarberShop's Employees")
+    @Null(groups = {BarberShopCreate.class, ClientInBarberShop.class}, message = "{barber.employee.null}")
     @JsonIgnoreProperties("barberShop")
     @Valid
     private List<EmployeeRequest> employees;
 
-    @Schema(description = "Clientes da Barbearia")
-    @Null(groups = BarberShopCreate.class, message = "The Client field must be null.")
-    @NotNull(groups = ClientInBarberShop.class, message = "The Client field cannot be null.")
+    @Schema(description = "BarberShop's Clients")
+    @Null(groups = BarberShopCreate.class, message = "{barber.client.null}")
+    @NotNull(groups = ClientInBarberShop.class, message = "{barber.client.not.null}")
     @JsonIgnoreProperties({"barberShops", "schedulings"})
     @Valid
     private List<ClientRequest> clients;

@@ -3,8 +3,8 @@ package br.com.barbermanager.barbershopmanagement.domain.model.user;
 import jakarta.validation.constraints.NotBlank;
 
 public record AuthenticationDTO(
-        @NotBlank(message = "Um Login precisa ser informado.")
+        @NotBlank(message = "{barber.login.not.blank}")
         String login,
-        @NotBlank(message = "Uma Senha precisa ser informada.")
+        @NotBlank(message = "{barber.password.not.blank}")
         String password){
 }

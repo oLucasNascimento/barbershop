@@ -87,7 +87,7 @@ class AuthenticationControllerTest {
 
         RestErrorMessage response = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
 
-        assertEquals("Um Login precisa ser informado.", response.getMessage());
+        assertEquals("The Login field cannot be null.", response.getMessage());
         assertEquals("VALIDATION_ERROR", response.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
         assertEquals("/auth/login", response.getPath());
@@ -105,7 +105,7 @@ class AuthenticationControllerTest {
 
         RestErrorMessage response = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
 
-        assertEquals("Uma Senha precisa ser informada.", response.getMessage());
+        assertEquals("The Password field cannot be null.", response.getMessage());
         assertEquals("VALIDATION_ERROR", response.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
         assertEquals("/auth/login", response.getPath());

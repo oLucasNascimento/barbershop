@@ -6,7 +6,6 @@ import br.com.barbermanager.barbershopmanagement.domain.model.validations.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -22,31 +21,31 @@ import lombok.Setter;
 public class EmployeeRequest {
 
     @Schema(hidden = true)
-    @Null(groups = EmployeeCreate.class, message = "The Employee ID field must be null.")
-    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class}, message = "The Employee ID field cannot be null.")
+    @Null(groups = EmployeeCreate.class, message = "{employee.id.null}")
+    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class}, message = "{employee.id.not.null}")
     private Integer employeeId;
 
-    @Schema(description = "Nome do Funcionário", example = "Igor Silva")
-    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The Name field cannot be null.")
+    @Schema(description = "Employee's Name", example = "Maria Johnson")
+    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "{employee.name.not.null}")
     private String name;
 
-    @Schema(description = "CPF do Funcionário", example = "8978568795")
-    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The CPF field cannot be null.")
+    @Schema(description = "Employee's CPF", example = "987.654.321-00")
+    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "{employee.cpf.not.null}")
     private String cpf;
 
-    @Schema(description = "Senha do Funcionário", example = "1234")
-    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The Password field cannot be null.")
+    @Schema(description = "Employee's Password", example = "mariaSecure456")
+    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "{employee.password.not.null}")
     private String password;
 
-    @Schema(description = "Telefone do Funcionário", example = "11223344")
-    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "The Phone field cannot be null.")
+    @Schema(description = "Employee's Phone", example = "+55 (21) 91234-5678")
+    @NotBlank(groups = {EmployeeCreate.class, EmployeeUpdate.class}, message = "{employee.phone.not.null}")
     private String phone;
 
     @Schema(hidden = true)
     private StatusEnum status;
 
-    @Schema(description = "Barbearia do Funcionário", example = "{\"barberShopId\":\"1\"}")
-    @NotNull(groups = EmployeeCreate.class, message = "The BarberShop field cannot be null.")
+    @Schema(description = "Employee's BarberShop", example = "{\"barberShopId\":\"1\"}")
+    @NotNull(groups = EmployeeCreate.class, message = "{employee.barbershop.not.null}")
     @JsonIgnoreProperties({"items", "employees", "clients"})
     @Valid
     private BarberShopRequest barberShop;

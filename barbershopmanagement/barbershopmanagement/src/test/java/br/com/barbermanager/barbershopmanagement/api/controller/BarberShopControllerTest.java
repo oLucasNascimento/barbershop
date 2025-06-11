@@ -162,8 +162,8 @@ class BarberShopControllerTest {
     }
 
     @Test
-    void whenCreateNewBarberShopWithAdressFieldNullThenThrowAnBadRequestException() throws Exception {
-        this.barberShopRequest.setAdress(null);
+    void whenCreateNewBarberShopWithAddressFieldNullThenThrowAnBadRequestException() throws Exception {
+        this.barberShopRequest.setAddress(null);
         String userJson = this.objectMapper.writeValueAsString(this.barberShopRequest);
 
         String responseContent = mockMvc.perform(post("/barbershop/new")
@@ -173,7 +173,7 @@ class BarberShopControllerTest {
 
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
 
-        assertEquals("The Adress field cannot be null.", restError.getMessage());
+        assertEquals("The Address field cannot be null.", restError.getMessage());
         assertEquals("VALIDATION_ERROR", restError.getErrorCode());
         assertEquals(HttpStatus.BAD_REQUEST, restError.getStatus());
         assertEquals("/barbershop/new", restError.getPath());

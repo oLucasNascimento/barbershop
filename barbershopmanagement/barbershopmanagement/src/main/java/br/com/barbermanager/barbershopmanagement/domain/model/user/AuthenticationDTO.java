@@ -1,4 +1,10 @@
 package br.com.barbermanager.barbershopmanagement.domain.model.user;
 
-public record AuthenticationDTO(String login, String password){
+import jakarta.validation.constraints.NotBlank;
+
+public record AuthenticationDTO(
+        @NotBlank(message = "{barber.login.not.blank}")
+        String login,
+        @NotBlank(message = "{barber.password.not.blank}")
+        String password){
 }

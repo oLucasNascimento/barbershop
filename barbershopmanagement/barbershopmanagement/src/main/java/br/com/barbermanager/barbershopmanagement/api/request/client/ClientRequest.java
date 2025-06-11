@@ -24,36 +24,37 @@ import java.util.List;
 public class ClientRequest {
 
     @Schema(hidden = true)
-    @Null(groups = ClientCreate.class, message = "The Client ID field must be null.")
-    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class, ClientInBarberShop.class}, message = "The Client ID field cannot be null.")
+    @Null(groups = ClientCreate.class, message = "{client.id.null}")
+    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class, ClientInBarberShop.class}, message = "{client.id.not.null}")
     private Integer clientId;
 
-    @Schema(description = "Nome do Cliente", example = "Tiago Ferreira")
-    @NotBlank(groups = ClientCreate.class, message = "The Name field cannot be null.")
+    @Schema(description = "Client's Name", example = "John Smith")
+    @NotBlank(groups = ClientCreate.class, message = "{client.name.not.null}")
     private String name;
 
-    @Schema(description = "CPF do Cliente", example = "98564753475")
-    @NotBlank(groups = ClientCreate.class, message = "The CPF field cannot be null.")
+    @Schema(description = "Client's CPF", example = "98564753475")
+    @NotBlank(groups = ClientCreate.class, message = "{client.cpf.not.null}")
     private String cpf;
 
-    @Schema(description = "Senha do Cliente", example = "1234567890")
-    @NotBlank(groups = ClientCreate.class, message = "The Password field cannot be null.")
+    @Schema(description = "Client's Password", example = "customerPass123!")
+    @NotBlank(groups = ClientCreate.class, message = "{client.password.not.null}")
     private String password;
 
-    @Schema(description = "Telefone do Cliente", example = "99887766")
-    @NotBlank(groups = ClientCreate.class, message = "The Phone field cannot be null.")
+    @Schema(description = "Client's Phone", example = "+55 (11) 98765-4321")
+    @NotBlank(groups = ClientCreate.class, message = "{client.phone.not.null}")
     private String phone;
 
     @Schema(hidden = true)
     private StatusEnum status;
 
-    @Null(groups = ClientCreate.class, message = "The BarberShop field must be null.")
+    @Schema(description = "Client's BarberShops")
+    @Null(groups = ClientCreate.class, message = "{client.barbershop.null}")
     @JsonIgnoreProperties({"items", "employees", "clients"})
     @Valid
     private List<BarberShopRequest> barberShops;
 
-    @Schema(description = "Agendamentos do Cliente")
-    @Null(message = "The Scheduling field must be null.")
+    @Schema(description = "Client's Scheduglings")
+    @Null(message = "{client.schedulings.null}")
     @JsonIgnoreProperties({"barberShop", "items", "employees", "clients"})
     @Valid
     private List<SchedulingRequest> schedulings;

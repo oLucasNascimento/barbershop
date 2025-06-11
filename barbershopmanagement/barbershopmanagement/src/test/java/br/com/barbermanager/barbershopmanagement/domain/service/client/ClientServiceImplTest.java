@@ -12,6 +12,7 @@ import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeR
 import br.com.barbermanager.barbershopmanagement.domain.model.*;
 import br.com.barbermanager.barbershopmanagement.domain.repository.ClientRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import br.com.barbermanager.barbershopmanagement.domain.service.user.UserService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
@@ -61,6 +62,9 @@ class ClientServiceImplTest {
     @Mock
     private ClientMapper clientMapper;
 
+    @Mock
+    private UserService userService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -91,6 +95,7 @@ class ClientServiceImplTest {
         when(this.clientRepository.findByCpf(anyString())).thenReturn(null);
         when(this.clientMapper.toClient((ClientRequest) any())).thenReturn(this.client);
         when(this.clientMapper.toClientResponse(any())).thenReturn(this.clientResponse);
+        when(this.userService.register(any())).thenReturn(true);
 
         ClientResponse response = this.clientService.createClient(this.clientRequest);
 

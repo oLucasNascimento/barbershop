@@ -1,17 +1,15 @@
 package br.com.barbermanager.barbershopmanagement.api.controller;
 
 import br.com.barbermanager.barbershopmanagement.api.request.barbershop.BarberShopRequest;
-import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
-import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.request.item.ItemRequest;
-import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.barbershop.BarberShopSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
-import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
+import br.com.barbermanager.barbershopmanagement.config.security.TokenService;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.service.barbershop.BarberShopService;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.UserRole;
+import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
 import br.com.barbermanager.barbershopmanagement.exception.handler.RestErrorMessage;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,12 +26,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -57,6 +53,9 @@ class ItemControllerTest {
     public static final double PRICE = 20.0;
     public static final int TIME = 70;
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
+    public static final String LOGIN = "lucas";
+    public static final UserRole ROLE_BARBERSHOP = UserRole.BARBERSHOP;
+    public static final String TOKEN = "tokenFake";
 
     private BarberShopSimple barberShopSimple = new BarberShopSimple();
     private BarberShopRequest barberShopRequest = new BarberShopRequest();
@@ -65,16 +64,21 @@ class ItemControllerTest {
     private ItemResponse itemResponse = new ItemResponse();
     private ItemSimple itemSimple = new ItemSimple();
 
+    private User userAuth = new User();
+
     @Autowired
     private MockMvc mockMvc;
-
-    @InjectMocks
-    private ItemController itemController;
 
     @MockBean
     private ItemService itemService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @MockBean
+    private TokenService tokenService;
+
+    @MockBean
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
@@ -85,10 +89,14 @@ class ItemControllerTest {
 
     @Test
     void whenCreateNewItemThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.itemService.createItem(any())).thenReturn(this.itemResponse);
         String userJson = this.objectMapper.writeValueAsString(this.itemRequest);
         String responseContent = mockMvc.perform(post("/item/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
 
@@ -101,10 +109,14 @@ class ItemControllerTest {
 
     @Test
     void whenCreateNewItemWithoutBarberShopThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.itemRequest.setBarberShop(null);
         String userJson = this.objectMapper.writeValueAsString(this.itemRequest);
         String responseContent = mockMvc.perform(post("/item/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -119,10 +131,14 @@ class ItemControllerTest {
 
     @Test
     void whenCreateNewItemWithBarberShopIdNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.barberShopRequest.setBarberShopId(null);
         String userJson = this.objectMapper.writeValueAsString(this.itemRequest);
         String responseContent = mockMvc.perform(post("/item/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -137,10 +153,14 @@ class ItemControllerTest {
 
     @Test
     void whenCreateNewItemWithNameNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.itemRequest.setName(null);
         String userJson = this.objectMapper.writeValueAsString(this.itemRequest);
         String responseContent = mockMvc.perform(post("/item/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -155,10 +175,14 @@ class ItemControllerTest {
 
     @Test
     void whenCreateNewItemWithPriceNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.itemRequest.setPrice(null);
         String userJson = this.objectMapper.writeValueAsString(this.itemRequest);
         String responseContent = mockMvc.perform(post("/item/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -173,10 +197,14 @@ class ItemControllerTest {
 
     @Test
     void whenCreateNewItemWithTimeNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.itemRequest.setTime(null);
         String userJson = this.objectMapper.writeValueAsString(this.itemRequest);
         String responseContent = mockMvc.perform(post("/item/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
 
@@ -222,10 +250,14 @@ class ItemControllerTest {
 
     @Test
     void whenFindItemsByBarberShopThenReturnAnListOfItems() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.itemService.itemByBarberShop(anyInt(), any())).thenReturn(List.of(this.itemSimple));
         String userJson = this.objectMapper.writeValueAsString(this.itemRequest);
         String responseContent = mockMvc.perform(get("/item/barbershop/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         List<ItemSimple> response = this.objectMapper.readValue(responseContent, new TypeReference<List<ItemSimple>>() {
@@ -238,20 +270,28 @@ class ItemControllerTest {
 
     @Test
     void whenDeleteItemThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.itemService).deleteItem(anyInt());
         mockMvc.perform(delete("/item/delete/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk());
         verify(this.itemService, times(1)).deleteItem(anyInt());
     }
 
     @Test
     void whenUpdateItemThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.itemService.updateItem(anyInt(), any())).thenReturn(this.itemResponse);
         when(this.itemService.itemById(anyInt())).thenReturn(this.itemResponse);
         String userJson = this.objectMapper.writeValueAsString(this.itemRequest);
         String responseContent = mockMvc.perform(patch("/item/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         ItemResponse response = this.objectMapper.readValue(responseContent, ItemResponse.class);
@@ -263,10 +303,14 @@ class ItemControllerTest {
 
     @Test
     void whenUpdateItemWithBarberShopIdNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.barberShopRequest.setBarberShopId(null);
         String userJson = this.objectMapper.writeValueAsString(this.itemRequest);
         String responseContent = mockMvc.perform(patch("/item/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -280,15 +324,21 @@ class ItemControllerTest {
 
     @Test
     void whenActiveEmployeeThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.itemService).activeItem(anyInt());
         mockMvc.perform(patch("/item/active-item/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk());
         verify(this.itemService, times(1)).activeItem(anyInt());
 
     }
 
     private void startUser() {
+        this.userAuth = new User(LOGIN, PASSWORD, ROLE_BARBERSHOP);
+
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
         this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, PASSWORD, NUMBER, OPENING, CLOSING, STATUS_ACTIVE, null, null, null);
 

@@ -14,6 +14,7 @@ import br.com.barbermanager.barbershopmanagement.domain.model.*;
 import br.com.barbermanager.barbershopmanagement.domain.repository.BarberShopRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import br.com.barbermanager.barbershopmanagement.domain.service.item.ItemService;
+import br.com.barbermanager.barbershopmanagement.domain.service.user.UserService;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyActiveException;
 import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.NotFoundException;
@@ -47,7 +48,6 @@ class BarberShopServiceImplTest {
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
     public static final StatusEnum STATUS_INACTIVE = StatusEnum.INACTIVE;
     public static final String NO_BARBER_SHOPS = "There aren't barber shops to show.";
-
 
     private BarberShop barberShop = new BarberShop();
     private BarberShopRequest barberShopRequest = new BarberShopRequest();
@@ -85,6 +85,9 @@ class BarberShopServiceImplTest {
     @Mock
     private ItemMapper itemMapper;
 
+    @Mock
+    private UserService userService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -110,6 +113,7 @@ class BarberShopServiceImplTest {
     void whenCreateBarberShopThenReturnAnBarberShopResponse() {
         when(this.barberShopRepository.findByEmail(anyString())).thenReturn(null);
         when(this.barberShopMapper.toBarberShopResponse(any())).thenReturn(this.barberShopResponse);
+        when(this.userService.register(any())).thenReturn(true);
 
         BarberShopResponse response = this.barberShopService.createBarberShop(this.barberShopRequest);
 
@@ -327,7 +331,7 @@ class BarberShopServiceImplTest {
 
     @Test
     void whenUpdateBarberShopThenReturnSuccess() {
-        this.barberShopRequest.setAdress(null);
+        this.barberShopRequest.setAddress(null);
         when(this.barberShopService.barberShopExists(anyInt())).thenReturn(true);
         when(this.barberShopRepository.findByEmail(anyString())).thenReturn(null);
         when(this.barberShopRepository.getById(anyInt())).thenReturn(this.barberShop);

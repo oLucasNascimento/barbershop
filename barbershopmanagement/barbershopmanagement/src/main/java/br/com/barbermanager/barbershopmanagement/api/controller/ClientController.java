@@ -3,12 +3,14 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 import br.com.barbermanager.barbershopmanagement.api.request.client.ClientRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimple;
+import br.com.barbermanager.barbershopmanagement.config.security.SecurityConfiguration;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientCreate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.ClientUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.service.client.ClientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +23,7 @@ import java.util.List;
 @RestController
 @Validated
 @RequestMapping("/client")
+@SecurityRequirement(name = SecurityConfiguration.SECURITY)
 public class ClientController {
 
     @Autowired

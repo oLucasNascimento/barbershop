@@ -26,36 +26,36 @@ import java.util.List;
 public class SchedulingRequest {
 
     @Schema(hidden = true)
-    @Null(groups = SchedulingCreate.class, message = "The Scheduling ID field must be null.")
+    @Null(groups = SchedulingCreate.class, message = "{scheduling.id.null}")
     private Integer schedulingId;
 
-    @Schema(description = "Cliente", example = "{\"clientId\":\"1\"}")
+    @Schema(description = "Client", example = "{\"clientId\":\"1\"}")
     @Valid
     @JsonIgnoreProperties({"barberShops", "schedulings"})
-    @NotNull(groups = SchedulingCreate.class, message = "The Client field cannot be null.")
+    @NotNull(groups = SchedulingCreate.class, message = "{scheduling.client.not.null}")
     private ClientRequest client;
 
-    @Schema(description = "Barbearia", example = "{\"barberShopId\":\"1\"}")
+    @Schema(description = "BarberShop", example = "{\"barberShopId\":\"1\"}")
     @Valid
     @JsonIgnoreProperties({"items", "employees", "clients"})
-    @NotNull(groups = SchedulingCreate.class, message = "The BarberShop field cannot be null.")
+    @NotNull(groups = SchedulingCreate.class, message = "{scheduling.barbershop.not.null}")
     private BarberShopRequest barberShop;
 
-    @Schema(description = "Funcionário", example = "{\"employeeId\":\"1\"}")
+    @Schema(description = "Employee", example = "{\"employeeId\":\"1\"}")
     @Valid
     @JsonIgnoreProperties("barberShop")
-    @NotNull(groups = SchedulingCreate.class, message = "The Employee field cannot be null.")
+    @NotNull(groups = SchedulingCreate.class, message = "{scheduling.employee.not.null}")
     private EmployeeRequest employee;
 
-    @Schema(description = "Serviços", example = "[{\"itemId\":\"1\"}]")
+    @Schema(description = "Services", example = "[{\"itemId\":\"1\"}]")
     @Valid
     @JsonIgnoreProperties("barberShop")
-    @NotNull(groups = SchedulingCreate.class, message = "The Items field cannot be null.")
+    @NotNull(groups = SchedulingCreate.class, message = "{scheduling.item.not.null}")
     private List<ItemRequest> items;
 
-    @Schema(description = "Horário do Agendamento", example = "2024-12-20T17:00:00Z")
+    @Schema(description = "Scheduling Time", example = "2024-12-20T17:00:00Z")
     @Valid
-    @NotNull(groups = SchedulingCreate.class, message = "The Scheduling Time field cannot be null.")
+    @NotNull(groups = SchedulingCreate.class, message = "{scheduling.scheduling.time.not.null}")
     private LocalDateTime schedulingTime;
 
     @Schema(hidden = true)

@@ -4,12 +4,14 @@ package br.com.barbermanager.barbershopmanagement.api.controller;
 import br.com.barbermanager.barbershopmanagement.api.request.employee.EmployeeRequest;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeResponse;
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
+import br.com.barbermanager.barbershopmanagement.config.security.SecurityConfiguration;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.EmployeeCreate;
 import br.com.barbermanager.barbershopmanagement.domain.model.validations.EmployeeUpdate;
 import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +24,7 @@ import java.util.List;
 @RestController
 @Validated
 @RequestMapping("/employee")
+@SecurityRequirement(name = SecurityConfiguration.SECURITY)
 public class EmployeeController {
 
     @Autowired

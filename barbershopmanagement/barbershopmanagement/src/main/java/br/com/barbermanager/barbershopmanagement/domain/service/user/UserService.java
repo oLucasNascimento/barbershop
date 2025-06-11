@@ -4,9 +4,9 @@ import br.com.barbermanager.barbershopmanagement.domain.model.user.Authenticatio
 import br.com.barbermanager.barbershopmanagement.domain.model.user.RegisterDTO;
 import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
 import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
+import br.com.barbermanager.barbershopmanagement.exception.AlreadyExistsException;
 import br.com.barbermanager.barbershopmanagement.exception.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,12 +27,12 @@ public class UserService {
         try{
           return this.authenticationManager.authenticate(userNamePassword);
         } catch (Exception ex){
-            throw new BadRequestException(ex.getMessage());
+            throw new BadRequestException("Email/Username invalid.");
         }
     }
 
     public boolean register(RegisterDTO data){
-        if(this.userRepository.findByLogin(data.login()) != null) return false;
+        if(this.userRepository.findByLogin(data.login()) != null) throw new AlreadyExistsException("Email/Username already exists.");
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.login(), encryptedPassword, data.role());
         this.userRepository.save(newUser);

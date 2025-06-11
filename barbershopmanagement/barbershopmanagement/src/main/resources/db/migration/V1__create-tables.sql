@@ -64,6 +64,17 @@ FOREIGN KEY (fk_items) REFERENCES item (item_id),
 FOREIGN KEY (fk_schedulings) REFERENCES scheduling (scheduling_id)
 );
 
+CREATE TABLE users(
+user_id SERIAL PRIMARY KEY,
+login TEXT NOT NULL UNIQUE,
+password TEXT NOT NULL,
+role TEXT NOT NULL
+);
+
+INSERT INTO users (login, password, role) VALUES
+('barber', '123', '1'),
+('client', '123', '2');
+
 INSERT INTO barber_shop (adress, email, name, phone, zip_code, status, closing_time, opening_time) VALUES
 ('123 Rua Principal', 'info@barbershop1.com', 'Barbearia Estilo', '(11) 1234-5678', '12345-678', 0, '21:00:00', '08:00:00'),
 ('1428 Elm St', 'info@barbershop2.com', 'Barbearia Elegante', '(11) 8765-4321', '23456-789', 0, '20:00:00', '09:00:00');

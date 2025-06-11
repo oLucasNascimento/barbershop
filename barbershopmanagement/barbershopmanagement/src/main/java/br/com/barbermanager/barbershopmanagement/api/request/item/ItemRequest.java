@@ -24,27 +24,27 @@ import lombok.Setter;
 public class ItemRequest {
 
     @Schema(hidden = true)
-    @Null(groups = ItemCreate.class, message = "The Item ID field must be null.")
-    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class}, message = "The Item ID field cannot be null.")
+    @Null(groups = ItemCreate.class, message = "{item.id.null}")
+    @NotNull(groups = {SchedulingCreate.class, SchedulingUpdate.class, BarberShopUpdate.class}, message = "{item.id.not.null}")
     private Integer itemId;
 
-    @Schema(description = "Nome do Serviço", example = "Corte de Cabelo + Barba")
-    @NotBlank(groups = ItemCreate.class, message = "The Name field cannot be null.")
+    @Schema(description = "Service Name", example = "Haircut")
+    @NotBlank(groups = ItemCreate.class, message = "{item.name.not.null}")
     private String name;
 
-    @Schema(description = "Preço do Serviço", example = "40.0")
-    @NotNull(groups = ItemCreate.class, message = "The Price field cannot be null.")
+    @Schema(description = "Service Price", example = "20.0")
+    @NotNull(groups = ItemCreate.class, message = "{item.price.not.null}")
     private Double price;
 
-    @Schema(description = "Tempo do Serviço (em minutos)", example = "50")
-    @NotNull(groups = ItemCreate.class, message = "The Time field cannot be null.")
+    @Schema(description = "Service Time (in minutes)", example = "30")
+    @NotNull(groups = ItemCreate.class, message = "{item.time.not.null}")
     private Integer time;
 
     @Schema(hidden = true)
     private StatusEnum status;
 
-    @Schema(description = "Barbearia do Funcionário", example = "{\"barberShopId\":\"1\"}")
-    @NotNull(groups = ItemCreate.class, message = "The BarberShop field cannot be null.")
+    @Schema(description = "Service BarberShop", example = "{\"barberShopId\":\"1\"}")
+    @NotNull(groups = ItemCreate.class, message = "{item.barbershop.not.null}")
     @JsonIgnoreProperties({"items", "employees", "clients"})
     @Valid
     private BarberShopRequest barberShop;

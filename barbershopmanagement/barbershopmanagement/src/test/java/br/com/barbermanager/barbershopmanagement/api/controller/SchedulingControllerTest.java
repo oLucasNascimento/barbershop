@@ -10,8 +10,11 @@ import br.com.barbermanager.barbershopmanagement.api.response.client.ClientSimpl
 import br.com.barbermanager.barbershopmanagement.api.response.employee.EmployeeSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.item.ItemSimple;
 import br.com.barbermanager.barbershopmanagement.api.response.scheduling.SchedulingResponse;
+import br.com.barbermanager.barbershopmanagement.config.security.TokenService;
 import br.com.barbermanager.barbershopmanagement.domain.model.StatusEnum;
-import br.com.barbermanager.barbershopmanagement.domain.service.employee.EmployeeService;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.User;
+import br.com.barbermanager.barbershopmanagement.domain.model.user.UserRole;
+import br.com.barbermanager.barbershopmanagement.domain.repository.UserRepository;
 import br.com.barbermanager.barbershopmanagement.domain.service.scheduling.SchedulingService;
 import br.com.barbermanager.barbershopmanagement.exception.handler.RestErrorMessage;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,8 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,7 +29,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -49,7 +49,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class SchedulingControllerTest {
 
     public static final Integer ID = 1;
-    public static final Integer ID2 = 2;
     public static final String NAME_BARBER = "El Bigodon";
     public static final String ZIP_CODE = "55000000";
     public static final String ADRESS = "Rua Macaparana";
@@ -65,6 +64,11 @@ class SchedulingControllerTest {
     public static final double PRICE = 20.0;
     public static final int TIME = 70;
     public static final StatusEnum STATUS_ACTIVE = StatusEnum.ACTIVE;
+    public static final String LOGIN = "lucas";
+    public static final UserRole ROLE_BARBERSHOP = UserRole.BARBERSHOP;
+    public static final String TOKEN = "tokenFake";
+    public static final UserRole ROLE_CLIENT = UserRole.CLIENT;
+    public static final UserRole ROLE_ADMIN = UserRole.ADMIN;
 
     private BarberShopRequest barberShopRequest = new BarberShopRequest();
     private BarberShopSimple barberShopSimple = new BarberShopSimple();
@@ -81,16 +85,21 @@ class SchedulingControllerTest {
     private SchedulingRequest schedulingRequest = new SchedulingRequest();
     private SchedulingResponse schedulingResponse = new SchedulingResponse();
 
+    private User userAuth = new User();
+
     @Autowired
     private MockMvc mockMvc;
-
-    @InjectMocks
-    private SchedulingController schedulingController;
 
     @MockBean
     private SchedulingService schedulingService;
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @MockBean
+    private TokenService tokenService;
+
+    @MockBean
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
@@ -101,11 +110,14 @@ class SchedulingControllerTest {
 
     @Test
     void whenCreateNewSchedulingThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.schedulingService.newScheduling(any())).thenReturn(this.schedulingResponse);
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
-
         String responseContent = mockMvc.perform(post("/scheduling/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
 
@@ -117,11 +129,14 @@ class SchedulingControllerTest {
 
     @Test
     void whenCreateNewSchedulingWithBarberShopNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.setBarberShop(null);
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
-
         String responseContent = mockMvc.perform(post("/scheduling/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -134,11 +149,14 @@ class SchedulingControllerTest {
 
     @Test
     void whenCreateNewSchedulingWithBarberShopIdNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.getBarberShop().setBarberShopId(null);
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
-
         String responseContent = mockMvc.perform(post("/scheduling/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -151,11 +169,14 @@ class SchedulingControllerTest {
 
     @Test
     void whenCreateNewSchedulingWithClientNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.setClient(null);
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
-
         String responseContent = mockMvc.perform(post("/scheduling/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -168,11 +189,14 @@ class SchedulingControllerTest {
 
     @Test
     void whenCreateNewSchedulingWithClientIdNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.getClient().setClientId(null);
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
-
         String responseContent = mockMvc.perform(post("/scheduling/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -185,11 +209,15 @@ class SchedulingControllerTest {
 
     @Test
     void whenCreateNewSchedulingWithItemsNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.setItems(null);
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
 
         String responseContent = mockMvc.perform(post("/scheduling/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -202,11 +230,15 @@ class SchedulingControllerTest {
 
     @Test
     void whenCreateNewSchedulingWithItemIdNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.getItems().get(0).setItemId(null);
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
 
         String responseContent = mockMvc.perform(post("/scheduling/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -219,11 +251,15 @@ class SchedulingControllerTest {
 
     @Test
     void whenCreateNewSchedulingWithEmployeeNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.setEmployee(null);
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
 
         String responseContent = mockMvc.perform(post("/scheduling/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -236,11 +272,15 @@ class SchedulingControllerTest {
 
     @Test
     void whenCreateNewSchedulingWithEmployeeIDNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.getEmployee().setEmployeeId(null);
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
 
         String responseContent = mockMvc.perform(post("/scheduling/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -253,11 +293,15 @@ class SchedulingControllerTest {
 
     @Test
     void whenCreateNewSchedulingWithSchedulingTimeNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.setSchedulingTime(null);
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
 
         String responseContent = mockMvc.perform(post("/scheduling/new")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -270,9 +314,17 @@ class SchedulingControllerTest {
 
     @Test
     void whenFindAllSchedulingsThenReturnAnListOfSchedulings() throws Exception {
+        this.userAuth.setRole(ROLE_ADMIN);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.schedulingService.allSchedulings(any())).thenReturn(List.of(this.schedulingResponse));
         String responseContent = mockMvc.perform(get("/scheduling/all")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         List<SchedulingResponse> responseList = this.objectMapper.readValue(responseContent, new TypeReference<List<SchedulingResponse>>() {
@@ -284,9 +336,13 @@ class SchedulingControllerTest {
 
     @Test
     void whenFindSchedulingByIdThenReturnAnScheduling() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.schedulingService.schedulingById(any())).thenReturn(this.schedulingResponse);
         String responseContent = mockMvc.perform(get("/scheduling/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         SchedulingResponse response = this.objectMapper.readValue(responseContent, SchedulingResponse.class);
@@ -297,9 +353,13 @@ class SchedulingControllerTest {
 
     @Test
     void whenFindSchedulingsByBarberShopThenReturnAnListOfSchedulings() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.schedulingService.schedulingsByBarberShop(anyInt(), any())).thenReturn(List.of(this.schedulingResponse));
         String responseContent = mockMvc.perform(get("/scheduling/barbershop/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         List<SchedulingResponse> responseList = this.objectMapper.readValue(responseContent, new TypeReference<List<SchedulingResponse>>() {
@@ -311,9 +371,14 @@ class SchedulingControllerTest {
 
     @Test
     void whenFindSchedulingsByClientThenReturnAnListOfSchedulings() throws Exception {
+        this.userAuth.setRole(ROLE_CLIENT);
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.schedulingService.schedulingsByClient(anyInt(), any())).thenReturn(List.of(this.schedulingResponse));
         String responseContent = mockMvc.perform(get("/scheduling/client/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         List<SchedulingResponse> responseList = this.objectMapper.readValue(responseContent, new TypeReference<List<SchedulingResponse>>() {
@@ -325,9 +390,13 @@ class SchedulingControllerTest {
 
     @Test
     void whenFindSchedulingsByEmployeeThenReturnAnListOfSchedulings() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.schedulingService.schedulingsByEmployee(anyInt(), any())).thenReturn(List.of(this.schedulingResponse));
         String responseContent = mockMvc.perform(get("/scheduling/employee/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         List<SchedulingResponse> responseList = this.objectMapper.readValue(responseContent, new TypeReference<List<SchedulingResponse>>() {
@@ -339,9 +408,13 @@ class SchedulingControllerTest {
 
     @Test
     void whenFindSchedulingsByItemThenReturnAnListOfSchedulings() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         when(this.schedulingService.schedulingsByItem(anyInt(), any())).thenReturn(List.of(this.schedulingResponse));
         String responseContent = mockMvc.perform(get("/scheduling/item/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         List<SchedulingResponse> responseList = this.objectMapper.readValue(responseContent, new TypeReference<List<SchedulingResponse>>() {
@@ -353,9 +426,13 @@ class SchedulingControllerTest {
 
     @Test
     void whenCancelSchedulingThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.schedulingService).cancelScheduling(anyInt());
         String responseContent = mockMvc.perform(delete("/scheduling/cancel/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         verify(this.schedulingService, times(1)).cancelScheduling(anyInt());
@@ -363,10 +440,14 @@ class SchedulingControllerTest {
 
     @Test
     void whenUpdateSchedulingThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
         when(this.schedulingService.updateScheduling(anyInt(), any())).thenReturn(this.schedulingResponse);
         mockMvc.perform(patch("/scheduling/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isOk());
 
@@ -375,6 +456,9 @@ class SchedulingControllerTest {
 
     @Test
     void whenUpdateSchedulingWithoutSomeFieldsFilledThenReturnSuccess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.setItems(null);
         this.schedulingRequest.setEmployee(null);
         this.schedulingRequest.setClient(null);
@@ -384,6 +468,7 @@ class SchedulingControllerTest {
         when(this.schedulingService.updateScheduling(anyInt(), any())).thenReturn(this.schedulingResponse);
         mockMvc.perform(patch("/scheduling/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isOk());
 
@@ -392,12 +477,16 @@ class SchedulingControllerTest {
 
     @Test
     void whenUpdateSchedulingWithItemFilledButItemIdIsNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.getItems().get(0).setItemId(null);
 
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
         when(this.schedulingService.updateScheduling(anyInt(), any())).thenReturn(this.schedulingResponse);
         String responseContent = mockMvc.perform(patch("/scheduling/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -410,12 +499,16 @@ class SchedulingControllerTest {
 
     @Test
     void whenUpdateSchedulingWithEmployeeFilledButEmployeeIdIsNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.getEmployee().setEmployeeId(null);
 
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
         when(this.schedulingService.updateScheduling(anyInt(), any())).thenReturn(this.schedulingResponse);
         String responseContent = mockMvc.perform(patch("/scheduling/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -428,12 +521,16 @@ class SchedulingControllerTest {
 
     @Test
     void whenUpdateSchedulingWithClientFilledButClientIdIsNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         this.schedulingRequest.getClient().setClientId(null);
 
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
         when(this.schedulingService.updateScheduling(anyInt(), any())).thenReturn(this.schedulingResponse);
         String responseContent = mockMvc.perform(patch("/scheduling/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -446,12 +543,15 @@ class SchedulingControllerTest {
 
     @Test
     void whenUpdateSchedulingWithBarberShopFilledButBarberShopIdIsNullThenThrowAnBadRequestException() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
         this.schedulingRequest.getBarberShop().setBarberShopId(null);
 
         String userJson = this.objectMapper.writeValueAsString(this.schedulingRequest);
         when(this.schedulingService.updateScheduling(anyInt(), any())).thenReturn(this.schedulingResponse);
         String responseContent = mockMvc.perform(patch("/scheduling/update/1")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN)
                         .content(userJson))
                 .andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString();
         RestErrorMessage restError = this.objectMapper.readValue(responseContent, RestErrorMessage.class);
@@ -464,15 +564,21 @@ class SchedulingControllerTest {
 
     @Test
     void whenFinishSchedulingThenReturnSucess() throws Exception {
+        when(this.tokenService.validateToken(any())).thenReturn(LOGIN);
+        when(this.userRepository.findByLogin(anyString())).thenReturn(this.userAuth);
+
         doNothing().when(this.schedulingService).finishScheduling(anyInt());
         String responseContent = mockMvc.perform(patch("/scheduling/finish/1")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + TOKEN))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         verify(this.schedulingService, times(1)).finishScheduling(anyInt());
     }
 
     private void startUser() {
+        this.userAuth = new User(LOGIN, PASSWORD, ROLE_BARBERSHOP);
+
         this.barberShopRequest = new BarberShopRequest(ID, NAME_BARBER, ZIP_CODE, ADRESS, MAIL, NUMBER, PASSWORD, OPENING, CLOSING, STATUS_ACTIVE, List.of(this.itemRequest), List.of(this.employeeRequest), List.of(this.clientRequest));
         this.barberShopSimple = new BarberShopSimple(ID, NAME_BARBER, ADRESS, NUMBER, OPENING, CLOSING, STATUS_ACTIVE);
 
